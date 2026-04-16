@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Brand Data Schema",
+  "type": "object",
+  "properties": {
+    "brand_name": {
+      "type": "string"
+    },
+    "brand_id": {
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": ["brand_name", "brand_id"]
+}
