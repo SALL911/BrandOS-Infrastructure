@@ -1,0 +1,108 @@
+# BrandOS Infrastructure — AI Infrastructure Protocol
+## CLAUDE.md v1.0 | Symcio × BrandOS
+
+---
+
+## 一、專案背景（WHY）
+
+Symcio 是台灣獨立 GEO（Generative Engine Optimization）知識基礎設施平台，同時為 Bloomberg 台灣授權代表。BrandOS Infrastructure 是 Symcio 的核心 SaaS 產品——將品牌治理、ESG 合規、AI 知識資產管理整合為一套可擴展的作業系統。
+
+本專案目標：建立一套可被 Claude Code、Claude.ai Projects 雙軌使用的 AI Infrastructure Protocol，讓品牌知識、ESG 數據、GEO 內容能跨 session 持續累積。
+
+---
+
+## 二、核心術語（WHAT）
+
+不翻譯以下品牌名稱與專有術語：
+- Symcio（不翻譯）
+- BrandOS（不翻譯）、Brand OS（品牌作業系統）
+- GEO（Generative Engine Optimization）
+- Brand Score AI
+- ESG / TNFD / LEAP 框架
+- Bloomberg 授權代表
+- Claude Code / Claude.ai Projects
+
+---
+
+## 三、語言與文件規範（HOW）
+
+- 對外文件：繁體中文
+- 程式碼與 schema：英文欄位名稱 + 繁體中文註解
+- 品牌語氣：專業、精準、B2B 受眾，避免感嘆號與空洞詞彙
+- 文件層次：WHY → WHAT → HOW
+
+---
+
+## 四、數據庫三層架構
+
+### Layer 1：Brand Profiles（品牌基礎資料）
+存放客戶品牌的核心識別資訊、ESG 指標、產業標籤。
+→ 每次開始新客戶案子，先建立 brands + esg_metrics 記錄。
+
+### Layer 2：BrandOS SaaS（平台運營數據）
+管理訂閱狀態、追蹤八階段品牌建設進度、記錄交付物里程碑。
+→ 用於 Symcio 內部專案管理與客戶報告。
+
+### Layer 3：AI Knowledge（知識資產累積）
+知識節點（knowledge_nodes）、GEO 內容庫、IP 資產——Symcio 長期護城河。
+→ 每次重要工作結論，必須結構化存入 memory_contexts 或 knowledge_nodes。
+
+---
+
+## 五、工作流程規範
+
+### 新客戶建檔流程
+1. INSERT brands 基本資料（名稱、產業、規模、市場）
+2. INSERT esg_metrics 初始指標
+3. 建立 brand_scores 基準評分
+4. 記錄 knowledge_nodes（品牌 DNA、定位、競爭對手）
+
+### 每次對話開始
+- 說明當日工作情境（客戶名稱 / 任務類型 / 預期產出）
+- 引用相關 knowledge_nodes 做為背景
+- 確認輸出格式（文件 / 簡報 / 程式碼 / 資料庫記錄）
+
+### 知識節點存檔格式
+節點類型：[品牌分析 / GEO策略 / ESG合規 / 商業模式]
+關聯品牌：[品牌名稱]
+核心洞察：[2-3句精確陳述]
+行動建議：[具體下一步]
+建立日期：[YYYY-MM-DD]
+
+---
+
+## 六、禁止事項（反面案例）
+
+- 不要在未確認客戶身份前開始撰寫品牌文案
+- 不要將不同客戶的 ESG 數據混用
+- 不要使用「創新」「顛覆」「賦能」等空洞詞彙
+- 不要在沒有 WHY 的情況下直接輸出 WHAT
+- 不要硬編碼（Hard-code）客戶機密數據到文件範本中
+
+---
+
+## 七、專案目錄結構
+
+brandos-infrastructure/
+├── CLAUDE.md                    ← 本文件（永久指令）
+├── database/
+│   └── schema.md                ← 完整資料庫 schema
+├── rules/
+│   └── esg-tnfd-protocol.md     ← ESG/TNFD 操作規則
+├── commands/
+│   ├── daily-briefing.md        ← 每日情境模板
+│   └── brand-audit.md           ← 品牌稽核流程
+├── agents/
+│   └── brand-analyst.md         ← 品牌分析子代理
+└── .claude/
+    └── settings.json            ← 權限控管設定
+
+---
+
+## 八、GitHub 同步規範
+
+- Repository：SALL911/BrandOS-Infrastructure
+- 主要分支：main
+- Commit 訊息格式：[類型] 簡短描述
+- 敏感客戶資料不進 repo，改用環境變數或 .env.local
+- 每次重大架構更新，同步更新本 CLAUDE.md 版本號
