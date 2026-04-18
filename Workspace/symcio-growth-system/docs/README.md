@@ -1,6 +1,6 @@
 # 📘 BrandOS Infrastructure — Symcio Growth System
 
-> **透過 Claude Code 建立的 AI 行銷 × 獲客 × 成交自動化系統**
+> **AI 行銷 × 獲客 × 成交自動化系統**
 > Repo: [github.com/SALL911/BrandOS-Infrastructure](https://github.com/SALL911/BrandOS-Infrastructure)
 
 ---
