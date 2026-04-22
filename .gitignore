@@ -47,5 +47,9 @@ outputs/
 private/bci/weights_*.json
 private/bci/weights_*.py
 private/bci/fixtures_*.json
-# 例外：允許 *.example.* 作為結構樣本進 repo
+private/bci/inputs/*.csv
+private/bci/inputs/*.xlsx
+private/bci/calibration_log.md
+# 例外：允許 *.example.* + README.md 結構樣本進 repo
 !private/bci/weights_*.example.json
+!private/bci/inputs/README.md
