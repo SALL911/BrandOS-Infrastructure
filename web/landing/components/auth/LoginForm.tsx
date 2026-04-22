@@ -144,9 +144,19 @@ export function LoginForm({ mode }: { mode: Mode }) {
           </div>
 
           <div>
-            <label className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted">
-              密碼
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted">
+                密碼
+              </label>
+              {mode === "login" && (
+                <Link
+                  href="/forgot-password"
+                  className="font-mono text-[11px] text-accent no-underline hover:underline"
+                >
+                  忘記密碼？
+                </Link>
+              )}
+            </div>
             <input
               type="password"
               value={password}
