@@ -1,0 +1,767 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Brand Scoring Schema",
+  "description": "品牌評分計算的 JSON Schema 定義",
+  "type": "object",
+  "properties": {
+    "function": {
+      "type": "string",
+      "const": "calculate_brand_score",
+      "description": "函數名稱"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "const": ["brand", "esg", "carbon", "tnfd"],
+      "description": "輸入參數列表"
+    },
+    "output": {
+      "type": "string",
+      "const": "score",
+      "description": "輸出參數"
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "$ref": "#/definitions/BrandIdentityInput"
+        },
+        "esg": {
+          "$ref": "#/definitions/ESGInput"
+        },
+        "carbon": {
+          "$ref": "#/definitions/CarbonInput"
+        },
+        "tnfd": {
+          "$ref": "#/definitions/TNFDInput"
+        },
+        "options": {
+          "$ref": "#/definitions/ScoringOptions"
+        }
+      },
+      "required": ["brand", "esg", "carbon", "tnfd"]
+    }
+  },
+  "required": ["function", "inputs", "output", "parameters"],
+  "definitions": {
+    "BrandIdentityInput": {
+      "type": "object",
+      "properties": {
+        "brand_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9-]+$",
+          "description": "品牌唯一識別符"
+        },
+        "did": {
+          "type": "string",
+          "pattern": "^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$",
+          "description": "去中心化身份識別符"
+        },
+        "credentials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VerifiableCredential"
+          },
+          "description": "品牌憑證列表"
+        },
+        "metadata": {
+          "$ref": "#/definitions/BrandMetadata"
+        }
+      },
+      "required": ["brand_id", "metadata"]
+    },
+    "VerifiableCredential": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["brand_registration", "legal_entity", "compliance_certificate", "quality_certification"],
+          "description": "憑證類型"
+        },
+        "issuer": {
+          "type": "string",
+          "description": "發行者 DID"
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "發行日期"
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "過期日期"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "expired", "revoked"],
+          "description": "憑證狀態"
+        }
+      },
+      "required": ["type", "issuer", "issuanceDate"]
+    },
+    "BrandMetadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "品牌名稱"
+        },
+        "industry": {
+          "type": "string",
+          "enum": ["technology", "retail", "finance", "healthcare", "manufacturing", "services", "energy", "agriculture"],
+          "description": "產業類別"
+        },
+        "country": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "國家代碼 (ISO 3166-1 alpha-2)"
+        },
+        "registration_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "註冊日期"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive", "suspended"],
+          "description": "品牌狀態"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "description": "品牌網站"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "品牌描述"
+        }
+      },
+      "required": ["name", "industry", "country", "registration_date", "status"]
+    },
+    "ESGInput": {
+      "type": "object",
+      "properties": {
+        "carbon_tracking": {
+          "$ref": "#/definitions/CarbonTracking"
+        },
+        "sustainability_metrics": {
+          "$ref": "#/definitions/SustainabilityMetrics"
+        },
+        "social_impact": {
+          "$ref": "#/definitions/SocialImpact"
+        },
+        "governance": {
+          "$ref": "#/definitions/Governance"
+        }
+      },
+      "required": ["carbon_tracking", "sustainability_metrics"]
+    },
+    "CarbonTracking": {
+      "type": "object",
+      "properties": {
+        "scope1_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 1 排放量 (kg CO2e)"
+        },
+        "scope2_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 2 排放量 (kg CO2e)"
+        },
+        "scope3_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 3 排放量 (kg CO2e)"
+        },
+        "reduction_targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReductionTarget"
+          },
+          "description": "減排目標列表"
+        },
+        "measurement_period": {
+          "type": "string",
+          "pattern": "^\\d{4}-Q[1-4]$",
+          "description": "測量週期 (YYYY-QX)"
+        }
+      },
+      "required": ["scope1_emissions", "scope2_emissions", "scope3_emissions"]
+    },
+    "ReductionTarget": {
+      "type": "object",
+      "properties": {
+        "target_year": {
+          "type": "integer",
+          "minimum": 2020,
+          "maximum": 2050,
+          "description": "目標年份"
+        },
+        "reduction_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "減排百分比"
+        },
+        "baseline_year": {
+          "type": "integer",
+          "minimum": 2000,
+          "maximum": 2025,
+          "description": "基準年份"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["scope1", "scope2", "scope3", "all"],
+          "description": "減排範疇"
+        }
+      },
+      "required": ["target_year", "reduction_percentage", "baseline_year", "scope"]
+    },
+    "SustainabilityMetrics": {
+      "type": "object",
+      "properties": {
+        "energy_consumption": {
+          "type": "number",
+          "minimum": 0,
+          "description": "能源消耗量 (kWh)"
+        },
+        "water_usage": {
+          "type": "number",
+          "minimum": 0,
+          "description": "用水量 (m³)"
+        },
+        "waste_generated": {
+          "type": "number",
+          "minimum": 0,
+          "description": "廢物產生量 (kg)"
+        },
+        "recycling_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "回收率 (%)"
+        },
+        "renewable_energy_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "可再生能源百分比"
+        }
+      },
+      "required": ["energy_consumption", "water_usage", "waste_generated"]
+    },
+    "SocialImpact": {
+      "type": "object",
+      "properties": {
+        "employee_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "員工數量"
+        },
+        "gender_diversity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "性別多樣性 (%)"
+        },
+        "community_investment": {
+          "type": "number",
+          "minimum": 0,
+          "description": "社區投資金額"
+        },
+        "training_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "員工培訓時數"
+        },
+        "employee_satisfaction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "員工滿意度 (%)"
+        }
+      },
+      "required": ["employee_count"]
+    },
+    "Governance": {
+      "type": "object",
+      "properties": {
+        "board_independence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "董事會獨立性 (%)"
+        },
+        "ethics_training_completion": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "道德培訓完成率 (%)"
+        },
+        "compliance_incidents": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "合規事件數量"
+        },
+        "audit_frequency": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12,
+          "description": "審計頻率 (次/年)"
+        },
+        "whistleblower_cases": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "舉報案件數量"
+        }
+      },
+      "required": ["board_independence", "ethics_training_completion"]
+    },
+    "CarbonInput": {
+      "type": "object",
+      "properties": {
+        "scope1_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 1 排放量 (kg CO2e)"
+        },
+        "scope2_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 2 排放量 (kg CO2e)"
+        },
+        "scope3_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 3 排放量 (kg CO2e)"
+        },
+        "advertising_carbon": {
+          "$ref": "#/definitions/AdvertisingCarbon"
+        },
+        "reduction_targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReductionTarget"
+          },
+          "description": "減排目標列表"
+        },
+        "renewable_energy_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "可再生能源百分比"
+        }
+      },
+      "required": ["scope1_emissions", "scope2_emissions", "scope3_emissions"]
+    },
+    "AdvertisingCarbon": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": ["meta", "google", "amazon", "tiktok", "other"],
+          "description": "廣告平台"
+        },
+        "campaign_name": {
+          "type": "string",
+          "description": "廣告活動名稱"
+        },
+        "impressions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "曝光次數"
+        },
+        "energy_factor": {
+          "type": "number",
+          "minimum": 0,
+          "description": "能源因子 (kWh/impression)"
+        },
+        "emission_factor": {
+          "type": "number",
+          "minimum": 0,
+          "description": "排放因子 (kg CO2e/kWh)"
+        },
+        "carbon_kg": {
+          "type": "number",
+          "minimum": 0,
+          "description": "碳排放量 (kg CO2e)"
+        },
+        "device_type": {
+          "type": "string",
+          "enum": ["mobile", "desktop", "tablet", "all"],
+          "description": "設備類型"
+        },
+        "region": {
+          "type": "string",
+          "description": "地區代碼"
+        },
+        "measurement_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "測量日期"
+        }
+      },
+      "required": ["platform", "campaign_name", "impressions", "carbon_kg", "measurement_date"]
+    },
+    "TNFDInput": {
+      "type": "object",
+      "properties": {
+        "biodiversity_assessment": {
+          "$ref": "#/definitions/BiodiversityAssessment"
+        },
+        "deforestation_risk": {
+          "$ref": "#/definitions/DeforestationRisk"
+        },
+        "ecosystem_services": {
+          "$ref": "#/definitions/EcosystemServices"
+        },
+        "nature_related_risks": {
+          "$ref": "#/definitions/NatureRelatedRisks"
+        }
+      },
+      "required": ["biodiversity_assessment", "deforestation_risk"]
+    },
+    "BiodiversityAssessment": {
+      "type": "object",
+      "properties": {
+        "impact_level": {
+          "type": "string",
+          "enum": ["positive", "neutral", "low_negative", "moderate_negative", "high_negative"],
+          "description": "生物多樣性影響程度"
+        },
+        "assessment_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "評估日期"
+        },
+        "protected_species_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "受保護物種數量"
+        },
+        "habitat_preservation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "棲息地保護率 (%)"
+        },
+        "biodiversity_index": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "生物多樣性指數"
+        }
+      },
+      "required": ["impact_level", "assessment_date"]
+    },
+    "DeforestationRisk": {
+      "type": "object",
+      "properties": {
+        "risk_level": {
+          "type": "string",
+          "enum": ["very_low", "low", "medium", "high", "very_high"],
+          "description": "森林砍伐風險等級"
+        },
+        "assessment_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "評估日期"
+        },
+        "forest_area_monitored": {
+          "type": "number",
+          "minimum": 0,
+          "description": "監測森林面積 (公頃)"
+        },
+        "deforestation_rate": {
+          "type": "number",
+          "minimum": 0,
+          "description": "森林砍伐率 (%/年)"
+        },
+        "supply_chain_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "供應鏈覆蓋率 (%)"
+        }
+      },
+      "required": ["risk_level", "assessment_date"]
+    },
+    "EcosystemServices": {
+      "type": "object",
+      "properties": {
+        "protection_level": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "生態系統服務保護水平 (%)"
+        },
+        "services_preserved": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["water_purification", "carbon_sequestration", "soil_conservation", "pollination", "climate_regulation"]
+          },
+          "description": "保護的生態系統服務列表"
+        },
+        "investment_amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "生態系統服務投資金額"
+        },
+        "restoration_projects": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "生態修復項目數量"
+        }
+      },
+      "required": ["protection_level"]
+    },
+    "NatureRelatedRisks": {
+      "type": "object",
+      "properties": {
+        "mitigation_level": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "自然相關風險緩解水平 (%)"
+        },
+        "risk_assessment_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "風險評估日期"
+        },
+        "identified_risks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["climate_change", "biodiversity_loss", "water_scarcity", "soil_degradation", "pollution"]
+          },
+          "description": "識別的自然相關風險列表"
+        },
+        "mitigation_strategies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "緩解策略列表"
+        },
+        "financial_exposure": {
+          "type": "number",
+          "minimum": 0,
+          "description": "財務暴露金額"
+        }
+      },
+      "required": ["mitigation_level", "risk_assessment_date"]
+    },
+    "ScoringOptions": {
+      "type": "object",
+      "properties": {
+        "weights": {
+          "type": "object",
+          "properties": {
+            "brand_identity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "品牌身份權重"
+            },
+            "esg_performance": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "ESG 績效權重"
+            },
+            "carbon_footprint": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "碳足跡權重"
+            },
+            "tnfd_assessment": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "TNFD 評估權重"
+            }
+          },
+          "description": "自定義權重配置"
+        },
+        "industry": {
+          "type": "string",
+          "enum": ["technology", "retail", "finance", "healthcare", "manufacturing", "services", "energy", "agriculture"],
+          "description": "產業類別，用於基準比較"
+        },
+        "benchmark_comparison": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否進行基準比較"
+        },
+        "generate_recommendations": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否生成改進建議"
+        }
+      }
+    },
+    "ScoreOutput": {
+      "type": "object",
+      "properties": {
+        "brand_id": {
+          "type": "string",
+          "description": "品牌 ID"
+        },
+        "total_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "總評分 (0-100)"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["excellent", "good", "average", "poor", "critical"],
+          "description": "評分類別"
+        },
+        "scoring_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "評分日期"
+        },
+        "component_scores": {
+          "type": "object",
+          "properties": {
+            "brand_identity": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "品牌身份評分"
+                },
+                "weight": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "權重"
+                },
+                "weighted_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "加權評分"
+                },
+                "sub_scores": {
+                  "type": "object",
+                  "properties": {
+                    "did_verification": {"type": "number", "minimum": 0, "maximum": 100},
+                    "credential_completeness": {"type": "number", "minimum": 0, "maximum": 100},
+                    "brand_consistency": {"type": "number", "minimum": 0, "maximum": 100},
+                    "reputation_score": {"type": "number", "minimum": 0, "maximum": 100}
+                  }
+                }
+              }
+            },
+            "esg_performance": {
+              "type": "object",
+              "properties": {
+                "score": {"type": "number", "minimum": 0, "maximum": 100},
+                "weight": {"type": "number", "minimum": 0, "maximum": 1},
+                "weighted_score": {"type": "number", "minimum": 0, "maximum": 100},
+                "sub_scores": {
+                  "type": "object",
+                  "properties": {
+                    "environmental": {"type": "number", "minimum": 0, "maximum": 100},
+                    "social": {"type": "number", "minimum": 0, "maximum": 100},
+                    "governance": {"type": "number", "minimum": 0, "maximum": 100},
+                    "sustainability_metrics": {"type": "number", "minimum": 0, "maximum": 100}
+                  }
+                }
+              }
+            },
+            "carbon_footprint": {
+              "type": "object",
+              "properties": {
+                "score": {"type": "number", "minimum": 0, "maximum": 100},
+                "weight": {"type": "number", "minimum": 0, "maximum": 1},
+                "weighted_score": {"type": "number", "minimum": 0, "maximum": 100},
+                "sub_scores": {
+                  "type": "object",
+                  "properties": {
+                    "emission_reduction": {"type": "number", "minimum": 0, "maximum": 100},
+                    "carbon_efficiency": {"type": "number", "minimum": 0, "maximum": 100},
+                    "renewable_energy": {"type": "number", "minimum": 0, "maximum": 100},
+                    "carbon_neutral_progress": {"type": "number", "minimum": 0, "maximum": 100}
+                  }
+                }
+              }
+            },
+            "tnfd_assessment": {
+              "type": "object",
+              "properties": {
+                "score": {"type": "number", "minimum": 0, "maximum": 100},
+                "weight": {"type": "number", "minimum": 0, "maximum": 1},
+                "weighted_score": {"type": "number", "minimum": 0, "maximum": 100},
+                "sub_scores": {
+                  "type": "object",
+                  "properties": {
+                    "biodiversity_impact": {"type": "number", "minimum": 0, "maximum": 100},
+                    "deforestation_risk": {"type": "number", "minimum": 0, "maximum": 100},
+                    "ecosystem_services": {"type": "number", "minimum": 0, "maximum": 100},
+                    "nature_related_risks": {"type": "number", "minimum": 0, "maximum": 100}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "改進建議列表"
+        },
+        "benchmark_comparison": {
+          "type": "object",
+          "properties": {
+            "brand_identity_vs_benchmark": {
+              "type": "number",
+              "description": "品牌身份 vs 基準差異"
+            },
+            "esg_vs_benchmark": {
+              "type": "number",
+              "description": "ESG vs 基準差異"
+            },
+            "carbon_vs_benchmark": {
+              "type": "number",
+              "description": "碳足跡 vs 基準差異"
+            },
+            "tnfd_vs_benchmark": {
+              "type": "number",
+              "description": "TNFD vs 基準差異"
+            },
+            "overall_vs_benchmark": {
+              "type": "number",
+              "description": "整體 vs 基準差異"
+            }
+          }
+        },
+        "execution_time_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "執行時間 (毫秒)"
+        }
+      },
+      "required": ["brand_id", "total_score", "category", "scoring_date", "component_scores"]
+    }
+  }
+}

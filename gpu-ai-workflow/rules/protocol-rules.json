@@ -1,0 +1,1271 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BrandOS AI Infrastructure Protocol Rules",
+  "description": "可計算的協議規則引擎，包含驗證、合規和業務邏輯規則",
+  "type": "object",
+  "properties": {
+    "protocol_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "協議版本"
+    },
+    "rule_categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["validation", "compliance", "business_logic", "security", "performance"]
+      },
+      "description": "規則類別"
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "brand_identity_rules": {
+          "$ref": "#/definitions/BrandIdentityRules",
+          "description": "品牌身份驗證規則"
+        },
+        "esg_compliance_rules": {
+          "$ref": "#/definitions/ESGComplianceRules",
+          "description": "ESG 合規規則"
+        },
+        "ai_governance_rules": {
+          "$ref": "#/definitions/AIGovernanceRules",
+          "description": "AI 治理規則"
+        },
+        "verification_rules": {
+          "$ref": "#/definitions/VerificationRules",
+          "description": "驗證規則"
+        },
+        "gpu_acceleration_rules": {
+          "$ref": "#/definitions/GPUAccelerationRules",
+          "description": "GPU 加速規則"
+        }
+      },
+      "required": ["brand_identity_rules", "esg_compliance_rules", "ai_governance_rules"]
+    },
+    "rule_engine": {
+      "$ref": "#/definitions/RuleEngine",
+      "description": "規則引擎配置"
+    }
+  },
+  "required": ["protocol_version", "rule_categories", "rules"],
+  "definitions": {
+    "BrandIdentityRules": {
+      "type": "object",
+      "properties": {
+        "did_validation": {
+          "$ref": "#/definitions/DIDValidationRule",
+          "description": "DID 驗證規則"
+        },
+        "credential_validation": {
+          "$ref": "#/definitions/CredentialValidationRule",
+          "description": "憑證驗證規則"
+        },
+        "brand_uniqueness": {
+          "$ref": "#/definitions/BrandUniquenessRule",
+          "description": "品牌唯一性規則"
+        },
+        "industry_classification": {
+          "$ref": "#/definitions/IndustryClassificationRule",
+          "description": "產業分類規則"
+        }
+      },
+      "required": ["did_validation", "credential_validation"]
+    },
+    "DIDValidationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "BRAND_DID_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "品牌 DID 格式驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "validation"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證品牌 DID 格式是否符合協議標準"
+        }
+      },
+      "required": ["rule_id", "name", "category", "severity", "conditions", "actions"]
+    },
+    "CredentialValidationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "BRAND_CRED_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "可驗證憑證格式驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "validation"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證可驗證憑證的完整性和格式"
+        }
+      }
+    },
+    "BrandUniquenessRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "BRAND_UNIQUE_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "品牌唯一性檢查"
+        },
+        "category": {
+          "type": "string",
+          "const": "business_logic"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "確保品牌在協議中的唯一性"
+        }
+      }
+    },
+    "IndustryClassificationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "BRAND_INDUSTRY_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "產業分類驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "validation"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "warning"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證產業分類的準確性和一致性"
+        }
+      }
+    },
+    "ESGComplianceRules": {
+      "type": "object",
+      "properties": {
+        "carbon_reporting": {
+          "$ref": "#/definitions/CarbonReportingRule",
+          "description": "碳排放報告規則"
+        },
+        "advertising_carbon": {
+          "$ref": "#/definitions/AdvertisingCarbonRule",
+          "description": "廣告碳排放計算規則"
+        },
+        "sustainability_metrics": {
+          "$ref": "#/definitions/SustainabilityMetricsRule",
+          "description": "可持續性指標規則"
+        },
+        "reduction_target_validation": {
+          "$ref": "#/definitions/ReductionTargetValidationRule",
+          "description": "減排目標驗證規則"
+        }
+      },
+      "required": ["carbon_reporting", "advertising_carbon"]
+    },
+    "CarbonReportingRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "ESG_CARBON_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "碳排放報告完整性驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "compliance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證碳排放報告的完整性和準確性"
+        }
+      }
+    },
+    "AdvertisingCarbonRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "ESG_AD_CARBON_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "廣告碳排放計算規則"
+        },
+        "category": {
+          "type": "string",
+          "const": "business_logic"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "根據協議標準計算廣告碳排放"
+        },
+        "calculation_formula": {
+          "type": "string",
+          "const": "carbon_kg = impressions × energy_factor × emission_factor"
+        },
+        "energy_factors": {
+          "type": "object",
+          "properties": {
+            "meta": {
+              "type": "number",
+              "const": 0.000001,
+              "description": "kWh per impression"
+            },
+            "google": {
+              "type": "number",
+              "const": 0.0000012,
+              "description": "kWh per impression"
+            },
+            "amazon": {
+              "type": "number",
+              "const": 0.0000015,
+              "description": "kWh per impression"
+            },
+            "tiktok": {
+              "type": "number",
+              "const": 0.0000008,
+              "description": "kWh per impression"
+            }
+          }
+        },
+        "emission_factors": {
+          "type": "object",
+          "properties": {
+            "global_average": {
+              "type": "number",
+              "const": 0.5,
+              "description": "kg CO2e per kWh"
+            },
+            "renewable_heavy": {
+              "type": "number",
+              "const": 0.2,
+              "description": "kg CO2e per kWh"
+            },
+            "fossil_heavy": {
+              "type": "number",
+              "const": 0.8,
+              "description": "kg CO2e per kWh"
+            }
+          }
+        }
+      }
+    },
+    "SustainabilityMetricsRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "ESG_SUSTAIN_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "可持續性指標驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "validation"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "warning"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證可持續性指標的合理性"
+        },
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "min_recycling_rate": {
+              "type": "number",
+              "const": 0,
+              "description": "最低回收率"
+            },
+            "max_recycling_rate": {
+              "type": "number",
+              "const": 100,
+              "description": "最高回收率"
+            },
+            "min_renewable_percentage": {
+              "type": "number",
+              "const": 0,
+              "description": "最低可再生能源百分比"
+            },
+            "max_renewable_percentage": {
+              "type": "number",
+              "const": 100,
+              "description": "最高可再生能源百分比"
+            }
+          }
+        }
+      }
+    },
+    "ReductionTargetValidationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "ESG_TARGET_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "減排目標合理性驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "compliance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "warning"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證減排目標的合理性和可行性"
+        },
+        "validation_criteria": {
+          "type": "object",
+          "properties": {
+            "min_target_year": {
+              "type": "integer",
+              "const": 2020,
+              "description": "最早目標年份"
+            },
+            "max_target_year": {
+              "type": "integer",
+              "const": 2050,
+              "description": "最晚目標年份"
+            },
+            "min_reduction_percentage": {
+              "type": "number",
+              "const": 0,
+              "description": "最低減排百分比"
+            },
+            "max_reduction_percentage": {
+              "type": "number",
+              "const": 100,
+              "description": "最高減排百分比"
+            },
+            "min_baseline_year": {
+              "type": "integer",
+              "const": 2000,
+              "description": "最早基準年份"
+            }
+          }
+        }
+      }
+    },
+    "AIGovernanceRules": {
+      "type": "object",
+      "properties": {
+        "decision_audit": {
+          "$ref": "#/definitions/DecisionAuditRule",
+          "description": "決策審計規則"
+        },
+        "model_accountability": {
+          "$ref": "#/definitions/ModelAccountabilityRule",
+          "description": "模型問責規則"
+        },
+        "algorithm_registry": {
+          "$ref": "#/definitions/AlgorithmRegistryRule",
+          "description": "演算法註冊規則"
+        },
+        "bias_detection": {
+          "$ref": "#/definitions/BiasDetectionRule",
+          "description": "偏見檢測規則"
+        }
+      },
+      "required": ["decision_audit", "model_accountability", "algorithm_registry"]
+    },
+    "DecisionAuditRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "AI_AUDIT_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "AI 決策審計完整性驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "compliance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "確保 AI 決策審計記錄的完整性和不可篡改性"
+        },
+        "retention_period_days": {
+          "type": "integer",
+          "const": 2555,
+          "description": "審計記錄保留天數 (7年)"
+        },
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["decision_id", "model_version", "input_data_hash", "timestamp", "confidence_score"]
+        }
+      }
+    },
+    "ModelAccountabilityRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "AI_ACCOUNT_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "模型問責制驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "compliance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證 AI 模型問責記錄的完整性"
+        },
+        "risk_assessment_required": {
+          "type": "boolean",
+          "const": true,
+          "description": "是否需要風險評估"
+        },
+        "performance_thresholds": {
+          "type": "object",
+          "properties": {
+            "min_accuracy": {
+              "type": "number",
+              "const": 0.7,
+              "description": "最低準確率"
+            },
+            "min_fairness_score": {
+              "type": "number",
+              "const": 0.8,
+              "description": "最低公平性分數"
+            },
+            "max_bias_score": {
+              "type": "number",
+              "const": 0.2,
+              "description": "最高偏見分數"
+            }
+          }
+        }
+      }
+    },
+    "AlgorithmRegistryRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "AI_REGISTRY_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "演算法註冊驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "validation"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證演算法註冊信息的完整性和準確性"
+        },
+        "required_risk_levels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["low", "medium", "high", "critical"]
+        },
+        "deployment_restrictions": {
+          "type": "object",
+          "properties": {
+            "critical": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "const": ["manual_review", "ethical_approval", "legal_compliance"]
+            },
+            "high": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "const": ["manual_review", "ethical_approval"]
+            },
+            "medium": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "const": ["automated_review"]
+            },
+            "low": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "const": ["self_certification"]
+            }
+          }
+        }
+      }
+    },
+    "BiasDetectionRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "AI_BIAS_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "AI 偏見檢測規則"
+        },
+        "category": {
+          "type": "string",
+          "const": "compliance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "warning"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "檢測和評估 AI 模型的潛在偏見"
+        },
+        "bias_metrics": {
+          "type": "object",
+          "properties": {
+            "demographic_parity": {
+              "type": "number",
+              "minimum": 0.8,
+              "description": "人口統計平等性閾值"
+            },
+            "equal_opportunity": {
+              "type": "number",
+              "minimum": 0.8,
+              "description": "機會平等性閾值"
+            },
+            "disparate_impact": {
+              "type": "number",
+              "minimum": 0.8,
+              "description": "差異影響閾值"
+            }
+          }
+        },
+        "protected_attributes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["gender", "race", "age", "disability", "religion"]
+        }
+      }
+    },
+    "VerificationRules": {
+      "type": "object",
+      "properties": {
+        "zkp_validation": {
+          "$ref": "#/definitions/ZKPValidationRule",
+          "description": "零知識證明驗證規則"
+        },
+        "data_integrity": {
+          "$ref": "#/definitions/DataIntegrityRule",
+          "description": "資料完整性驗證規則"
+        },
+        "audit_trail": {
+          "$ref": "#/definitions/AuditTrailRule",
+          "description": "審計追蹤規則"
+        }
+      },
+      "required": ["data_integrity"]
+    },
+    "ZKPValidationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "VERIFY_ZKP_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "零知識證明驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "validation"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證零知識證明的有效性和完整性"
+        },
+        "supported_proof_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["zk-snark", "zk-stark", "bulletproofs"]
+        },
+        "max_verification_time_ms": {
+          "type": "integer",
+          "const": 5000,
+          "description": "最大驗證時間 (毫秒)"
+        }
+      }
+    },
+    "DataIntegrityRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "VERIFY_INTEGRITY_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "資料完整性驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "validation"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "驗證資料的完整性和真實性"
+        },
+        "supported_hash_algorithms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["sha256", "sha3-256", "blake2b"]
+        },
+        "signature_algorithms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["Ed25519", "ECDSA", "RSA"]
+        }
+      }
+    },
+    "AuditTrailRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "AUDIT_TRAIL_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "審計追蹤完整性驗證"
+        },
+        "category": {
+          "type": "string",
+          "const": "compliance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "確保審計追蹤的完整性和不可篡改性"
+        },
+        "immutable_storage": {
+          "type": "boolean",
+          "const": true,
+          "description": "是否使用不可變存儲"
+        },
+        "retention_period_years": {
+          "type": "integer",
+          "const": 7,
+          "description": "保留年限"
+        }
+      }
+    },
+    "GPUAccelerationRules": {
+      "type": "object",
+      "properties": {
+        "gpu_utilization": {
+          "$ref": "#/definitions/GPUUtilizationRule",
+          "description": "GPU 利用率規則"
+        },
+        "memory_management": {
+          "$ref": "#/definitions/MemoryManagementRule",
+          "description": "記憶體管理規則"
+        },
+        "performance_optimization": {
+          "$ref": "#/definitions/PerformanceOptimizationRule",
+          "description": "效能優化規則"
+        },
+        "resource_allocation": {
+          "$ref": "#/definitions/ResourceAllocationRule",
+          "description": "資源分配規則"
+        }
+      },
+      "required": ["gpu_utilization", "memory_management"]
+    },
+    "GPUUtilizationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "GPU_UTIL_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "GPU 利用率監控規則"
+        },
+        "category": {
+          "type": "string",
+          "const": "performance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "warning"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "監控和優化 GPU 利用率"
+        },
+        "target_utilization": {
+          "type": "number",
+          "minimum": 80,
+          "maximum": 95,
+          "const": 85,
+          "description": "目標利用率 (%)"
+        },
+        "max_temperature": {
+          "type": "number",
+          "const": 85,
+          "description": "最高溫度 (°C)"
+        },
+        "min_memory_free": {
+          "type": "number",
+          "const": 512,
+          "description": "最低可用記憶體 (MB)"
+        }
+      }
+    },
+    "MemoryManagementRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "GPU_MEM_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "GPU 記憶體管理規則"
+        },
+        "category": {
+          "type": "string",
+          "const": "performance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "error"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "優化 GPU 記憶體使用和管理"
+        },
+        "max_memory_usage_percentage": {
+          "type": "number",
+          "const": 90,
+          "description": "最大記憶體使用百分比"
+        },
+        "auto_cleanup_threshold": {
+          "type": "number",
+          "const": 85,
+          "description": "自動清理閾值 (%)"
+        },
+        "batch_size_optimization": {
+          "type": "boolean",
+          "const": true,
+          "description": "是否啟用批次大小自動優化"
+        }
+      }
+    },
+    "PerformanceOptimizationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "GPU_PERF_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "GPU 效能優化規則"
+        },
+        "category": {
+          "type": "string",
+          "const": "performance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "info"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "自動優化 GPU 效能"
+        },
+        "target_inference_time_ms": {
+          "type": "number",
+          "const": 100,
+          "description": "目標推理時間 (毫秒)"
+        },
+        "target_throughput_fps": {
+          "type": "number",
+          "const": 30,
+          "description": "目標吞吐量 (FPS)"
+        },
+        "optimization_techniques": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["quantization", "pruning", "tensorrt", "batch_optimization"]
+        }
+      }
+    },
+    "ResourceAllocationRule": {
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "const": "GPU_ALLOC_001"
+        },
+        "name": {
+          "type": "string",
+          "const": "GPU 資源分配規則"
+        },
+        "category": {
+          "type": "string",
+          "const": "performance"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "const": "warning"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleCondition"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RuleAction"
+          }
+        },
+        "description": {
+          "type": "string",
+          "const": "優化 GPU 資源分配策略"
+        },
+        "max_concurrent_models": {
+          "type": "integer",
+          "const": 4,
+          "description": "最大並發模型數"
+        },
+        "load_balancing_strategy": {
+          "type": "string",
+          "enum": ["round_robin", "least_loaded", "priority_based"],
+          "const": "least_loaded"
+        },
+        "priority_levels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "const": ["critical", "high", "medium", "low"]
+        }
+      }
+    },
+    "RuleCondition": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "要檢查的欄位"
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["equals", "not_equals", "greater_than", "less_than", "greater_equal", "less_equal", "contains", "regex", "exists", "not_exists"],
+          "description": "比較運算符"
+        },
+        "value": {
+          "description": "比較值"
+        },
+        "logical_operator": {
+          "type": "string",
+          "enum": ["and", "or"],
+          "description": "邏輯運算符"
+        }
+      },
+      "required": ["field", "operator"]
+    },
+    "RuleAction": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["reject", "warn", "log", "notify", "transform", "retry"],
+          "description": "動作類型"
+        },
+        "message": {
+          "type": "string",
+          "description": "錯誤或警告訊息"
+        },
+        "parameters": {
+          "type": "object",
+          "description": "動作參數"
+        }
+      },
+      "required": ["type", "message"]
+    },
+    "RuleEngine": {
+      "type": "object",
+      "properties": {
+        "execution_mode": {
+          "type": "string",
+          "enum": ["sequential", "parallel", "conditional"],
+          "const": "conditional",
+          "description": "執行模式"
+        },
+        "max_execution_time_ms": {
+          "type": "integer",
+          "const": 5000,
+          "description": "最大執行時間 (毫秒)"
+        },
+        "cache_enabled": {
+          "type": "boolean",
+          "const": true,
+          "description": "是否啟用快取"
+        },
+        "cache_ttl_seconds": {
+          "type": "integer",
+          "const": 300,
+          "description": "快取生存時間 (秒)"
+        },
+        "logging_enabled": {
+          "type": "boolean",
+          "const": true,
+          "description": "是否啟用日誌記錄"
+        },
+        "metrics_enabled": {
+          "type": "boolean",
+          "const": true,
+          "description": "是否啟用指標收集"
+        }
+      }
+    }
+  }
+}

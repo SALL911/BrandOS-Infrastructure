@@ -1,13 +1,28 @@
-# BrandOS Infrastructure — AI Infrastructure Protocol
-## CLAUDE.md v1.0 | Symcio × BrandOS
+# BrandOS Infrastructure — AI Visibility Intelligence Platform
+## CLAUDE.md v1.1 | Symcio × BrandOS
 
 ---
 
 ## 一、專案背景（WHY）
 
-Symcio 是台灣獨立 GEO（Generative Engine Optimization）知識基礎設施平台，同時為 Bloomberg 台灣授權代表。BrandOS Infrastructure 是 Symcio 的核心 SaaS 產品——將品牌治理、ESG 合規、AI 知識資產管理整合為一套可擴展的作業系統。
+**Symcio 定位（三個第一）**
+- 台灣**第一個**「AI 曝光可量化系統」
+- 台灣**唯一**「跨 ChatGPT / Gemini 的品牌可見度指標」
+- **全球第一個**「AI 搜尋排名監測平台」
+
+**一句話類比**：Symcio = AI 時代的 **SimilarWeb + SEMrush + Bloomberg** 合體。
+
+**專業領域**：企業在 AI 裡的**曝光、排名與影響力**量化與治理。
+**品類定義**：AI Visibility Intelligence（AVI），由 Symcio 先行定義。
+**護城河**：台灣唯一同時具備「跨四引擎 AI 可見度量化」與「ESG × AI 雙軌治理」能力的平台。
+
+**品牌使用規範**：Bloomberg、SimilarWeb、SEMrush 僅作為**類比座標**（nominative fair use）說明品類定位，**不主張任何授權、合作或代表關係**。對外文宣不得使用「授權代表」「official partner」等字樣。
+
+BrandOS Infrastructure 是 Symcio 的核心 SaaS 產品——將品牌治理、ESG 合規、AI 知識資產管理整合為一套可擴展的作業系統。
 
 本專案目標：建立一套可被 Claude Code、Claude.ai Projects 雙軌使用的 AI Infrastructure Protocol，讓品牌知識、ESG 數據、GEO 內容能跨 session 持續累積。
+
+完整品類與訊息矩陣見 `docs/POSITIONING.md`。
 
 ---
 
@@ -17,10 +32,12 @@ Symcio 是台灣獨立 GEO（Generative Engine Optimization）知識基礎設施
 - Symcio（不翻譯）
 - BrandOS（不翻譯）、Brand OS（品牌作業系統）
 - GEO（Generative Engine Optimization）
+- AVI（AI Visibility Intelligence）— 由 Symcio 定義的新品類
+- AI Visibility / AI 可見度 — 四引擎曝光度合稱
 - Brand Score AI
 - ESG / TNFD / LEAP 框架
-- Bloomberg 授權代表
 - Claude Code / Claude.ai Projects
+- SimilarWeb / SEMrush / Bloomberg — 類比座標（僅作產業定位比喻，非合作關係），不翻譯
 
 ---
 
@@ -106,3 +123,44 @@ brandos-infrastructure/
 - Commit 訊息格式：[類型] 簡短描述
 - 敏感客戶資料不進 repo，改用環境變數或 .env.local
 - 每次重大架構更新，同步更新本 CLAUDE.md 版本號
+
+---
+
+## 九、工具角色分工與單一真相來源（SSoT）
+
+### 9.1 七工具分工表
+
+| 工具 | 角色 | 主要方向 |
+|------|------|---------|
+| GitHub `SALL911/BrandOS-Infrastructure` | **單一真相來源（SSoT）** | 所有工具的中心 |
+| Claude Code | 開發 / 部署 / DB migration 執行 agent | 讀寫 GitHub + Supabase |
+| VS Code / Windsurf | 本機 IDE | `git pull` / `git push` |
+| claude.ai（雲端 Claude） | 策略思考、行銷內容 brainstorm | 透過 GitHub MCP 讀 repo；Notion MCP 讀 Notion |
+| Notion + BrandOS Claude | 人類協作知識庫（brief / 會議 / CRM 草稿） | 人類編輯、AI 讀取 |
+| Notion AI | Notion 內文案生成 | 僅限 Notion 內部 |
+| Supabase | 結構化資料庫（knowledge_nodes / geo_content / leads） | GitHub Actions 自動部署 |
+| Composio | 200+ 第三方 app 整合層（HubSpot / Gmail / Slack / Linear） | 終端 CLI + GitHub Actions 雙軌 |
+
+### 9.2 底層改寫規則（避免雙向衝突）
+
+| 內容類型 | 唯一編輯位置 | 同步方向 |
+|---------|-------------|---------|
+| Schema / code / migration / workflow | GitHub repo | repo → Supabase（auto via CI）|
+| 品牌知識 / 客戶 brief / 會議紀錄 | Notion | Notion → `docs/notion-sync/` → `knowledge_nodes`（單向 cron）|
+| 行銷內容 / GEO 內容 | Notion 起草 → repo approved | Notion → `geo_content` 表（approved 後）|
+| 敏感憑證（API key / DB password）| GitHub Secrets | 不同步、不落地 |
+
+禁止事項：
+- 不得在 Notion 與 repo 同時修改同一筆資料（先 Notion、再單向推）
+- 不得把 Notion API token 寫入 repo；一律走 `secrets.NOTION_API_KEY`
+- 不得在 Supabase Studio 手動改 schema（必須透過 migration PR）
+
+### 9.3 AI 自動化獲客行銷路線圖
+
+| 優先級 | 任務 | 實作位置 |
+|-------|------|---------|
+| P0 | Notion → GitHub → Supabase 單向同步 | `.github/workflows/notion-sync.yml` |
+| P1 | GEO visibility 每日 cron 測試 | `.github/workflows/geo-audit.yml`（待建）|
+| P1 | Lead → HubSpot via Composio | `.github/workflows/composio-hubspot-sync.yml` |
+| P2 | Lead scoring agent | `agents/lead-scorer.py`（待建）|
+| P3 | GEO 內容自動發布 | `agents/publisher.py`（待建）|

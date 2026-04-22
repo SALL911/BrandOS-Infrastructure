@@ -1,0 +1,843 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BrandOS AI Infrastructure Protocol Core Schema",
+  "description": "核心協議結構化定義",
+  "type": "object",
+  "properties": {
+    "protocol": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "協議版本號"
+        },
+        "name": {
+          "type": "string",
+          "const": "BrandOS-AI-Infrastructure-Protocol",
+          "description": "協議名稱"
+        },
+        "namespace": {
+          "type": "string",
+          "const": "https://brandos.ai/protocol",
+          "description": "協議命名空間"
+        }
+      },
+      "required": ["version", "name", "namespace"]
+    },
+    "brand_identity": {
+      "$ref": "#/definitions/BrandIdentity",
+      "description": "品牌身份模組"
+    },
+    "esg_data": {
+      "$ref": "#/definitions/ESGData",
+      "description": "ESG 資料模組"
+    },
+    "ai_governance": {
+      "$ref": "#/definitions/AIGovernance",
+      "description": "AI 治理模組"
+    },
+    "verification": {
+      "$ref": "#/definitions/Verification",
+      "description": "驗證層模組"
+    },
+    "gpu_acceleration": {
+      "$ref": "#/definitions/GPUAcceleration",
+      "description": "GPU 加速模組"
+    }
+  },
+  "required": ["protocol", "brand_identity", "esg_data", "ai_governance", "verification"],
+  "definitions": {
+    "BrandIdentity": {
+      "type": "object",
+      "properties": {
+        "did": {
+          "$ref": "#/definitions/DecentralizedIdentifier",
+          "description": "去中心化身份識別符"
+        },
+        "credentials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VerifiableCredential"
+          },
+          "description": "可驗證憑證列表"
+        },
+        "metadata": {
+          "$ref": "#/definitions/BrandMetadata",
+          "description": "品牌元資料"
+        }
+      },
+      "required": ["did", "credentials", "metadata"]
+    },
+    "DecentralizedIdentifier": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "const": "did",
+          "description": "DID 方法"
+        },
+        "method_specific_id": {
+          "type": "string",
+          "pattern": "^brand:[a-z]{2}:[a-zA-Z0-9-]+$",
+          "description": "方法特定 ID，格式: brand:country:unique-id"
+        },
+        "did": {
+          "type": "string",
+          "pattern": "^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$",
+          "description": "完整 DID 字符串"
+        }
+      },
+      "required": ["method", "method_specific_id", "did"]
+    },
+    "VerifiableCredential": {
+      "type": "object",
+      "properties": {
+        "@context": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "JSON-LD 上下文"
+        },
+        "type": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "憑證類型"
+        },
+        "issuer": {
+          "type": "string",
+          "description": "發行者 DID"
+        },
+        "issuanceDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "發行日期"
+        },
+        "credentialSubject": {
+          "type": "object",
+          "description": "憑證主體"
+        },
+        "proof": {
+          "$ref": "#/definitions/DigitalProof",
+          "description": "數位證明"
+        }
+      },
+      "required": ["@context", "type", "issuer", "issuanceDate", "credentialSubject", "proof"]
+    },
+    "DigitalProof": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["Ed25519Signature2018", "RsaSignature2018", "EcdsaSecp256k1Signature2019"],
+          "description": "證明類型"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "創建時間"
+        },
+        "proofPurpose": {
+          "type": "string",
+          "enum": ["assertionMethod", "authentication"],
+          "description": "證明目的"
+        },
+        "verificationMethod": {
+          "type": "string",
+          "description": "驗證方法"
+        },
+        "jws": {
+          "type": "string",
+          "description": "JSON Web Signature"
+        }
+      },
+      "required": ["type", "created", "proofPurpose", "verificationMethod", "jws"]
+    },
+    "BrandMetadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "品牌名稱"
+        },
+        "industry": {
+          "type": "string",
+          "enum": ["technology", "retail", "finance", "healthcare", "manufacturing", "services"],
+          "description": "產業類別"
+        },
+        "country": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "國家代碼 (ISO 3166-1 alpha-2)"
+        },
+        "registration_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "註冊日期"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive", "suspended"],
+          "description": "品牌狀態"
+        }
+      },
+      "required": ["name", "industry", "country", "registration_date", "status"]
+    },
+    "ESGData": {
+      "type": "object",
+      "properties": {
+        "carbon_tracking": {
+          "$ref": "#/definitions/CarbonTracking",
+          "description": "碳追蹤資料"
+        },
+        "sustainability_metrics": {
+          "$ref": "#/definitions/SustainabilityMetrics",
+          "description": "可持續性指標"
+        },
+        "social_impact": {
+          "$ref": "#/definitions/SocialImpact",
+          "description": "社會影響評估"
+        },
+        "governance": {
+          "$ref": "#/definitions/GovernanceMetrics",
+          "description": "治理指標"
+        }
+      },
+      "required": ["carbon_tracking", "sustainability_metrics"]
+    },
+    "CarbonTracking": {
+      "type": "object",
+      "properties": {
+        "scope1_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 1 排放量 (kg CO2e)"
+        },
+        "scope2_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 2 排放量 (kg CO2e)"
+        },
+        "scope3_emissions": {
+          "type": "number",
+          "minimum": 0,
+          "description": "範疇 3 排放量 (kg CO2e)"
+        },
+        "advertising_carbon": {
+          "$ref": "#/definitions/AdvertisingCarbon",
+          "description": "廣告碳排放"
+        },
+        "reduction_targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReductionTarget"
+          },
+          "description": "減排目標"
+        }
+      },
+      "required": ["scope1_emissions", "scope2_emissions", "scope3_emissions"]
+    },
+    "AdvertisingCarbon": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": ["meta", "google", "amazon", "tiktok", "other"],
+          "description": "廣告平台"
+        },
+        "campaign_name": {
+          "type": "string",
+          "description": "廣告活動名稱"
+        },
+        "impressions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "曝光次數"
+        },
+        "energy_factor": {
+          "type": "number",
+          "minimum": 0,
+          "description": "能源因子 (kWh/impression)"
+        },
+        "emission_factor": {
+          "type": "number",
+          "minimum": 0,
+          "description": "排放因子 (kg CO2e/kWh)"
+        },
+        "carbon_kg": {
+          "type": "number",
+          "minimum": 0,
+          "description": "碳排放量 (kg CO2e)"
+        },
+        "device_type": {
+          "type": "string",
+          "enum": ["mobile", "desktop", "tablet", "all"],
+          "description": "設備類型"
+        },
+        "region": {
+          "type": "string",
+          "description": "地區代碼"
+        },
+        "measurement_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "測量日期"
+        }
+      },
+      "required": ["platform", "campaign_name", "impressions", "carbon_kg", "measurement_date"]
+    },
+    "ReductionTarget": {
+      "type": "object",
+      "properties": {
+        "target_year": {
+          "type": "integer",
+          "minimum": 2020,
+          "description": "目標年份"
+        },
+        "reduction_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "減排百分比"
+        },
+        "baseline_year": {
+          "type": "integer",
+          "minimum": 2000,
+          "description": "基準年份"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["scope1", "scope2", "scope3", "all"],
+          "description": "減排範疇"
+        }
+      },
+      "required": ["target_year", "reduction_percentage", "baseline_year", "scope"]
+    },
+    "SustainabilityMetrics": {
+      "type": "object",
+      "properties": {
+        "energy_consumption": {
+          "type": "number",
+          "minimum": 0,
+          "description": "能源消耗量 (kWh)"
+        },
+        "water_usage": {
+          "type": "number",
+          "minimum": 0,
+          "description": "用水量 (m³)"
+        },
+        "waste_generated": {
+          "type": "number",
+          "minimum": 0,
+          "description": "廢物產生量 (kg)"
+        },
+        "recycling_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "回收率 (%)"
+        },
+        "renewable_energy_percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "可再生能源百分比"
+        }
+      },
+      "required": ["energy_consumption", "water_usage", "waste_generated"]
+    },
+    "SocialImpact": {
+      "type": "object",
+      "properties": {
+        "employee_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "員工數量"
+        },
+        "gender_diversity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "性別多樣性 (%)"
+        },
+        "community_investment": {
+          "type": "number",
+          "minimum": 0,
+          "description": "社區投資金額"
+        },
+        "training_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "培訓時數"
+        }
+      },
+      "required": ["employee_count"]
+    },
+    "GovernanceMetrics": {
+      "type": "object",
+      "properties": {
+        "board_independence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "董事會獨立性 (%)"
+        },
+        "ethics_training_completion": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "道德培訓完成率 (%)"
+        },
+        "compliance_incidents": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "合規事件數量"
+        },
+        "audit_frequency": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "審計頻率 (次/年)"
+        }
+      },
+      "required": ["board_independence", "ethics_training_completion"]
+    },
+    "AIGovernance": {
+      "type": "object",
+      "properties": {
+        "decision_audit_trail": {
+          "$ref": "#/definitions/DecisionAuditTrail",
+          "description": "AI 決策審計追蹤"
+        },
+        "model_accountability": {
+          "$ref": "#/definitions/ModelAccountability",
+          "description": "模型問責制"
+        },
+        "algorithm_registry": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AlgorithmRegistry"
+          },
+          "description": "演算法註冊表"
+        }
+      },
+      "required": ["decision_audit_trail", "model_accountability"]
+    },
+    "DecisionAuditTrail": {
+      "type": "object",
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9-]+$",
+          "description": "決策 ID"
+        },
+        "model_version": {
+          "type": "string",
+          "description": "模型版本"
+        },
+        "input_data_hash": {
+          "type": "string",
+          "description": "輸入資料雜湊值"
+        },
+        "output_result": {
+          "type": "object",
+          "description": "輸出結果"
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "信心分數"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "決策時間戳"
+        },
+        "explanation": {
+          "type": "string",
+          "description": "決策解釋"
+        }
+      },
+      "required": ["decision_id", "model_version", "input_data_hash", "timestamp"]
+    },
+    "ModelAccountability": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "description": "模型 ID"
+        },
+        "model_name": {
+          "type": "string",
+          "description": "模型名稱"
+        },
+        "purpose": {
+          "type": "string",
+          "description": "模型用途"
+        },
+        "training_data_summary": {
+          "type": "object",
+          "description": "訓練資料摘要"
+        },
+        "performance_metrics": {
+          "type": "object",
+          "description": "效能指標"
+        },
+        "bias_assessment": {
+          "type": "object",
+          "description": "偏見評估"
+        },
+        "fairness_metrics": {
+          "type": "object",
+          "description": "公平性指標"
+        },
+        "responsible_party": {
+          "type": "string",
+          "description": "負責方"
+        },
+        "review_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "審查日期"
+        }
+      },
+      "required": ["model_id", "model_name", "purpose", "responsible_party"]
+    },
+    "AlgorithmRegistry": {
+      "type": "object",
+      "properties": {
+        "algorithm_id": {
+          "type": "string",
+          "description": "演算法 ID"
+        },
+        "algorithm_name": {
+          "type": "string",
+          "description": "演算法名稱"
+        },
+        "algorithm_type": {
+          "type": "string",
+          "enum": ["supervised_learning", "unsupervised_learning", "reinforcement_learning", "deep_learning", "rule_based"],
+          "description": "演算法類型"
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "風險等級"
+        },
+        "deployment_status": {
+          "type": "string",
+          "enum": ["development", "testing", "production", "deprecated"],
+          "description": "部署狀態"
+        },
+        "compliance_status": {
+          "type": "string",
+          "enum": ["compliant", "non_compliant", "under_review"],
+          "description": "合規狀態"
+        }
+      },
+      "required": ["algorithm_id", "algorithm_name", "algorithm_type", "risk_level"]
+    },
+    "Verification": {
+      "type": "object",
+      "properties": {
+        "zero_knowledge_proof": {
+          "$ref": "#/definitions/ZeroKnowledgeProof",
+          "description": "零知識證明"
+        },
+        "data_integrity": {
+          "$ref": "#/definitions/DataIntegrity",
+          "description": "資料完整性"
+        },
+        "audit_logs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AuditLog"
+          },
+          "description": "審計日誌"
+        }
+      },
+      "required": ["zero_knowledge_proof", "data_integrity"]
+    },
+    "ZeroKnowledgeProof": {
+      "type": "object",
+      "properties": {
+        "proof_type": {
+          "type": "string",
+          "enum": ["zk-snark", "zk-stark", "bulletproofs"],
+          "description": "證明類型"
+        },
+        "circuit_id": {
+          "type": "string",
+          "description": "電路 ID"
+        },
+        "proof_hash": {
+          "type": "string",
+          "description": "證明雜湊值"
+        },
+        "verification_key": {
+          "type": "string",
+          "description": "驗證金鑰"
+        },
+        "public_inputs": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "公開輸入"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "生成時間"
+        }
+      },
+      "required": ["proof_type", "circuit_id", "proof_hash"]
+    },
+    "DataIntegrity": {
+      "type": "object",
+      "properties": {
+        "data_hash": {
+          "type": "string",
+          "description": "資料雜湊值"
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "enum": ["sha256", "sha3-256", "blake2b"],
+          "description": "雜湊演算法"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "時間戳"
+        },
+        "signer": {
+          "type": "string",
+          "description": "簽署者"
+        },
+        "signature": {
+          "type": "string",
+          "description": "數位簽章"
+        }
+      },
+      "required": ["data_hash", "hash_algorithm", "timestamp", "signer", "signature"]
+    },
+    "AuditLog": {
+      "type": "object",
+      "properties": {
+        "log_id": {
+          "type": "string",
+          "description": "日誌 ID"
+        },
+        "event_type": {
+          "type": "string",
+          "enum": ["data_creation", "data_modification", "data_access", "verification", "compliance_check"],
+          "description": "事件類型"
+        },
+        "actor": {
+          "type": "string",
+          "description": "執行者"
+        },
+        "resource": {
+          "type": "string",
+          "description": "資源"
+        },
+        "action": {
+          "type": "string",
+          "description": "執行動作"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": ["success", "failure", "partial"],
+          "description": "執行結果"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "時間戳"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "元資料"
+        }
+      },
+      "required": ["log_id", "event_type", "actor", "action", "timestamp"]
+    },
+    "GPUAcceleration": {
+      "type": "object",
+      "properties": {
+        "gpu_detection": {
+          "$ref": "#/definitions/GPUDetection",
+          "description": "GPU 偵測資訊"
+        },
+        "model_optimization": {
+          "$ref": "#/definitions/ModelOptimization",
+          "description": "模型優化設定"
+        },
+        "performance_metrics": {
+          "$ref": "#/definitions/PerformanceMetrics",
+          "description": "效能指標"
+        },
+        "resource_allocation": {
+          "$ref": "#/definitions/ResourceAllocation",
+          "description": "資源分配"
+        }
+      },
+      "required": ["gpu_detection", "model_optimization"]
+    },
+    "GPUDetection": {
+      "type": "object",
+      "properties": {
+        "gpu_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "GPU 數量"
+        },
+        "gpu_info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GPUInfo"
+          },
+          "description": "GPU 資訊列表"
+        },
+        "cuda_version": {
+          "type": "string",
+          "description": "CUDA 版本"
+        },
+        "driver_version": {
+          "type": "string",
+          "description": "驅動程式版本"
+        }
+      },
+      "required": ["gpu_count", "cuda_version"]
+    },
+    "GPUInfo": {
+      "type": "object",
+      "properties": {
+        "gpu_id": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "GPU ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "GPU 名稱"
+        },
+        "memory_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "總記憶體 (MB)"
+        },
+        "memory_free": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "可用記憶體 (MB)"
+        },
+        "utilization": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "利用率 (%)"
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "description": "溫度 (°C)"
+        },
+        "power_usage": {
+          "type": "number",
+          "minimum": 0,
+          "description": "功耗 (W)"
+        }
+      },
+      "required": ["gpu_id", "name", "memory_total", "utilization"]
+    },
+    "ModelOptimization": {
+      "type": "object",
+      "properties": {
+        "precision": {
+          "type": "string",
+          "enum": ["fp32", "fp16", "int8", "mixed"],
+          "description": "精度模式"
+        },
+        "batch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "批次大小"
+        },
+        "optimization_techniques": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["quantization", "pruning", "knowledge_distillation", "tensorrt", "onnx"]
+          },
+          "description": "優化技術"
+        },
+        "memory_optimization": {
+          "type": "boolean",
+          "description": "記憶體優化啟用"
+        }
+      },
+      "required": ["precision", "batch_size"]
+    },
+    "PerformanceMetrics": {
+      "type": "object",
+      "properties": {
+        "inference_time_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "推理時間 (毫秒)"
+        },
+        "throughput_fps": {
+          "type": "number",
+          "minimum": 0,
+          "description": "吞吐量 (FPS)"
+        },
+        "gpu_utilization": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "GPU 利用率 (%)"
+        },
+        "memory_efficiency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "記憶體效率 (%)"
+        },
+        "energy_efficiency": {
+          "type": "number",
+          "minimum": 0,
+          "description": "能源效率 (inferences/kWh)"
+        }
+      },
+      "required": ["inference_time_ms", "throughput_fps"]
+    },
+    "ResourceAllocation": {
+      "type": "object",
+      "properties": {
+        "allocated_memory": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "分配記憶體 (MB)"
+        },
+        "max_concurrent_models": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "最大並發模型數"
+        },
+        "priority_queue": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "優先級佇列"
+        },
+        "load_balancing_strategy": {
+          "type": "string",
+          "enum": ["round_robin", "least_loaded", "priority_based"],
+          "description": "負載均衡策略"
+        }
+      },
+      "required": ["allocated_memory", "max_concurrent_models"]
+    }
+  }
+}

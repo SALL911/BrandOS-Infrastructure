@@ -1,0 +1,1566 @@
+openapi: 3.0.3
+info:
+  title: BrandOS AI Infrastructure Protocol API
+  description: |
+    BrandOS AI 基礎設施協議 API，提供品牌身份、ESG 資料、AI 治理和 GPU 加速的統一介面。
+    
+    本 API 實現了以下核心功能：
+    - 去中心化品牌身份管理 (DID)
+    - ESG 資料追蹤與驗證
+    - AI 決策審計與治理
+    - GPU 加速模型推理
+    - 零知識證明驗證
+  version: 1.0.0
+  contact:
+    name: BrandOS Protocol Team
+    email: protocol@brandos.ai
+    url: https://brandos.ai
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.brandos.ai/v1
+    description: 生產環境
+  - url: https://staging-api.brandos.ai/v1
+    description: 測試環境
+  - url: http://localhost:8000/v1
+    description: 開發環境
+
+tags:
+  - name: Brand Identity
+    description: 品牌身份管理相關 API
+  - name: ESG Data
+    description: ESG 資料管理相關 API
+  - name: AI Governance
+    description: AI 治理相關 API
+  - name: Verification
+    description: 驗證相關 API
+  - name: GPU Acceleration
+    description: GPU 加速相關 API
+  - name: Protocol
+    description: 協議核心功能
+
+paths:
+  /protocol/info:
+    get:
+      tags:
+        - Protocol
+      summary: 獲取協議資訊
+      description: 獲取 BrandOS 協議的基本資訊和版本
+      operationId: getProtocolInfo
+      responses:
+        '200':
+          description: 成功返回協議資訊
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProtocolInfo'
+              example:
+                protocol:
+                  version: "1.0.0"
+                  name: "BrandOS-AI-Infrastructure-Protocol"
+                  namespace: "https://brandos.ai/protocol"
+                timestamp: "2026-03-29T13:42:00Z"
+                status: "active"
+
+  /brand/identity:
+    post:
+      tags:
+        - Brand Identity
+      summary: 創建品牌身份
+      description: 為品牌創建去中心化身份識別符 (DID)
+      operationId: createBrandIdentity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBrandIdentityRequest'
+      responses:
+        '201':
+          description: 品牌身份創建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandIdentity'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: 品牌已存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /brand/identity/{did}:
+    get:
+      tags:
+        - Brand Identity
+      summary: 獲取品牌身份
+      description: 根據 DID 獲取品牌身份資訊
+      operationId: getBrandIdentity
+      parameters:
+        - name: did
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$'
+          description: 品牌的 DID
+      responses:
+        '200':
+          description: 成功返回品牌身份
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandIdentity'
+        '404':
+          description: 品牌身份不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /brand/credentials:
+    post:
+      tags:
+        - Brand Identity
+      summary: 發布可驗證憑證
+      description: 為品牌發布可驗證憑證
+      operationId: issueCredential
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifiableCredential'
+      responses:
+        '201':
+          description: 憑證發布成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifiableCredential'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /esg/carbon:
+    post:
+      tags:
+        - ESG Data
+      summary: 記錄碳排放資料
+      description: 記錄品牌的碳排放資料，包括廣告碳排放
+      operationId: recordCarbonData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarbonDataRequest'
+      responses:
+        '201':
+          description: 碳排放資料記錄成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarbonTracking'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /esg/carbon/advertising:
+    post:
+      tags:
+        - ESG Data
+      summary: 計算廣告碳排放
+      description: 根據廣告曝光資料計算碳排放量
+      operationId: calculateAdvertisingCarbon
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdvertisingCarbonRequest'
+      responses:
+        '200':
+          description: 廣告碳排放計算成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvertisingCarbon'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /esg/sustainability:
+    post:
+      tags:
+        - ESG Data
+      summary: 記錄可持續性指標
+      description: 記錄品牌的可持續性指標資料
+      operationId: recordSustainabilityMetrics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SustainabilityMetrics'
+      responses:
+        '201':
+          description: 可持續性指標記錄成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SustainabilityMetrics'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ai/governance/decision:
+    post:
+      tags:
+        - AI Governance
+      summary: 記錄 AI 決策
+      description: 記錄 AI 模型的決策過程和結果，建立審計追蹤
+      operationId: recordAIDecision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionAuditTrail'
+      responses:
+        '201':
+          description: AI 決策記錄成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecisionAuditTrail'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ai/governance/decision/{decision_id}:
+    get:
+      tags:
+        - AI Governance
+      summary: 獲取 AI 決策記錄
+      description: 根據決策 ID 獲取 AI 決策的審計記錄
+      operationId: getAIDecision
+      parameters:
+        - name: decision_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 決策 ID
+      responses:
+        '200':
+          description: 成功返回決策記錄
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecisionAuditTrail'
+        '404':
+          description: 決策記錄不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ai/governance/models:
+    post:
+      tags:
+        - AI Governance
+      summary: 註冊 AI 模型
+      description: 註冊 AI 模型並建立問責記錄
+      operationId: registerAIModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelAccountability'
+      responses:
+        '201':
+          description: AI 模型註冊成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelAccountability'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verification/zkp:
+    post:
+      tags:
+        - Verification
+      summary: 生成零知識證明
+      description: 為給定的資料生成零知識證明
+      operationId: generateZKProof
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZKProofRequest'
+      responses:
+        '201':
+          description: 零知識證明生成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZeroKnowledgeProof'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verification/zkp/verify:
+    post:
+      tags:
+        - Verification
+      summary: 驗證零知識證明
+      description: 驗證零知識證明的有效性
+      operationId: verifyZKProof
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyZKProofRequest'
+      responses:
+        '200':
+          description: 驗證結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationResult'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verification/integrity:
+    post:
+      tags:
+        - Verification
+      summary: 驗證資料完整性
+      description: 驗證資料的完整性和真實性
+      operationId: verifyDataIntegrity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataIntegrityRequest'
+      responses:
+        '200':
+          description: 資料完整性驗證結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataIntegrity'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /gpu/status:
+    get:
+      tags:
+        - GPU Acceleration
+      summary: 獲取 GPU 狀態
+      description: 獲取系統中 GPU 的狀態和可用性
+      operationId: getGPUStatus
+      responses:
+        '200':
+          description: 成功返回 GPU 狀態
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GPUDetection'
+        '500':
+          description: 伺服器內部錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /gpu/models/optimize:
+    post:
+      tags:
+        - GPU Acceleration
+      summary: 優化 AI 模型
+      description: 對 AI 模型進行 GPU 加速優化
+      operationId: optimizeModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelOptimizationRequest'
+      responses:
+        '200':
+          description: 模型優化成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelOptimization'
+        '400':
+          description: 請求參數錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /gpu/performance/metrics:
+    get:
+      tags:
+        - GPU Acceleration
+      summary: 獲取效能指標
+      description: 獲取 GPU 加速的效能指標
+      operationId: getPerformanceMetrics
+      parameters:
+        - name: model_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 模型 ID (可選)
+      responses:
+        '200':
+          description: 成功返回效能指標
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceMetrics'
+        '500':
+          description: 伺服器內部錯誤
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    ProtocolInfo:
+      type: object
+      properties:
+        protocol:
+          type: object
+          properties:
+            version:
+              type: string
+              example: "1.0.0"
+            name:
+              type: string
+              example: "BrandOS-AI-Infrastructure-Protocol"
+            namespace:
+              type: string
+              example: "https://brandos.ai/protocol"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-03-29T13:42:00Z"
+        status:
+          type: string
+          enum: [active, maintenance, deprecated]
+          example: "active"
+
+    CreateBrandIdentityRequest:
+      type: object
+      required:
+        - name
+        - industry
+        - country
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: 品牌名稱
+          example: "TechCorp"
+        industry:
+          type: string
+          enum: [technology, retail, finance, healthcare, manufacturing, services]
+          description: 產業類別
+          example: "technology"
+        country:
+          type: string
+          pattern: '^[A-Z]{2}$'
+          description: 國家代碼 (ISO 3166-1 alpha-2)
+          example: "TW"
+        unique_id:
+          type: string
+          pattern: '^[a-zA-Z0-9-]+$'
+          description: 自定義唯一 ID (可選)
+          example: "techcorp-001"
+
+    BrandIdentity:
+      type: object
+      required:
+        - did
+        - credentials
+        - metadata
+      properties:
+        did:
+          $ref: '#/components/schemas/DecentralizedIdentifier'
+        credentials:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerifiableCredential'
+          description: 可驗證憑證列表
+        metadata:
+          $ref: '#/components/schemas/BrandMetadata'
+        created_at:
+          type: string
+          format: date-time
+          description: 創建時間
+          example: "2026-03-29T13:42:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新時間
+          example: "2026-03-29T13:42:00Z"
+
+    DecentralizedIdentifier:
+      type: object
+      required:
+        - method
+        - method_specific_id
+        - did
+      properties:
+        method:
+          type: string
+          const: "did"
+          description: DID 方法
+        method_specific_id:
+          type: string
+          pattern: '^brand:[a-z]{2}:[a-zA-Z0-9-]+$'
+          description: 方法特定 ID
+          example: "brand:tw:techcorp-001"
+        did:
+          type: string
+          pattern: '^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$'
+          description: 完整 DID 字符串
+          example: "did:brand:tw:techcorp-001"
+
+    BrandMetadata:
+      type: object
+      required:
+        - name
+        - industry
+        - country
+        - registration_date
+        - status
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: 品牌名稱
+          example: "TechCorp"
+        industry:
+          type: string
+          enum: [technology, retail, finance, healthcare, manufacturing, services]
+          description: 產業類別
+          example: "technology"
+        country:
+          type: string
+          pattern: '^[A-Z]{2}$'
+          description: 國家代碼
+          example: "TW"
+        registration_date:
+          type: string
+          format: date-time
+          description: 註冊日期
+          example: "2026-03-29T13:42:00Z"
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+          description: 品牌狀態
+          example: "active"
+
+    VerifiableCredential:
+      type: object
+      required:
+        - "@context"
+        - type
+        - issuer
+        - issuanceDate
+        - credentialSubject
+        - proof
+      properties:
+        "@context":
+          type: array
+          items:
+            type: string
+          description: JSON-LD 上下文
+          example: ["https://www.w3.org/2018/credentials/v1"]
+        type:
+          type: array
+          items:
+            type: string
+          description: 憑證類型
+          example: ["VerifiableCredential", "BrandCredential"]
+        issuer:
+          type: string
+          description: 發行者 DID
+          example: "did:brand:tw:brandos-registry"
+        issuanceDate:
+          type: string
+          format: date-time
+          description: 發行日期
+          example: "2026-03-29T13:42:00Z"
+        credentialSubject:
+          type: object
+          description: 憑證主體
+          example:
+            id: "did:brand:tw:techcorp-001"
+            brandName: "TechCorp"
+            industry: "technology"
+        proof:
+          $ref: '#/components/schemas/DigitalProof'
+
+    DigitalProof:
+      type: object
+      required:
+        - type
+        - created
+        - proofPurpose
+        - verificationMethod
+        - jws
+      properties:
+        type:
+          type: string
+          enum: [Ed25519Signature2018, RsaSignature2018, EcdsaSecp256k1Signature2019]
+          description: 證明類型
+          example: "Ed25519Signature2018"
+        created:
+          type: string
+          format: date-time
+          description: 創建時間
+          example: "2026-03-29T13:42:00Z"
+        proofPurpose:
+          type: string
+          enum: [assertionMethod, authentication]
+          description: 證明目的
+          example: "assertionMethod"
+        verificationMethod:
+          type: string
+          description: 驗證方法
+          example: "did:brand:tw:techcorp-001#key-1"
+        jws:
+          type: string
+          description: JSON Web Signature
+          example: "eyJhbGciOiJFZERTQSJ9...signature"
+
+    CarbonDataRequest:
+      type: object
+      required:
+        - brand_did
+        - scope1_emissions
+        - scope2_emissions
+        - scope3_emissions
+      properties:
+        brand_did:
+          type: string
+          pattern: '^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$'
+          description: 品牌 DID
+          example: "did:brand:tw:techcorp-001"
+        scope1_emissions:
+          type: number
+          minimum: 0
+          description: 範疇 1 排放量 (kg CO2e)
+          example: 1000.5
+        scope2_emissions:
+          type: number
+          minimum: 0
+          description: 範疇 2 排放量 (kg CO2e)
+          example: 2000.0
+        scope3_emissions:
+          type: number
+          minimum: 0
+          description: 範疇 3 排放量 (kg CO2e)
+          example: 5000.0
+        measurement_period:
+          type: string
+          description: 測量週期
+          example: "2026-Q1"
+        reduction_targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReductionTarget'
+          description: 減排目標
+
+    ReductionTarget:
+      type: object
+      required:
+        - target_year
+        - reduction_percentage
+        - baseline_year
+        - scope
+      properties:
+        target_year:
+          type: integer
+          minimum: 2020
+          description: 目標年份
+          example: 2030
+        reduction_percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 減排百分比
+          example: 50.0
+        baseline_year:
+          type: integer
+          minimum: 2000
+          description: 基準年份
+          example: 2020
+        scope:
+          type: string
+          enum: [scope1, scope2, scope3, all]
+          description: 減排範疇
+          example: "all"
+
+    CarbonTracking:
+      type: object
+      required:
+        - scope1_emissions
+        - scope2_emissions
+        - scope3_emissions
+        - brand_did
+        - timestamp
+      properties:
+        brand_did:
+          type: string
+          description: 品牌 DID
+          example: "did:brand:tw:techcorp-001"
+        scope1_emissions:
+          type: number
+          minimum: 0
+          description: 範疇 1 排放量 (kg CO2e)
+          example: 1000.5
+        scope2_emissions:
+          type: number
+          minimum: 0
+          description: 範疇 2 排放量 (kg CO2e)
+          example: 2000.0
+        scope3_emissions:
+          type: number
+          minimum: 0
+          description: 範疇 3 排放量 (kg CO2e)
+          example: 5000.0
+        advertising_carbon:
+          $ref: '#/components/schemas/AdvertisingCarbon'
+        reduction_targets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReductionTarget'
+          description: 減排目標
+        timestamp:
+          type: string
+          format: date-time
+          description: 記錄時間戳
+          example: "2026-03-29T13:42:00Z"
+
+    AdvertisingCarbonRequest:
+      type: object
+      required:
+        - platform
+        - campaign_name
+        - impressions
+      properties:
+        platform:
+          type: string
+          enum: [meta, google, amazon, tiktok, other]
+          description: 廣告平台
+          example: "meta"
+        campaign_name:
+          type: string
+          description: 廣告活動名稱
+          example: "Spring Sale 2026"
+        impressions:
+          type: integer
+          minimum: 0
+          description: 曝光次數
+          example: 1000000
+        device_type:
+          type: string
+          enum: [mobile, desktop, tablet, all]
+          description: 設備類型
+          example: "all"
+        region:
+          type: string
+          description: 地區代碼
+          example: "TW"
+        measurement_date:
+          type: string
+          format: date-time
+          description: 測量日期
+          example: "2026-03-29T13:42:00Z"
+
+    AdvertisingCarbon:
+      type: object
+      required:
+        - platform
+        - campaign_name
+        - impressions
+        - carbon_kg
+        - measurement_date
+      properties:
+        platform:
+          type: string
+          enum: [meta, google, amazon, tiktok, other]
+          description: 廣告平台
+          example: "meta"
+        campaign_name:
+          type: string
+          description: 廣告活動名稱
+          example: "Spring Sale 2026"
+        impressions:
+          type: integer
+          minimum: 0
+          description: 曝光次數
+          example: 1000000
+        energy_factor:
+          type: number
+          minimum: 0
+          description: 能源因子 (kWh/impression)
+          example: 0.000001
+        emission_factor:
+          type: number
+          minimum: 0
+          description: 排放因子 (kg CO2e/kWh)
+          example: 0.5
+        carbon_kg:
+          type: number
+          minimum: 0
+          description: 碳排放量 (kg CO2e)
+          example: 0.5
+        device_type:
+          type: string
+          enum: [mobile, desktop, tablet, all]
+          description: 設備類型
+          example: "all"
+        region:
+          type: string
+          description: 地區代碼
+          example: "TW"
+        measurement_date:
+          type: string
+          format: date-time
+          description: 測量日期
+          example: "2026-03-29T13:42:00Z"
+
+    SustainabilityMetrics:
+      type: object
+      required:
+        - energy_consumption
+        - water_usage
+        - waste_generated
+        - brand_did
+        - timestamp
+      properties:
+        brand_did:
+          type: string
+          description: 品牌 DID
+          example: "did:brand:tw:techcorp-001"
+        energy_consumption:
+          type: number
+          minimum: 0
+          description: 能源消耗量 (kWh)
+          example: 100000
+        water_usage:
+          type: number
+          minimum: 0
+          description: 用水量 (m³)
+          example: 5000
+        waste_generated:
+          type: number
+          minimum: 0
+          description: 廢物產生量 (kg)
+          example: 1000
+        recycling_rate:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 回收率 (%)
+          example: 75.5
+        renewable_energy_percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 可再生能源百分比
+          example: 60.0
+        measurement_period:
+          type: string
+          description: 測量週期
+          example: "2026-Q1"
+        timestamp:
+          type: string
+          format: date-time
+          description: 記錄時間戳
+          example: "2026-03-29T13:42:00Z"
+
+    DecisionAuditTrail:
+      type: object
+      required:
+        - decision_id
+        - model_version
+        - input_data_hash
+        - timestamp
+      properties:
+        decision_id:
+          type: string
+          pattern: '^[a-zA-Z0-9-]+$'
+          description: 決策 ID
+          example: "decision-12345"
+        model_id:
+          type: string
+          description: 模型 ID
+          example: "model-abc-123"
+        model_version:
+          type: string
+          description: 模型版本
+          example: "v1.2.0"
+        input_data_hash:
+          type: string
+          description: 輸入資料雜湊值
+          example: "sha256:abc123..."
+        output_result:
+          type: object
+          description: 輸出結果
+          example:
+            prediction: "positive"
+            confidence: 0.95
+        confidence_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: 信心分數
+          example: 0.95
+        timestamp:
+          type: string
+          format: date-time
+          description: 決策時間戳
+          example: "2026-03-29T13:42:00Z"
+        explanation:
+          type: string
+          description: 決策解釋
+          example: "基於特徵 A、B、C 的分析結果"
+
+    ModelAccountability:
+      type: object
+      required:
+        - model_id
+        - model_name
+        - purpose
+        - responsible_party
+      properties:
+        model_id:
+          type: string
+          description: 模型 ID
+          example: "model-abc-123"
+        model_name:
+          type: string
+          description: 模型名稱
+          example: "Customer Churn Predictor"
+        purpose:
+          type: string
+          description: 模型用途
+          example: "預測客戶流失風險"
+        training_data_summary:
+          type: object
+          description: 訓練資料摘要
+          example:
+            samples: 100000
+            features: 50
+            time_period: "2020-2023"
+        performance_metrics:
+          type: object
+          description: 效能指標
+          example:
+            accuracy: 0.92
+            precision: 0.89
+            recall: 0.87
+        bias_assessment:
+          type: object
+          description: 偏見評估
+          example:
+            gender_bias: 0.05
+            age_bias: 0.03
+        fairness_metrics:
+          type: object
+          description: 公平性指標
+          example:
+            demographic_parity: 0.85
+            equal_opportunity: 0.88
+        responsible_party:
+          type: string
+          description: 負責方
+          example: "Data Science Team"
+        review_date:
+          type: string
+          format: date-time
+          description: 審查日期
+          example: "2026-03-29T13:42:00Z"
+
+    ZKProofRequest:
+      type: object
+      required:
+        - circuit_id
+        - private_inputs
+        - public_inputs
+      properties:
+        circuit_id:
+          type: string
+          description: 電路 ID
+          example: "carbon-emission-proof"
+        proof_type:
+          type: string
+          enum: [zk-snark, zk-stark, bulletproofs]
+          description: 證明類型
+          example: "zk-snark"
+        private_inputs:
+          type: object
+          description: 私有輸入
+          example:
+            actual_emissions: 5000
+            reduction_target: 1000
+        public_inputs:
+          type: array
+          items:
+            type: string
+          description: 公開輸入
+          example: ["did:brand:tw:techcorp-001", "2026-Q1"]
+
+    ZeroKnowledgeProof:
+      type: object
+      required:
+        - proof_type
+        - circuit_id
+        - proof_hash
+      properties:
+        proof_type:
+          type: string
+          enum: [zk-snark, zk-stark, bulletproofs]
+          description: 證明類型
+          example: "zk-snark"
+        circuit_id:
+          type: string
+          description: 電路 ID
+          example: "carbon-emission-proof"
+        proof_hash:
+          type: string
+          description: 證明雜湊值
+          example: "0xabc123..."
+        verification_key:
+          type: string
+          description: 驗證金鑰
+          example: "0xdef456..."
+        public_inputs:
+          type: array
+          items:
+            type: string
+          description: 公開輸入
+          example: ["did:brand:tw:techcorp-001", "2026-Q1"]
+        generated_at:
+          type: string
+          format: date-time
+          description: 生成時間
+          example: "2026-03-29T13:42:00Z"
+
+    VerifyZKProofRequest:
+      type: object
+      required:
+        - proof
+        - public_inputs
+        - verification_key
+      properties:
+        proof:
+          type: string
+          description: 零知識證明
+          example: "0xproof123..."
+        public_inputs:
+          type: array
+          items:
+            type: string
+          description: 公開輸入
+          example: ["did:brand:tw:techcorp-001", "2026-Q1"]
+        verification_key:
+          type: string
+          description: 驗證金鑰
+          example: "0xdef456..."
+
+    VerificationResult:
+      type: object
+      required:
+        - valid
+        - timestamp
+      properties:
+        valid:
+          type: boolean
+          description: 驗證是否通過
+          example: true
+        verification_time_ms:
+          type: number
+          minimum: 0
+          description: 驗證時間 (毫秒)
+          example: 150
+        error_message:
+          type: string
+          description: 錯誤訊息 (如果驗證失敗)
+          example: null
+        timestamp:
+          type: string
+          format: date-time
+          description: 驗證時間戳
+          example: "2026-03-29T13:42:00Z"
+
+    DataIntegrityRequest:
+      type: object
+      required:
+        - data
+        - signature
+      properties:
+        data:
+          type: object
+          description: 要驗證的資料
+          example:
+            brand_did: "did:brand:tw:techcorp-001"
+            carbon_emissions: 5000
+            timestamp: "2026-03-29T13:42:00Z"
+        signature:
+          type: string
+          description: 數位簽章
+          example: "0xsignature123..."
+        signer:
+          type: string
+          description: 簽署者
+          example: "did:brand:tw:techcorp-001"
+        hash_algorithm:
+          type: string
+          enum: [sha256, sha3-256, blake2b]
+          description: 雜湊演算法
+          example: "sha256"
+
+    DataIntegrity:
+      type: object
+      required:
+        - data_hash
+        - hash_algorithm
+        - timestamp
+        - signer
+        - signature
+        - valid
+      properties:
+        data_hash:
+          type: string
+          description: 資料雜湊值
+          example: "sha256:abc123..."
+        hash_algorithm:
+          type: string
+          enum: [sha256, sha3-256, blake2b]
+          description: 雜湊演算法
+          example: "sha256"
+        timestamp:
+          type: string
+          format: date-time
+          description: 時間戳
+          example: "2026-03-29T13:42:00Z"
+        signer:
+          type: string
+          description: 簽署者
+          example: "did:brand:tw:techcorp-001"
+        signature:
+          type: string
+          description: 數位簽章
+          example: "0xsignature123..."
+        valid:
+          type: boolean
+          description: 驗證是否通過
+          example: true
+
+    GPUDetection:
+      type: object
+      required:
+        - gpu_count
+        - cuda_version
+      properties:
+        gpu_count:
+          type: integer
+          minimum: 0
+          description: GPU 數量
+          example: 2
+        gpu_info:
+          type: array
+          items:
+            $ref: '#/components/schemas/GPUInfo'
+          description: GPU 資訊列表
+        cuda_version:
+          type: string
+          description: CUDA 版本
+          example: "12.1"
+        driver_version:
+          type: string
+          description: 驅動程式版本
+          example: "525.60.13"
+        timestamp:
+          type: string
+          format: date-time
+          description: 檢測時間戳
+          example: "2026-03-29T13:42:00Z"
+
+    GPUInfo:
+      type: object
+      required:
+        - gpu_id
+        - name
+        - memory_total
+        - utilization
+      properties:
+        gpu_id:
+          type: integer
+          minimum: 0
+          description: GPU ID
+          example: 0
+        name:
+          type: string
+          description: GPU 名稱
+          example: "NVIDIA GeForce RTX 3070"
+        memory_total:
+          type: integer
+          minimum: 0
+          description: 總記憶體 (MB)
+          example: 8192
+        memory_free:
+          type: integer
+          minimum: 0
+          description: 可用記憶體 (MB)
+          example: 4096
+        utilization:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 利用率 (%)
+          example: 75.5
+        temperature:
+          type: number
+          minimum: 0
+          description: 溫度 (°C)
+          example: 65.0
+        power_usage:
+          type: number
+          minimum: 0
+          description: 功耗 (W)
+          example: 200.0
+
+    ModelOptimizationRequest:
+      type: object
+      required:
+        - model_path
+        - optimization_techniques
+      properties:
+        model_path:
+          type: string
+          description: 模型路徑
+          example: "/models/customer_churn.pth"
+        model_type:
+          type: string
+          enum: [pytorch, onnx, tensorflow]
+          description: 模型類型
+          example: "pytorch"
+        optimization_techniques:
+          type: array
+          items:
+            type: string
+            enum: [quantization, pruning, knowledge_distillation, tensorrt, onnx]
+          description: 優化技術
+          example: ["quantization", "tensorrt"]
+        target_precision:
+          type: string
+          enum: [fp32, fp16, int8, mixed]
+          description: 目標精度
+          example: "fp16"
+        target_batch_size:
+          type: integer
+          minimum: 1
+          description: 目標批次大小
+          example: 32
+
+    ModelOptimization:
+      type: object
+      required:
+        - precision
+        - batch_size
+      properties:
+        precision:
+          type: string
+          enum: [fp32, fp16, int8, mixed]
+          description: 精度模式
+          example: "fp16"
+        batch_size:
+          type: integer
+          minimum: 1
+          description: 批次大小
+          example: 32
+        optimization_techniques:
+          type: array
+          items:
+            type: string
+            enum: [quantization, pruning, knowledge_distillation, tensorrt, onnx]
+          description: 應用的優化技術
+          example: ["quantization", "tensorrt"]
+        memory_optimization:
+          type: boolean
+          description: 記憶體優化啟用
+          example: true
+        optimization_time_ms:
+          type: number
+          minimum: 0
+          description: 優化耗時 (毫秒)
+          example: 5000
+        size_reduction_percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 模型大小減少百分比
+          example: 45.5
+
+    PerformanceMetrics:
+      type: object
+      required:
+        - inference_time_ms
+        - throughput_fps
+      properties:
+        inference_time_ms:
+          type: number
+          minimum: 0
+          description: 推理時間 (毫秒)
+          example: 10.5
+        throughput_fps:
+          type: number
+          minimum: 0
+          description: 吞吐量 (FPS)
+          example: 95.2
+        gpu_utilization:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: GPU 利用率 (%)
+          example: 85.5
+        memory_efficiency:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: 記憶體效率 (%)
+          example: 78.0
+        energy_efficiency:
+          type: number
+          minimum: 0
+          description: 能源效率 (inferences/kWh)
+          example: 1000.0
+        model_id:
+          type: string
+          description: 模型 ID
+          example: "model-abc-123"
+        timestamp:
+          type: string
+          format: date-time
+          description: 測量時間戳
+          example: "2026-03-29T13:42:00Z"
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+        - timestamp
+      properties:
+        error:
+          type: string
+          description: 錯誤類型
+          example: "ValidationError"
+        message:
+          type: string
+          description: 錯誤訊息
+          example: "Invalid DID format"
+        details:
+          type: object
+          description: 錯誤詳情
+          example:
+            field: "did"
+            value: "invalid-did"
+            expected_pattern: "^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$"
+        timestamp:
+          type: string
+          format: date-time
+          description: 錯誤時間戳
+          example: "2026-03-29T13:42:00Z"
+        request_id:
+          type: string
+          description: 請求 ID
+          example: "req-12345"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token 認證
+
+  responses:
+    UnauthorizedError:
+      description: 認證失敗
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "UnauthorizedError"
+            message: "Invalid or expired token"
+            timestamp: "2026-03-29T13:42:00Z"
+            request_id: "req-12345"
+
+    ForbiddenError:
+      description: 權限不足
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "ForbiddenError"
+            message: "Insufficient permissions"
+            timestamp: "2026-03-29T13:42:00Z"
+            request_id: "req-12345"
+
+    NotFoundError:
+      description: 資源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "NotFoundError"
+            message: "Resource not found"
+            timestamp: "2026-03-29T13:42:00Z"
+            request_id: "req-12345"
+
+    ValidationError:
+      description: 請求參數驗證錯誤
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "ValidationError"
+            message: "Invalid request parameters"
+            details:
+              field: "did"
+              value: "invalid-did"
+              expected_pattern: "^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$"
+            timestamp: "2026-03-29T13:42:00Z"
+            request_id: "req-12345"
+
+    InternalServerError:
+      description: 伺服器內部錯誤
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "InternalServerError"
+            message: "Internal server error"
+            timestamp: "2026-03-29T13:42:00Z"
+            request_id: "req-12345"
+
+security:
+  - BearerAuth: []
+
+# 全域參數
+parameters:
+  RequestID:
+    name: X-Request-ID
+    in: header
+    description: 請求唯一標識符
+    required: false
+    schema:
+      type: string
+      format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+
+  BrandDID:
+    name: X-Brand-DID
+    in: header
+    description: 品牌 DID (用於驗證權限)
+    required: false
+    schema:
+      type: string
+      pattern: '^did:brand:[a-z]{2}:[a-zA-Z0-9-]+$'
+      example: "did:brand:tw:techcorp-001"
+
+# 全域回應標頭
+headers:
+  RateLimit-Limit:
+    description: 每小時請求限制
+    schema:
+      type: integer
+      example: 1000
+
+  RateLimit-Remaining:
+    description: 剩餘請求次數
+    schema:
+      type: integer
+      example: 999
+
+  RateLimit-Reset:
+    description: 限制重置時間 (Unix timestamp)
+    schema:
+      type: integer
+      example: 1640995200
+
+  X-Request-ID:
+    description: 請求唯一標識符
+    schema:
+      type: string
+      format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+
+  X-Response-Time:
+    description: 響應時間 (毫秒)
+    schema:
+      type: integer
+      example: 150

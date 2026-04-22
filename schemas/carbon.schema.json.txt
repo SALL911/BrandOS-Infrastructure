@@ -1,0 +1,18 @@
+{
+  "title": "Advertising Carbon Schema",
+  "type": "object",
+  "properties": {
+    "campaign_name": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string"
+    },
+    "impressions": {
+      "type": "number"
+    },
+    "carbon_kg": {
+      "type": "number"
+    }
+  }
+}

@@ -1,0 +1,263 @@
+version: '3.8'
+
+services:
+  # Main BrandOS API Service
+  brandos-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: brandos-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key}
+      - JWT_EXPIRES_IN=24h
+      - API_VERSION=v1
+      - RATE_LIMIT_MAX=1000
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001,https://brandos.ai
+      # Database Configuration
+      - MONGODB_URI=mongodb://mongodb:27017/brandos
+      - MONGODB_DB_NAME=brandos
+      # Redis Configuration
+      - REDIS_URL=redis://redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      # GPU Configuration
+      - GPU_ENABLED=true
+      - NVIDIA_VISIBLE_DEVICES=all
+      # External Services
+      - IPFS_API_URL=http://ipfs:5001
+      - CERAMIC_API_URL=http://ceramic:7007
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+      - ./certs:/app/certs
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - brandos-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: brandos-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-password123}
+      - MONGO_INITDB_DATABASE=brandos
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - brandos-network
+    restart: unless-stopped
+    command: mongod --auth
+
+  # Redis Cache
+  redis:
+    image: redis:7.2-alpine
+    container_name: brandos-redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - brandos-network
+    restart: unless-stopped
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD:-}
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: brandos-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - brandos-api
+    networks:
+      - brandos-network
+    restart: unless-stopped
+
+  # IPFS Node (for decentralized storage)
+  ipfs:
+    image: ipfs/go-ipfs:latest
+    container_name: brandos-ipfs
+    ports:
+      - "4001:4001"  # API port
+      - "4001:4001/udp"  # API port UDP
+      - "8080:8080"  # Gateway port
+    volumes:
+      - ipfs_data:/data/ipfs
+      - ./config/ipfs/config:/data/ipfs/config:ro
+    networks:
+      - brandos-network
+    restart: unless-stopped
+
+  # Ceramic Network (for decentralized identity)
+  ceramic:
+    image: ceramicnetwork/js-ceramic:latest
+    container_name: brandos-ceramic
+    ports:
+      - "7007:7007"
+    environment:
+      - CERAMIC_NETWORK=mainnet
+      - CERAMIC_PORT=7007
+    volumes:
+      - ceramic_data:/root/.ceramic
+      - ./config/ceramic:/app/config:ro
+    networks:
+      - brandos-network
+    restart: unless-stopped
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: brandos-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - brandos-network
+    restart: unless-stopped
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: brandos-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./config/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - brandos-network
+    restart: unless-stopped
+
+  # GPU Worker (for AI model processing)
+  gpu-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+    container_name: brandos-gpu-worker
+    environment:
+      - NODE_ENV=production
+      - WORKER_TYPE=gpu
+      - NVIDIA_VISIBLE_DEVICES=all
+      - REDIS_URL=redis://redis:6379
+      - MONGODB_URI=mongodb://mongodb:27017/brandos
+    volumes:
+      - ./logs:/app/logs
+      - ./models:/app/models
+    depends_on:
+      - redis
+      - mongodb
+    networks:
+      - brandos-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # Message Queue (Bull Board)
+  bull-board:
+    image: ghcr.io/felixmosh/bull-board:latest
+    container_name: brandos-bull-board
+    ports:
+      - "3002:3000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    depends_on:
+      - redis
+    networks:
+      - brandos-network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  ipfs_data:
+    driver: local
+  ceramic_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  brandos-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Development override
+---
+version: '3.8'
+
+services:
+  brandos-api:
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+  mongodb:
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=brandos_dev
+
+  redis:
+    environment:
+      - REDIS_PASSWORD=
+
+  grafana:
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
