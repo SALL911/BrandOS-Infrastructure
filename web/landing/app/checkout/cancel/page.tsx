@@ -17,7 +17,7 @@ export default function CheckoutCancel() {
         <h1 className="mt-3 text-4xl font-semibold">付款已取消。</h1>
         <p className="mt-6 text-lg text-muted">
           沒關係。你的 Free Scan 報告仍然有效。
-          若有疑問或需要客製方案，可以直接來信 <a href="mailto:sales@symcio.tw" className="underline">sales@symcio.tw</a>
+          若有疑問或需要客製方案，可以直接來信 <a href="mailto:info@symcio.tw" className="underline">info@symcio.tw</a>
           或回到 symcio.tw 重新下單。
         </p>
         <div className="mt-10 flex gap-3">

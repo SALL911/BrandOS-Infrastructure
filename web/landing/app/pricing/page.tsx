@@ -42,7 +42,7 @@ const PLANS = [
       "Email + Discord 技術支援",
     ],
     cta: "開始升級",
-    ctaHref: "mailto:sales@symcio.tw?subject=Professional%20Plan",
+    ctaHref: "mailto:info@symcio.tw?subject=Professional%20Plan",
     featured: true,
   },
   {
@@ -61,7 +61,7 @@ const PLANS = [
       "SLA 99.9% + 24 小時支援",
     ],
     cta: "聯絡業務",
-    ctaHref: "mailto:sales@symcio.tw?subject=Enterprise%20Plan",
+    ctaHref: "mailto:info@symcio.tw?subject=Enterprise%20Plan",
     featured: false,
   },
 ];

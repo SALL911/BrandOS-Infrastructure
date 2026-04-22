@@ -102,7 +102,7 @@ async function handleCheckoutCompleted(
 
   // 3. Confirmation email via Resend.
   if (email) {
-    const from = process.env.RESEND_FROM_ADDRESS || "Symcio <hello@symcio.tw>";
+    const from = process.env.RESEND_FROM_ADDRESS || "Symcio <info@symcio.tw>";
     const { subject, html } = renderAuditConfirmation({
       brandName,
       customerEmail: email,
@@ -113,7 +113,7 @@ async function handleCheckoutCompleted(
       to: email,
       subject,
       html,
-      replyTo: "sales@symcio.tw",
+      replyTo: "info@symcio.tw",
     });
     if (!emailResp.ok) warnings.push(`resend: ${emailResp.error}`);
   } else {

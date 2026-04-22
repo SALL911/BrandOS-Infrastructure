@@ -26,7 +26,7 @@ export default function CheckoutSuccess() {
             <li>1. Stripe 寄出收據到你的 email（幾分鐘內）。</li>
             <li>2. Symcio 啟動四引擎測試（ChatGPT / Claude / Gemini / Perplexity）。</li>
             <li>3. 24 小時內，完整報告 PDF 與 Calendly 連結會寄到你的 email。</li>
-            <li>4. 如 48 小時仍未收到，來信 <a href="mailto:sales@symcio.tw" className="underline">sales@symcio.tw</a> 我們親自處理。</li>
+            <li>4. 如 48 小時仍未收到，來信 <a href="mailto:info@symcio.tw" className="underline">info@symcio.tw</a> 我們親自處理。</li>
           </ol>
         </div>
         <div className="mt-10">

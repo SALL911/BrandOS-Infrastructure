@@ -28,7 +28,9 @@ on:
   #     }
   #   }
   repository_dispatch:
-    types: [paid-audit]
+    # paid-audit: Stripe webhook（$299 付款完成後）
+    # free-scan-request: Typeform webhook（/api/webhooks/typeform 收到表單提交）
+    types: [paid-audit, free-scan-request]
 
 permissions:
   contents: write

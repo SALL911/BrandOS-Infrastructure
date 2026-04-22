@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FreeScanForm } from "@/components/FreeScanForm";
+import { TypeformEmbed } from "@/components/TypeformEmbed";
 
 export const metadata: Metadata = {
   title: "免費品牌 AI 健檢 | Symcio BrandOS",
@@ -78,7 +78,7 @@ export default function BrandCheckPage() {
             </div>
 
             <div className="border border-line bg-surface p-6">
-              <FreeScanForm />
+              <TypeformEmbed />
             </div>
           </div>
         </div>

@@ -83,7 +83,7 @@ export function renderAuditConfirmation(params: {
           </p>
         </div>
         <p style="margin:16px 0 0;font-size:13px;color:#6B7280;">
-          如 48 小時後仍未收到，請來信 <a href="mailto:sales@symcio.tw" style="color:#0B0F19;">sales@symcio.tw</a>
+          如 48 小時後仍未收到，請來信 <a href="mailto:info@symcio.tw" style="color:#0B0F19;">info@symcio.tw</a>
           我們會親自追蹤。
         </p>
       </td></tr>

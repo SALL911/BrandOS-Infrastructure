@@ -87,13 +87,13 @@ export default function AboutPage() {
               </h2>
               <ul className="mt-4 space-y-2 text-white">
                 <li>
-                  一般洽詢：<a href="mailto:hello@symcio.tw" className="text-accent">hello@symcio.tw</a>
+                  一般洽詢：<a href="mailto:info@symcio.tw" className="text-accent">info@symcio.tw</a>
                 </li>
                 <li>
-                  業務合作：<a href="mailto:sales@symcio.tw" className="text-accent">sales@symcio.tw</a>
+                  業務合作：<a href="mailto:info@symcio.tw" className="text-accent">info@symcio.tw</a>
                 </li>
                 <li>
-                  資安回報：<a href="mailto:security@symcio.tw" className="text-accent">security@symcio.tw</a>
+                  資安回報：<a href="mailto:info@symcio.tw" className="text-accent">info@symcio.tw</a>
                 </li>
                 <li>
                   <a href="https://discord.gg/jGWJr2Sd" target="_blank" rel="noopener noreferrer" className="text-accent">Discord 社群</a>

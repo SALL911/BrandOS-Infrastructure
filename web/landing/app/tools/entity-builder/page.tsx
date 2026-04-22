@@ -108,7 +108,7 @@ export default function EntityBuilderPage() {
             </p>
             <p className="mt-3 text-sm text-muted">
               互動版 Entity Builder 介面正在開發中。若你想先拿到個人客製 JSON-LD，
-              歡迎寄 email 至 <a href="mailto:hello@symcio.tw" className="text-accent">hello@symcio.tw</a>，
+              歡迎寄 email 至 <a href="mailto:info@symcio.tw" className="text-accent">info@symcio.tw</a>，
               或加入 <a href="https://discord.gg/jGWJr2Sd" target="_blank" rel="noopener noreferrer" className="text-accent">Discord 社群</a>
               取得早期存取權。
             </p>

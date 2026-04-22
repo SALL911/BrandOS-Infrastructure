@@ -55,7 +55,7 @@ export function FreeScanForm() {
           掃描排程中，30 秒內寄出報告。
         </h3>
         <p className="mt-3 text-sm text-white/70">
-          請檢查信箱（含垃圾信夾）。沒收到請來信 hello@symcio.tw。
+          請檢查信箱（含垃圾信夾）。沒收到請來信 info@symcio.tw。
         </p>
       </div>
     );

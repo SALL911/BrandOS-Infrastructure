@@ -43,7 +43,7 @@ const PLANS = [
       "Email + Discord 支援",
     ],
     cta: "開始升級",
-    href: "mailto:sales@symcio.tw?subject=Professional%20Plan",
+    href: "mailto:info@symcio.tw?subject=Professional%20Plan",
     featured: true,
   },
   {
@@ -58,7 +58,7 @@ const PLANS = [
       "專屬 CSM",
     ],
     cta: "聯絡業務",
-    href: "mailto:sales@symcio.tw?subject=Enterprise%20Plan",
+    href: "mailto:info@symcio.tw?subject=Enterprise%20Plan",
     featured: false,
   },
 ];
