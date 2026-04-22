@@ -11,6 +11,15 @@
 --   4. engagement_signals 是高頻原子事件，bci_engine.py 做 7 天 rolling 聚合。
 -- ============================================================
 
+-- ---------- 0. 擴充 brands 表：通用股票代號欄位（F-axis 查詢用） ----------
+-- 現有 brands 表只有 bloomberg_id（Bloomberg Terminal 專用 BBG ID），
+-- 新增通用 ticker 欄位，給 yfinance / alphavantage / mops_tw adapters 使用。
+ALTER TABLE brands
+  ADD COLUMN IF NOT EXISTS ticker VARCHAR(20);
+
+COMMENT ON COLUMN brands.ticker     IS '通用股票代號（yfinance / alphavantage 使用）；格式：AAPL / 2330.TW / MSFT';
+COMMENT ON COLUMN brands.bloomberg_id IS 'Bloomberg Terminal 格式（客戶自備 Terminal 時使用，例 AAPL US Equity）';
+
 -- ---------- bci_snapshots ----------
 CREATE TABLE IF NOT EXISTS bci_snapshots (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
