@@ -186,6 +186,10 @@ class MarketDataProvider(Protocol):
 - 公式變更 → 本文件升版（v1 → v2），保留歷史版本
 - 資料源變更 → 更新 `§五` 表格，不改公式
 
+> **Calibration 流程**：如何從資料集產出權重數值——程序與驗證門檻見
+> `private/bci/CALIBRATION.md`，配套工具 `scripts/bci_calibrate.py`
+> （stdlib-only grid search + Spearman rank correlation，本地 + CI 可跑）。
+
 ---
 
 ## 八、不做什麼（明確邊界）

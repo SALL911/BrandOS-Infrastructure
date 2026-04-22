@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'scripts/bci_engine.py'
+      - 'scripts/bci_calibrate.py'
       - 'scripts/providers/**'
       - 'scripts/tests/**'
       - 'supabase/migrations/*bci*.sql'
@@ -11,6 +12,7 @@ on:
   pull_request:
     paths:
       - 'scripts/bci_engine.py'
+      - 'scripts/bci_calibrate.py'
       - 'scripts/providers/**'
       - 'scripts/tests/**'
       - 'supabase/migrations/*bci*.sql'
