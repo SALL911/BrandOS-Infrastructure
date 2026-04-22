@@ -339,7 +339,12 @@ export default function AuditForm() {
 
       {result && (
         <div ref={reportRef}>
-          <AuditReport result={result} />
+          <AuditReport
+            result={result}
+            companySize={form.companySize || undefined}
+            revenue={form.revenue || undefined}
+            description={form.description || undefined}
+          />
         </div>
       )}
 
