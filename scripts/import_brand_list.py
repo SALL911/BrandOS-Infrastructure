@@ -180,11 +180,14 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="CSV → Supabase leads + brands 匯入")
     ap.add_argument("csv_path", help="CSV file path（UTF-8）")
     ap.add_argument("--col-brand", required=True, help="品牌/公司名稱欄位名")
-    ap.add_argument("--col-email", required=True, help="Email 欄位名")
+    ap.add_argument("--col-email", required=True,
+                    help="Email 欄位名（可 comma-separated 多欄 fallback，例：'Work Email,Email'）")
     ap.add_argument("--col-domain", default=None, help="網域欄位名（選）")
     ap.add_argument("--col-industry", default=None, help="產業欄位名（選）")
-    ap.add_argument("--col-contact", default=None, help="聯絡人姓名欄位名（選）")
-    ap.add_argument("--col-phone", default=None, help="電話欄位名（選）")
+    ap.add_argument("--col-contact", default=None, help="聯絡人全名欄位名（與 --col-contact-first/last 二擇一）")
+    ap.add_argument("--col-contact-first", default=None, help="名（first name）欄位名")
+    ap.add_argument("--col-contact-last", default=None, help="姓（last name）欄位名")
+    ap.add_argument("--col-phone", default=None, help="電話欄位名（選，可用 fallback 串接：'Work Phone,Phone'）")
     ap.add_argument("--col-notes", default=None, help="備註欄位名（選，會附加到 leads.notes）")
     ap.add_argument("--segment", required=True, help="segment 標籤（例：startup-meta-2026）")
     ap.add_argument("--priority", type=int, default=10, help="priority 0–32767，高=先掃。預設 10")
@@ -206,8 +209,10 @@ def main() -> int:
             print("ERROR: CSV 沒有 header row", file=sys.stderr)
             return 2
         print(f"==> Headers found: {reader.fieldnames}")
-        required_cols = [args.col_brand, args.col_email]
-        for col in required_cols:
+        # 支援 --col-email 'Work Email,Email' fallback 串接
+        email_cols = [c.strip() for c in args.col_email.split(",")]
+        required_single = [args.col_brand] + email_cols[:1]  # brand + 首個 email col 必存在
+        for col in required_single:
             if col not in reader.fieldnames:
                 print(f"ERROR: 必要欄位 '{col}' 不在 CSV 裡。可用的欄位：{reader.fieldnames}",
                       file=sys.stderr)
@@ -220,12 +225,18 @@ def main() -> int:
         for raw in reader:
             stats["rows"] += 1
             brand_name = norm_text(raw.get(args.col_brand, ""))
-            email = norm_email(raw.get(args.col_email, ""))
+            # 按 fallback 順序試每個 email 欄位（例：先 Work Email，再 Email）
+            email = None
+            for col_name in email_cols:
+                candidate = norm_email(raw.get(col_name, ""))
+                if candidate:
+                    email = candidate
+                    break
             if not brand_name:
                 continue
             if not email:
-                raw_email = (raw.get(args.col_email, "") or "").strip()
-                stats["no_email" if not raw_email else "invalid_email"] += 1
+                any_raw = any((raw.get(c, "") or "").strip() for c in email_cols)
+                stats["no_email" if not any_raw else "invalid_email"] += 1
                 continue
             if email in seen_emails:
                 stats["dup_email"] += 1
@@ -234,8 +245,23 @@ def main() -> int:
 
             domain = norm_domain(raw.get(args.col_domain, "")) if args.col_domain else None
             industry = norm_text(raw.get(args.col_industry, ""), 100) if args.col_industry else ""
-            contact = norm_text(raw.get(args.col_contact, ""), 100) if args.col_contact else ""
-            phone = norm_text(raw.get(args.col_phone, ""), 50) if args.col_phone else ""
+            # 聯絡人：優先用 last+first 組合（Asian convention 姓先名後），
+            # 退回 single-column --col-contact
+            if args.col_contact_last or args.col_contact_first:
+                last = norm_text(raw.get(args.col_contact_last, ""), 50) if args.col_contact_last else ""
+                first = norm_text(raw.get(args.col_contact_first, ""), 50) if args.col_contact_first else ""
+                contact = " ".join(filter(None, [last, first]))[:100]
+            else:
+                contact = norm_text(raw.get(args.col_contact, ""), 100) if args.col_contact else ""
+
+            # 電話：col 可以是 'Work Phone,Phone' comma-separated fallback
+            phone = ""
+            if args.col_phone:
+                for col_name in [c.strip() for c in args.col_phone.split(",")]:
+                    v = norm_text(raw.get(col_name, ""), 50)
+                    if v:
+                        phone = v
+                        break
             notes_extra = norm_text(raw.get(args.col_notes, ""), 500) if args.col_notes else ""
 
             lead_row = {
