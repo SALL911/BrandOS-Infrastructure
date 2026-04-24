@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TypeformEmbed } from "@/components/TypeformEmbed";
+import { MethodologyComparison } from "@/components/MethodologyComparison";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 
@@ -59,6 +60,8 @@ export default function AboutPage() {
               SimilarWeb 量化網站流量、SEMrush 量化 Google 排名、Bloomberg 量化金融資料——
               Symcio 量化品牌在 AI 的曝光、排名、影響力。
             </p>
+
+            <MethodologyComparison />
 
             <div className="border-l-2 border-accent pl-6">
               <h2 className="font-mono text-xs uppercase tracking-widest text-accent">
