@@ -39,16 +39,21 @@ const CATEGORY_LABEL: Record<string, string> = {
 };
 
 async function loadItem(slug: string): Promise<NewsDetail | null> {
-  const sb = createClient();
-  const { data } = await sb
-    .from("news_items")
-    .select(
-      "id, slug, title_zh, summary_zh, bci_perspective, category, sdg_number, tags, source, source_url, source_title, source_author, published_at, created_at",
-    )
-    .eq("slug", slug)
-    .eq("status", "published")
-    .maybeSingle();
-  return (data as NewsDetail | null) ?? null;
+  // Graceful degrade if Supabase env missing or news_items table absent
+  try {
+    const sb = createClient();
+    const { data } = await sb
+      .from("news_items")
+      .select(
+        "id, slug, title_zh, summary_zh, bci_perspective, category, sdg_number, tags, source, source_url, source_title, source_author, published_at, created_at",
+      )
+      .eq("slug", slug)
+      .eq("status", "published")
+      .maybeSingle();
+    return (data as NewsDetail | null) ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

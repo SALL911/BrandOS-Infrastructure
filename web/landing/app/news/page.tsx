@@ -49,27 +49,37 @@ export default async function NewsIndexPage({
 }: {
   searchParams: { category?: string; sdg?: string };
 }) {
-  const sb = createClient();
+  // Graceful degrade — page still renders if Supabase env not set or
+  // news_items table doesn't exist yet (cron not run).
+  let list: NewsRow[] = [];
+  let dbError: string | null = null;
 
-  let query = sb
-    .from("news_items")
-    .select(
-      "id, slug, title_zh, summary_zh, category, sdg_number, tags, source, published_at, created_at",
-    )
-    .eq("status", "published")
-    .order("created_at", { ascending: false })
-    .limit(50);
+  try {
+    const sb = createClient();
+    let query = sb
+      .from("news_items")
+      .select(
+        "id, slug, title_zh, summary_zh, category, sdg_number, tags, source, published_at, created_at",
+      )
+      .eq("status", "published")
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-  if (searchParams.category) {
-    query = query.eq("category", searchParams.category);
+    if (searchParams.category) {
+      query = query.eq("category", searchParams.category);
+    }
+    if (searchParams.sdg) {
+      const n = parseInt(searchParams.sdg, 10);
+      if (!Number.isNaN(n)) query = query.eq("sdg_number", n);
+    }
+
+    const { data: rows, error } = await query;
+    list = (rows as NewsRow[] | null) ?? [];
+    if (error) dbError = error.message;
+  } catch (e) {
+    // Missing env vars / Supabase unreachable / news_items table absent
+    dbError = e instanceof Error ? e.message : String(e);
   }
-  if (searchParams.sdg) {
-    const n = parseInt(searchParams.sdg, 10);
-    if (!Number.isNaN(n)) query = query.eq("sdg_number", n);
-  }
-
-  const { data: rows, error } = await query;
-  const list = (rows as NewsRow[] | null) ?? [];
 
   const activeCat = searchParams.category;
   const activeSdg = searchParams.sdg;
@@ -127,15 +137,35 @@ export default async function NewsIndexPage({
 
       <section>
         <div className="mx-auto max-w-5xl px-6 py-12">
-          {error && (
-            <div className="rounded-card border border-danger/40 bg-danger/10 p-5 text-sm text-danger">
-              載入失敗：{error.message}
+          {dbError && (
+            <div className="mb-6 rounded-card border border-warning/40 bg-warning/10 p-5 text-sm text-warning">
+              <div className="font-bold">新聞管線尚未啟用</div>
+              <p className="mt-2 text-warning/90">
+                Vercel 還缺以下任一 env 設定，或 Supabase 還沒跑 news_items
+                migration：
+                <code className="ml-1 rounded bg-ink/40 px-1.5 py-0.5 font-mono text-xs">
+                  ANTHROPIC_API_KEY
+                </code>{" "}
+                <code className="rounded bg-ink/40 px-1.5 py-0.5 font-mono text-xs">
+                  DISCORD_NEWS_WEBHOOK_URL
+                </code>{" "}
+                <code className="rounded bg-ink/40 px-1.5 py-0.5 font-mono text-xs">
+                  CRON_SECRET
+                </code>
+              </p>
+              <p className="mt-2 font-mono text-[11px] text-warning/70">
+                {dbError}
+              </p>
             </div>
           )}
 
           {list.length === 0 ? (
             <div className="rounded-card border border-dashed border-line-soft bg-surface p-12 text-center">
-              <p className="text-muted">目前沒有符合條件的新聞。每日 09:00 台北時間自動更新。</p>
+              <p className="text-muted">
+                {dbError
+                  ? "等管線啟用後，每日 09:00 台北時間自動抓取 ESG / SDG / TNFD 新聞並產出 BCI 視角。"
+                  : "目前沒有符合條件的新聞。每日 09:00 台北時間自動更新。"}
+              </p>
               <div className="mt-6">
                 <Link
                   href="/news"
