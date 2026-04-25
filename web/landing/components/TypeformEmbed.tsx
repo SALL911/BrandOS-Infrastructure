@@ -1,44 +1,38 @@
 "use client";
 
 /**
- * Typeform embed component for /tools/brand-check.
+ * Typeform embed for /tools/brand-check and /about contact block.
  *
- * Uses Typeform's official JS embed SDK (loaded via script tag) to render
- * form ID ZZYlfK7A in a full-height iframe. The form submits via Typeform's
- * own infrastructure; we receive results through the webhook at
- * /api/webhooks/typeform.
+ * Form ZZYlfK7A — submissions hit /api/webhooks/typeform via Typeform's
+ * own webhook infrastructure.
  *
- * Why iframe over the React SDK: @typeform/embed-react adds ~30kb but doesn't
- * buy us anything we can't do with the vanilla loader.
+ * Loading strategy: Next.js <Script strategy="afterInteractive"> instead of
+ * useEffect-injecting the script tag. The previous useEffect approach
+ * race-conditioned on /about: the embed div was already mounted before the
+ * script ran, Typeform's MutationObserver missed the div, and the slot
+ * stayed blank. <Script> places the tag during hydration, before the
+ * embed div is interactive — observer attaches reliably.
  */
 
-import { useEffect } from "react";
+import Script from "next/script";
 
 const FORM_ID = "ZZYlfK7A";
 
 export function TypeformEmbed() {
-  useEffect(() => {
-    // Typeform's embed loader is idempotent — safe to add even if present
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src*="embed.typeform.com/next"]',
-    );
-    if (existing) return;
-
-    const script = document.createElement("script");
-    script.src = "//embed.typeform.com/next/embed.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
-
   return (
-    <div
-      data-tf-live={FORM_ID}
-      data-tf-opacity="100"
-      data-tf-iframe-props={`title=Symcio Free Scan`}
-      data-tf-transitive-search-params
-      data-tf-medium="snippet"
-      className="min-h-[600px] w-full"
-      style={{ height: "70vh" }}
-    />
+    <>
+      <Script
+        src="https://embed.typeform.com/next/embed.js"
+        strategy="afterInteractive"
+      />
+      <div
+        data-tf-live={FORM_ID}
+        data-tf-opacity="100"
+        data-tf-iframe-props="title=Symcio Free Scan"
+        data-tf-transitive-search-params
+        data-tf-medium="snippet"
+        style={{ width: "100%", height: "70vh", minHeight: 520 }}
+      />
+    </>
   );
 }
