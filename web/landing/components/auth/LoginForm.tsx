@@ -115,10 +115,14 @@ export function LoginForm({ mode }: { mode: Mode }) {
         <form onSubmit={onSubmit} className="space-y-4">
           {mode === "signup" && (
             <div>
-              <label className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted">
+              <label
+                htmlFor="auth-display-name"
+                className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted"
+              >
                 姓名
               </label>
               <input
+                id="auth-display-name"
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
@@ -129,10 +133,14 @@ export function LoginForm({ mode }: { mode: Mode }) {
           )}
 
           <div>
-            <label className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted">
+            <label
+              htmlFor="auth-email"
+              className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted"
+            >
               Email
             </label>
             <input
+              id="auth-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -145,7 +153,10 @@ export function LoginForm({ mode }: { mode: Mode }) {
 
           <div>
             <div className="mb-1.5 flex items-center justify-between">
-              <label className="block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted">
+              <label
+                htmlFor="auth-password"
+                className="block font-mono text-[11px] font-semibold uppercase tracking-[1px] text-muted"
+              >
                 密碼
               </label>
               {mode === "login" && (
@@ -158,6 +169,7 @@ export function LoginForm({ mode }: { mode: Mode }) {
               )}
             </div>
             <input
+              id="auth-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

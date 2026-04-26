@@ -25,8 +25,10 @@ test.describe("Brand AI Audit flow", () => {
       timeout: 3_000,
     });
 
-    // Report renders within 12s
-    await expect(page.getByText(/品牌 AI 可見度診斷報告/)).toBeVisible({
+    // Report renders within 12s — match the visible H2 (PDF mirror is aria-hidden)
+    await expect(
+      page.getByRole("heading", { name: /品牌 AI 可見度診斷報告/ }),
+    ).toBeVisible({
       timeout: 15_000,
     });
 
