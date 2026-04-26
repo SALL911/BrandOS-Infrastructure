@@ -15,7 +15,7 @@ const STATIC_ROUTES = [
   { path: "/audit", title: /Brand AI Audit/ },
   { path: "/login", title: /登入/ },
   { path: "/signup", title: /註冊/ },
-  { path: "/forgot-password", title: /登入/ }, // shares layout metadata
+  { path: "/forgot-password", title: /忘記密碼/ },
 ];
 
 for (const route of STATIC_ROUTES) {
