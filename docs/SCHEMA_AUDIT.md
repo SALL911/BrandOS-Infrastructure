@@ -1,5 +1,5 @@
 # Schema 一致性稽核 — symcio-brandos
-## SCHEMA_AUDIT.md v1.0 | 2026-04-27
+## SCHEMA_AUDIT.md v1.1 | 2026-04-27
 
 ---
 
@@ -135,14 +135,65 @@ CLAUDE.md 與 `rules/esg-tnfd-protocol.md` 將 ESG 表稱為 `esg_metrics`，但
 
 ---
 
+## RLS 政策
+
+由 `supabase/migrations/20260427000001_rls_policies.sql` 實作，姿態：
+
+| 表 | 對 anon/authenticated | 機制 |
+|----|---------------------|------|
+| `knowledge_nodes` | 讀取 `is_public = TRUE` | `knowledge_nodes_public_read` policy |
+| `geo_content` | 讀取 `published_at IS NOT NULL` | `geo_content_public_read` policy |
+| `visibility_reports` | 全部讀取（PDF 仍走 storage signed URL） | `visibility_reports_public_read` policy |
+| `members` / `audit_history` | 讀寫自家 row | 由 20260422000001 處理 |
+| `news_items` | 讀取 `status = 'published'` | 由 20260422000002 處理 |
+| 其餘表（含補上 RLS 的 `ai_queries`、`ai_responses`） | 完全拒絕 | RLS enabled + 無 policy = service_role only |
+
+`COMMENT ON TABLE` 標註 `RLS: service_role only` 讓 Studio 上一目了然。
+
+---
+
+## 資料補齊（industry / domain）
+
+線上 `brands` 共 74 筆，多數 `domain=NULL`、`industry='default'`。處理流程：
+
+| Stage | 自動化程度 | 工具 |
+|-------|----------|------|
+| 1. domain 補值 | 完全自動（`primary_email` 取 after-@） | `scripts/db/backfill_brand_metadata.py --stage domain` |
+| 2. industry 補值 | 半自動（讀 `data/brand_industry_mapping.csv`） | `scripts/db/backfill_brand_metadata.py --stage industry` |
+
+**資料準備**：
+
+`data/brand_industry_mapping.csv` 已預填可從公開資訊辨識的 21 個 domain → industry。其餘 ~53 筆 domain 需人工補：
+
+```bash
+# 1. 先跑 domain stage 把 brands.domain 填好
+SUPABASE_DB_URL=postgresql://... \
+  python scripts/db/backfill_brand_metadata.py --stage domain --dry-run
+
+# 2. 列出仍 industry='default' 的 domain，補進 CSV
+SUPABASE_DB_URL=postgresql://... \
+  python scripts/db/backfill_brand_metadata.py --stage industry --dry-run
+
+# 3. 確認後拿掉 --dry-run 寫入
+```
+
+**安全機制**：
+- 兩階段都在 `WHERE` 加 `domain IS NULL` / `industry IN ('default','')` 條件，**不覆蓋已有真值**
+- `--dry-run` 預設可印前 10 筆 preview
+- 不依賴 `service_role`；用 `SUPABASE_DB_URL`（postgres user）即可
+
+---
+
 ## 驗收標準
 
 | # | 動作 | 驗收 |
 |---|------|------|
-| 1 | secret ref 指向 `symcio-brandos` | `gh secret list` 顯示 `SUPABASE_PROJECT_REF` 已更新 |
+| 1 | secret ref 指向 `symcio-brandos` | `SUPABASE_PROJECT_REF` 等於 `friwpqphwumomernsouh` |
 | 2 | repo migration 已推上線 | Table Editor 顯示 25+ 張表 |
 | 3 | 線上獨有表進 repo | `supabase/snapshots/` 有 dump；`adopt_live_only_tables` migration 已加 |
 | 4 | 命名對齊 | `esg_metrics` 僅出現在本稽核文件（歷史紀錄），其他位置已改為 `esg_profiles` |
+| 5 | RLS 明確化 | `knowledge_nodes` / `geo_content` / `visibility_reports` 各有 anon read policy；其他 RLS-enabled 表有 `COMMENT` 標註 |
+| 6 | brand metadata 補齊 | `SELECT COUNT(*) FROM brands WHERE domain IS NULL` ≤ 5；`industry='default'` ≤ 10 |
 
 ---
 
@@ -151,3 +202,4 @@ CLAUDE.md 與 `rules/esg-tnfd-protocol.md` 將 ESG 表稱為 `esg_metrics`，但
 | 版本 | 日期 | 變更 |
 |------|------|------|
 | v1.0 | 2026-04-27 | 初版 — 對照 Table Editor 截圖完成 gap 分析 |
+| v1.1 | 2026-04-27 | 新增 RLS 政策章節與 brand metadata 補齊 runbook（migration 20260427000001 + backfill_brand_metadata.py） |
