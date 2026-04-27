@@ -16,21 +16,31 @@ behind one custom domain `orchestrator.symcio.tw`.
 
 ## 1. Provision the database
 
-The `lib/db/` package owns 7 tables (`brand`, `personas`, `brand_events`,
-`ai_decisions`, `generated_content`, `campaigns`, `integrations`).
-Materialize them once before the first deploy:
+The `lib/db/` package owns 8 tables (`brand`, `personas`, `brand_events`,
+`ai_decisions`, `generated_content`, `campaigns`, `integrations`,
+`taiwan_brands`). Materialize them and seed the dashboard data once
+before the first deploy:
 
 ```bash
 cd apps/orchestrator
 cp .env.example .env
 # edit .env, set DATABASE_URL=postgres://...
 pnpm install
+
+# 1a. Push schema to the empty DB
 pnpm --filter @workspace/db push
+
+# 1b. Seed the 30 Taiwan listed brands (without this the dashboard
+#     /api/rankings returns []; the SPA will render but be empty)
+pnpm --filter @workspace/api-server run db:seed
 ```
 
 `drizzle-kit push` is the safe path for first-run; it diff-applies the
 TypeScript schema. For repeat environments, generate migrations and
 run `migrate` instead — but that's stage 4.
+
+The seed is idempotent (skips if `taiwan_brands` already has rows), so
+re-running it on later schema changes is safe.
 
 ## 2. Create the Vercel project
 

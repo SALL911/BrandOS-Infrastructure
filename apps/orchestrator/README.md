@@ -42,10 +42,14 @@ apps/orchestrator/
 └── tsconfig.base.json       Shared TS config
 ```
 
-## Database schema (7 tables)
+## Database schema (8 tables)
 
 `brand` · `personas` · `brand_events` · `ai_decisions` ·
-`generated_content` · `campaigns` · `integrations`
+`generated_content` · `campaigns` · `integrations` · `taiwan_brands`
+
+`taiwan_brands` is the dashboard data source (30 listed brands with
+score / week_change / industry segments). Seed via `pnpm --filter
+@workspace/api-server run db:seed`.
 
 ## Migration plan (path A: standalone)
 
