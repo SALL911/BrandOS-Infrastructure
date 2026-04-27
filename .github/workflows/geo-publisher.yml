@@ -1,0 +1,103 @@
+name: GEO Content Publisher
+
+# 每日掃 geo_content WHERE status='approved'，渲染 markdown 副本到
+# docs/geo-content/<slug>.md，並把 DB 列流轉到 status='published' + published_at=NOW()。
+#
+# CLAUDE.md §9.3 P3 roadmap。
+#
+# 兩件事在同一輪 cron 完成；如果中途失敗，下一輪 cron 不會重做（status 已不為 'approved'），
+# 但 markdown 也不會被覆蓋（DB id 不存在於 'approved' 集合 → SELECT 不到）。
+# 若需要 re-publish 已 published 的內容，手動 SQL: UPDATE ... SET status='approved' WHERE id=...
+
+on:
+  schedule:
+    # 每日 UTC 04:00 = Asia/Taipei 12:00（排在 lead-scorer 03:00 之後）
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run（不寫檔不更新 DB，只印 preview）'
+        required: true
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: geo-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish approved geo_content rows
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install psycopg
+        run: pip install 'psycopg[binary]==3.2.*'
+
+      - name: Run publisher
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
+            echo "::error::SUPABASE_DB_URL secret is not set."
+            echo "::error::Same secret as brand-backfill / lead-scorer — pooler URL（IPv4，port 6543）."
+            exit 1
+          fi
+          ARGS=()
+          if [[ "${DRY_RUN:-true}" == "true" ]]; then
+            ARGS+=(--dry-run)
+          fi
+          python scripts/geo_publisher.py "${ARGS[@]}"
+
+      - name: Open PR with published markdown
+        if: github.event.inputs.dry_run != 'true' && success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$(git status --porcelain docs/geo-content)" ]; then
+            echo "No new geo-content files to commit."
+            exit 0
+          fi
+          DATE=$(date -u +%Y%m%d)
+          BRANCH="geo-publisher/${DATE}"
+          git config user.name  "brandos-geo-publisher[bot]"
+          git config user.email "brandos-geo-publisher@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add docs/geo-content
+          git commit -m "[geo-publisher] 自動發布 approved 內容（${DATE}）"
+          git push -u origin "$BRANCH"
+          if ! gh pr view "$BRANCH" >/dev/null 2>&1; then
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --draft \
+              --title "[geo-publisher] approved → published (${DATE})" \
+              --body "geo_content status='approved' 流轉到 'published' 後產生的 markdown 副本（audit trail）。DB 已更新，本 PR 為文件落地。"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## GEO Content Publisher"
+            echo "- Trigger: \`${{ github.event_name }}\`"
+            echo "- Dry-run: \`${{ github.event.inputs.dry_run || 'false (cron)' }}\`"
+            echo "- Status: ${{ job.status }}"
+          } >> "$GITHUB_STEP_SUMMARY"
