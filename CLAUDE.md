@@ -54,7 +54,7 @@ BrandOS Infrastructure 是 Symcio 的核心 SaaS 產品——將品牌治理、E
 
 ### Layer 1：Brand Profiles（品牌基礎資料）
 存放客戶品牌的核心識別資訊、ESG 指標、產業標籤。
-→ 每次開始新客戶案子，先建立 brands + esg_metrics 記錄。
+→ 每次開始新客戶案子，先建立 brands + esg_profiles 記錄。
 
 ### Layer 2：BrandOS SaaS（平台運營數據）
 管理訂閱狀態、追蹤八階段品牌建設進度、記錄交付物里程碑。
@@ -70,7 +70,7 @@ BrandOS Infrastructure 是 Symcio 的核心 SaaS 產品——將品牌治理、E
 
 ### 新客戶建檔流程
 1. INSERT brands 基本資料（名稱、產業、規模、市場）
-2. INSERT esg_metrics 初始指標
+2. INSERT esg_profiles 初始指標
 3. 建立 brand_scores 基準評分
 4. 記錄 knowledge_nodes（品牌 DNA、定位、競爭對手）
 

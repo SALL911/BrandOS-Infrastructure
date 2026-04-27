@@ -1,0 +1,2 @@
+# 線上 Supabase schema 反向匯出存放處
+# 由 scripts/db/dump-schema.sh 產生：<UTC-timestamp>_live_schema.sql
