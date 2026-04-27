@@ -36,7 +36,7 @@
 ### P — Prepare（準備）
 產出揭露報告，整合進財務報告與品牌治理。
 - 填寫 TNFD 揭露模板
-- 更新 esg_metrics 資料庫記錄
+- 更新 esg_profiles 資料庫記錄
 - 連結 Bloomberg ESG 數據接口
 
 ---
@@ -45,7 +45,7 @@
 
 ### 客戶 ESG 建檔 SOP
 1. 收集最近三年財報與 CSR/ESG 報告
-2. 填入 esg_metrics 表格（carbon / energy / water / governance 欄位）
+2. 填入 esg_profiles 表格（carbon / energy / water / governance 欄位）
 3. 執行 LEAP 第一階段（Locate）分析
 4. 產出 ESG Gap Analysis 報告
 5. 建立 knowledge_nodes 記錄關鍵洞察
