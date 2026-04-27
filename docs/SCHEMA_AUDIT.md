@@ -1,5 +1,5 @@
 # Schema 一致性稽核 — symcio-brandos
-## SCHEMA_AUDIT.md v1.3 | 2026-04-27
+## SCHEMA_AUDIT.md v1.4 | 2026-04-27
 
 ---
 
@@ -230,7 +230,7 @@ cd web/landing && vercel env ls production | grep -iE 'DB_URL|POSTGRES|DB_PASSWO
 |---|------|------|
 | 1 | secret ref 指向 `symcio-brandos` | ✅ 完成（`friwpqphwumomernsouh`）|
 | 2 | repo migration 已推上線 | ✅ 完成（deploy run #9 綠燈，Table Editor 25+ 張表）|
-| 3 | 線上獨有表進 repo | ⏳ 待跑 `dump-schema.sh` 把 `brand_rating_history` / `profiles` 收進 repo |
+| 3 | 線上獨有表進 repo | ⏳ Actions → **Schema Snapshot Dump** → Run workflow（confirm=`run`）→ 下載 `live-schema-snapshot` artifact → diff → 建 `adopt_live_only_tables` migration |
 | 4 | 命名對齊 | ✅ 完成（`esg_metrics` → `esg_profiles`）|
 | 5 | RLS 明確化 | ✅ 完成（migration 20260427000001 推上線）|
 | 6 | brand metadata 補齊 | ⏳ 待人工觸發 brand-backfill workflow |
@@ -246,3 +246,4 @@ cd web/landing && vercel env ls production | grep -iE 'DB_URL|POSTGRES|DB_PASSWO
 | v1.1 | 2026-04-27 | 新增 RLS 政策章節與 brand metadata 補齊 runbook（migration 20260427000001 + backfill_brand_metadata.py） |
 | v1.2 | 2026-04-27 | 部署事件紀錄；CSV 擴充至 67 筆；驗收狀態更新 |
 | v1.3 | 2026-04-27 | 階段三：DB 密碼 reset 下游影響盤點；Vercel 端 grep 後確認無 DB 密碼依賴，驗收 #7 ✅ 結案 |
+| v1.4 | 2026-04-27 | 加 `schema-snapshot.yml` workflow，把 `dump-schema.sh` 包成 workflow_dispatch；驗收 #3 從本機腳本改為 Actions 觸發 |

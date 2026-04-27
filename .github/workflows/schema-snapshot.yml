@@ -1,0 +1,70 @@
+name: Schema Snapshot Dump
+
+# 反向匯出線上 Supabase project 的 public schema，落為 supabase/snapshots/ 內 SQL artifact。
+# 用途：偵測 schema drift；把線上獨有的表（如 brand_rating_history / profiles）固化進 repo。
+#
+# 觸發方式：
+#   Actions → Schema Snapshot Dump → Run workflow
+#     confirm: 必須打 'run'
+#
+# 產物：
+#   GitHub Actions artifact `live-schema-snapshot`（30 天保留），內含一個或多個
+#   `supabase/snapshots/<UTC-timestamp>_live_schema.sql`
+#   下載後人工 review，再 commit 進 repo 補出對應的 adopt_live_only_tables migration。
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'run' to confirm"
+        required: true
+        default: 'no'
+
+concurrency:
+  group: schema-snapshot
+  cancel-in-progress: false
+
+jobs:
+  dump:
+    name: supabase db dump
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.event.inputs.confirm == 'run'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Dump live schema
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: bash scripts/db/dump-schema.sh
+
+      - name: Upload snapshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-schema-snapshot
+          path: supabase/snapshots/*.sql
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Schema Snapshot Dump"
+            echo "- Status: ${{ job.status }}"
+            echo "- Artifact: \`live-schema-snapshot\`（30 天保留）"
+            echo ""
+            echo "### Next"
+            echo "1. Download artifact 解開取得 \`<TS>_live_schema.sql\`"
+            echo "2. Diff against \`supabase/migrations/*.sql\` 找出線上獨有 DDL"
+            echo "3. 為線上獨有表建 \`supabase/migrations/<TS>_adopt_live_only_tables.sql\`"
+            echo "4. Commit snapshot SQL 進 \`supabase/snapshots/\`（入 git，做 audit trail）"
+          } >> "$GITHUB_STEP_SUMMARY"
