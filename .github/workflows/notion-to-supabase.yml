@@ -1,0 +1,77 @@
+name: Notion Sync → Supabase
+
+# 把 docs/notion-sync/*.md 的內容 UPSERT 進 knowledge_nodes 表。
+# CLAUDE.md §9.2「Notion → docs/notion-sync/ → knowledge_nodes（單向 cron）」的第二段。
+#
+# 觸發：
+#   - push 到 main 且改動 docs/notion-sync/**.md（由 notion-sync.yml 開的自動 PR merge 後落這條）
+#   - workflow_dispatch（手動觸發 + confirm）
+#
+# 使用 SUPABASE_DB_URL secret（pooler URL，IPv4，port 6543）—
+# 與 brand-backfill.yml 共用同一個 secret，避免 IPv6 直連雷。
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/notion-sync/**.md'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run（不寫 DB，只印 preview）'
+        required: true
+        default: true
+        type: boolean
+      confirm:
+        description: "Type 'run' to confirm（workflow_dispatch only）"
+        required: true
+        default: 'no'
+
+concurrency:
+  group: notion-to-supabase
+  cancel-in-progress: false
+
+jobs:
+  upsert:
+    name: Upsert knowledge_nodes from docs/notion-sync
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.event_name == 'push' || github.event.inputs.confirm == 'run'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install psycopg
+        run: pip install 'psycopg[binary]==3.2.*'
+
+      - name: Run UPSERT
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
+            echo "::error::SUPABASE_DB_URL secret is not set."
+            echo "::error::Same secret as brand-backfill — get it from Supabase Dashboard → Database → Connection string → Transaction pooler (port 6543)."
+            exit 1
+          fi
+          ARGS=()
+          if [[ "${DRY_RUN:-false}" == "true" ]]; then
+            ARGS+=(--dry-run)
+          fi
+          python scripts/db/notion_to_knowledge_nodes.py "${ARGS[@]}"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Notion → Supabase Sync"
+            echo "- Trigger: \`${{ github.event_name }}\`"
+            echo "- Dry-run: \`${{ github.event.inputs.dry_run || 'false (push trigger)' }}\`"
+            echo "- Status: ${{ job.status }}"
+          } >> "$GITHUB_STEP_SUMMARY"
