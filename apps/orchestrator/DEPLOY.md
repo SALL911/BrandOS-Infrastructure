@@ -69,8 +69,8 @@ pnpm --filter @workspace/brandos run build          # vite build → dist/public
 The deploy URL will be `<project-name>-<hash>.vercel.app`. Smoke test:
 
 ```bash
-curl https://<preview>.vercel.app/api/health
-# should return whatever artifacts/api-server/src/routes/health.ts emits
+curl https://<preview>.vercel.app/api/healthz
+# returns: {"status":"ok"}
 ```
 
 ## 5. Custom domain
@@ -91,8 +91,8 @@ curl https://<preview>.vercel.app/api/health
 curl -I https://orchestrator.symcio.tw
 # 200, HTML
 
-curl https://orchestrator.symcio.tw/api/health
-# 200, health JSON
+curl https://orchestrator.symcio.tw/api/healthz
+# 200, {"status":"ok"}
 
 # Hit a real DB-backed route once schema is pushed:
 curl https://orchestrator.symcio.tw/api/rankings
