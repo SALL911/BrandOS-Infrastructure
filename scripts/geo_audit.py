@@ -160,7 +160,7 @@ def analyze_mention(text: str, brand: str, domain: str = "") -> dict:
     brand_lower = brand.lower()
     domain_lower = domain.lower() if domain else ""
 
-    mentioned = (
+    mentioned = bool(
         brand_lower in lower
         or (domain_lower and domain_lower in lower)
     )
@@ -336,6 +336,20 @@ def main() -> int:
                     }
                 )
                 time.sleep(1)  # gentle rate limit
+
+    # Fail loud if every API call returned empty — otherwise we'd silently
+    # commit a 0-score report and the cron would keep generating noise.
+    # 100% empty almost always means: invalid API key / quota exhausted /
+    # API contract changed. Surface it instead of swallowing.
+    empty_count = sum(1 for r in results if not r.get("response_excerpt"))
+    if results and empty_count == len(results):
+        print(
+            f"\nERROR: all {len(results)} queries returned empty responses. "
+            f"Likely cause: invalid API key, quota exhausted, or API contract change. "
+            f"Refusing to write a 0-score report.",
+            file=sys.stderr,
+        )
+        return 3
 
     # Aggregate score
     scores = [r["score"] for r in results]
