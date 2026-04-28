@@ -94,7 +94,7 @@ function Ticker({ brands }: { brands: TaiwanBrand[] }) {
       <div className="flex animate-marquee whitespace-nowrap gap-0">
         {items.map((b, i) => (
           <span key={i} className="inline-flex items-center gap-1.5 px-5">
-            <span className="text-muted-foreground">{b.ticker}</span>
+            {b.ticker && <span className="text-muted-foreground">{b.ticker}</span>}
             <span className="font-medium">{b.name}</span>
             <span className={b.score >= 60 ? "text-green-400" : b.score >= 40 ? "text-yellow-400" : "text-red-400"}>
               {b.score}
@@ -144,7 +144,7 @@ function ClaimModal({ brand, onClose }: { brand: TaiwanBrand; onClose: () => voi
           <div className="rounded-lg border border-border bg-card/50 p-3 text-sm space-y-1">
             <div className="flex justify-between">
               <span className="text-muted-foreground">品牌</span>
-              <span className="font-medium">{brand.name} ({brand.ticker})</span>
+              <span className="font-medium">{brand.name}{brand.ticker ? ` (${brand.ticker})` : ""}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">目前 AI 能見度分數</span>
@@ -188,7 +188,7 @@ function ScoreExplorer({ brand, onClose, onClaim }: { brand: TaiwanBrand; onClos
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div>
           <div className="font-bold text-sm">{brand.name}</div>
-          <div className="text-xs text-muted-foreground font-mono">{brand.nameEn} · {brand.ticker}</div>
+          <div className="text-xs text-muted-foreground font-mono">{brand.nameEn}{brand.ticker ? ` · ${brand.ticker}` : ""}</div>
         </div>
         <Button variant="ghost" size="icon" onClick={onClose}><X className="h-4 w-4" /></Button>
       </div>
@@ -273,7 +273,7 @@ export default function Dashboard() {
       !search ||
       b.name.includes(search) ||
       b.nameEn.toLowerCase().includes(search.toLowerCase()) ||
-      b.ticker.includes(search)
+      (b.ticker?.includes(search) ?? false)
   );
 
   const statCards = stats

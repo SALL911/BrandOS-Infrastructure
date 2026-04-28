@@ -33,7 +33,7 @@ function BrandCard({ brand }: { brand: TaiwanBrand }) {
             </div>
             <div>
               <div className="font-semibold text-sm">{brand.name}</div>
-              <div className="text-xs text-muted-foreground font-mono">{brand.nameEn} · {brand.ticker}</div>
+              <div className="text-xs text-muted-foreground font-mono">{brand.nameEn}{brand.ticker ? ` · ${brand.ticker}` : ""}</div>
             </div>
           </div>
           <Badge variant="outline" className={`text-xs shrink-0 ${INDUSTRY_COLORS[brand.industry]}`}>

@@ -9,7 +9,7 @@ import { BrainCircuit, Zap, Target, ArrowRight, ChevronDown, ChevronUp } from "l
 interface Strategy {
   id: number;
   brand: string;
-  ticker: string;
+  ticker: string | null;
   industry: string;
   score: number;
   priority: "critical" | "high" | "medium";
@@ -89,7 +89,7 @@ function StrategyCard({ s }: { s: Strategy }) {
             </div>
             <div>
               <div className="font-semibold text-sm">{s.brand}</div>
-              <div className="text-xs text-muted-foreground font-mono">{s.ticker}</div>
+              {s.ticker && <div className="text-xs text-muted-foreground font-mono">{s.ticker}</div>}
             </div>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
