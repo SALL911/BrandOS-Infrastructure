@@ -10,7 +10,7 @@ interface AIEvent {
   id: number;
   time: string;
   brand: string;
-  ticker: string;
+  ticker: string | null;
   engine: string;
   type: "citation" | "missing" | "ranking_up" | "ranking_down" | "knowledge_update";
   message: string;
@@ -136,7 +136,7 @@ export default function Events() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium text-sm">{event.brand}</span>
-                        <span className="text-xs font-mono text-muted-foreground">{event.ticker}</span>
+                        {event.ticker && <span className="text-xs font-mono text-muted-foreground">{event.ticker}</span>}
                         <Badge variant="outline" className="text-xs py-0">{event.engine}</Badge>
                         <Badge variant="outline" className={`text-xs py-0 ${typeInfo.color}`}>{typeInfo.label}</Badge>
                         {event.impact === "high" && (

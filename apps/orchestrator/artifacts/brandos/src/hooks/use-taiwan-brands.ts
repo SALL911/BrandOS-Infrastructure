@@ -6,7 +6,7 @@ export interface TaiwanBrand {
   id: number;
   name: string;
   nameEn: string;
-  ticker: string;
+  ticker: string | null;
   industry: string;
   score: number;
   weekChange: number;

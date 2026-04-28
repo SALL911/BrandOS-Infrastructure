@@ -130,7 +130,8 @@ Stock code reference: ${b.ticker}.TW
 };
 
 export default function Content() {
-  const { data: brands = [] } = useRankings();
+  const { data: allBrands = [] } = useRankings();
+  const brands = allBrands.filter((b) => b.ticker);
   const { toast } = useToast();
   const [brandId, setBrandId] = useState<string>("none");
   const [contentType, setContentType] = useState<string>("knowledge_entry");

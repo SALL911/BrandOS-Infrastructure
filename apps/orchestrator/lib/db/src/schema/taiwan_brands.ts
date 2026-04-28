@@ -4,7 +4,7 @@ export const taiwanBrandsTable = pgTable("taiwan_brands", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   nameEn: text("name_en").notNull(),
-  ticker: text("ticker").notNull(),
+  ticker: text("ticker"),
   industry: text("industry").notNull(),
   score: integer("score").notNull().default(0),
   weekChange: integer("week_change").notNull().default(0),

@@ -30,7 +30,7 @@ const brands = [
   { name: "中國鋼鐵", nameEn: "China Steel", ticker: "2002", industry: "esg", score: 39, weekChange: -1, status: "falling", description: "台灣最大鋼鐵製造商，積極推進低碳鋼鐵技術", website: "https://csc.com.tw", employees: "9,500+", marketCap: "NT$0.4兆", knowledgeGraph: 42, aiCitation: 39, semanticSearch: 36, multimodal: 30 },
   { name: "台塑集團", nameEn: "Formosa Plastics", ticker: "1301", industry: "esg", score: 43, weekChange: 1, status: "rising", description: "台灣最大石化集團，積極投入碳捕捉與循環經濟", website: "https://fpg.com.tw", employees: "100,000+", marketCap: "NT$0.7兆", knowledgeGraph: 46, aiCitation: 44, semanticSearch: 40, multimodal: 34 },
   { name: "日月光半導體", nameEn: "ASE Technology", ticker: "3711", industry: "semi", score: 48, weekChange: 1, status: "rising", description: "全球最大半導體封裝測試廠，強化先進封裝布局", website: "https://aseglobal.com", employees: "90,000+", marketCap: "NT$0.65兆", knowledgeGraph: 52, aiCitation: 49, semanticSearch: 44, multimodal: 37 },
-  { name: "台灣菸酒", nameEn: "TTL", ticker: "1301", industry: "consumer", score: 35, weekChange: 0, status: "stable", description: "國營企業，台灣啤酒及高粱酒市場領導品牌", website: "https://ttl.com.tw", employees: "6,000+", marketCap: "NT$國營", knowledgeGraph: 38, aiCitation: 35, semanticSearch: 32, multimodal: 26 },
+  { name: "台灣菸酒", nameEn: "TTL", ticker: null, industry: "consumer", score: 35, weekChange: 0, status: "stable", description: "國營企業，台灣啤酒及高粱酒市場領導品牌（國營，未上市）", website: "https://ttl.com.tw", employees: "6,000+", marketCap: "NT$國營", knowledgeGraph: 38, aiCitation: 35, semanticSearch: 32, multimodal: 26 },
 ];
 
 async function seedTaiwanBrands() {
