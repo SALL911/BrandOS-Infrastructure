@@ -1,5 +1,5 @@
 # BrandOS Infrastructure — AI Visibility Intelligence Platform
-## CLAUDE.md v1.1 | Symcio × BrandOS
+## CLAUDE.md v1.2 | Symcio × BrandOS
 
 ---
 
@@ -170,3 +170,12 @@ brandos-infrastructure/
 | P1 | Lead → HubSpot via Composio | `.github/workflows/composio-hubspot-sync.yml` |
 | P2 | Lead scoring agent | `agents/lead-scorer.py`（待建）|
 | P3 | GEO 內容自動發布 | `agents/publisher.py`（待建）|
+
+---
+
+## 十、治理（DAO-lite）
+
+決策分級、投票、AI agent 權限邊界以 `GOVERNANCE.md` 為準。Claude Code 必守：
+- 只開 PR / proposal issue，不合併、不 approve、不投票
+- PR 描述標註等級（`governance: T0/T1/T2/T3`），無法判斷時往上一級
+- 不修改 `GOVERNANCE.md`、`.github/CODEOWNERS`，除非對應 SIP 已通過
