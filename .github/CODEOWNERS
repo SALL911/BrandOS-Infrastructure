@@ -1,0 +1,19 @@
+# CODEOWNERS — 審查責任對照（治理規則見 GOVERNANCE.md）
+# 新增 Maintainer 需經 T2 提案；修改本檔需 T3 提案。
+
+*                               @SALL911
+
+# T3 憲章級
+/GOVERNANCE.md                  @SALL911
+/.github/CODEOWNERS             @SALL911
+/CLAUDE.md                      @SALL911
+
+# T1：schema / migration / CI
+/supabase/                      @SALL911
+/database/                      @SALL911
+/.github/workflows/             @SALL911
+
+# T2：方法論與定位
+/docs/BCI_METHODOLOGY.md        @SALL911
+/docs/POSITIONING.md            @SALL911
+/docs/governance/               @SALL911
