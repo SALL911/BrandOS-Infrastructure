@@ -53,6 +53,16 @@ from geo_audit import ENGINES, analyze_mention  # noqa: E402
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PROMPTS_DIR = REPO_ROOT / "prompts"
 
+# 各引擎實際呼叫的模型，與 geo_audit.py 的 adapter 保持一致。
+# 方法論揭露要求記錄模型版本，所以這裡不能留空字串。
+# 改 adapter 的模型時這張表要一起改，否則報告會標錯版本。
+ENGINE_MODELS = {
+    "gemini": "gemini-1.5-flash",
+    "claude": "claude-haiku-4-5-20251001",
+    "openai": "gpt-4o-mini",
+    "perplexity": "sonar",
+}
+
 # 每次呼叫之間的間隔（秒），避免觸發引擎 rate limit
 CALL_INTERVAL = float(os.environ.get("AIVI_CALL_INTERVAL", "1.5"))
 
@@ -182,6 +192,9 @@ def main() -> int:
                   "依合規規則拒絕採樣。", file=sys.stderr)
             return 2
 
+    sb_configured = bool(os.environ.get("SUPABASE_URL")
+                         and os.environ.get("SUPABASE_SERVICE_ROLE_KEY"))
+
     wanted = [e.strip() for e in os.environ.get(
         "AIVI_ENGINES", ",".join(ENGINES)).split(",") if e.strip()]
     engines = [e for e in wanted if e in ENGINES and os.environ.get(ENGINES[e][0])]
@@ -215,6 +228,11 @@ def main() -> int:
         "status": "running",
     }
     run_id = sb_insert_one("aivi_runs", {k: v for k, v in run_row.items() if v is not None})
+    if sb_configured and not run_id:
+        print("ERROR: Supabase 已設定但 aivi_runs 寫入失敗，中止採樣。"
+              "否則 80 次 API 呼叫的結果只會留在 runner 本機並隨 job 消失。",
+              file=sys.stderr)
+        return 3
 
     records: list[dict] = []
     errors = 0
@@ -247,7 +265,7 @@ def main() -> int:
                     "latency_ms": latency,
                     "error": error,
                     "mentioned": mentioned,
-                    "rank_position": analysis.get("rank"),
+                    "rank_position": analysis.get("rank_position"),
                     "sentiment": analysis.get("sentiment"),
                     "competitors": analysis.get("competitors", []),
                     "cited_urls": extract_urls(text),
@@ -260,15 +278,17 @@ def main() -> int:
                         "run_id": run_id,
                         "prompt_id": rec["prompt_id"],
                         "prompt_text": rec["prompt_text"],
+                        "intent": rec["intent"],
                         "locale": locale,
                         "engine": engine,
-                        "model_version": os.environ.get(f"{engine.upper()}_MODEL", ""),
+                        "model_version": (os.environ.get(f"{engine.upper()}_MODEL")
+                                          or ENGINE_MODELS.get(engine, "")),
                         "sampled_via": "api",
                         "response_text": text,
                         "latency_ms": latency,
                         "error": error,
                     })
-                    if response_id and not error:
+                    if response_id:
                         sb_insert_one("aivi_mentions", {
                             "response_id": response_id,
                             "brand_id": brand_id,
@@ -318,9 +338,16 @@ def main() -> int:
     }
 
     if run_id:
+        if errors == 0:
+            run_status = "completed"
+        elif errors >= len(records):
+            run_status = "failed"
+        else:
+            run_status = "partial"
         sb_patch("aivi_runs", f"id=eq.{run_id}", {
             "finished_at": datetime.now(timezone.utc).isoformat(),
-            "status": "completed" if errors < len(records) else "failed",
+            "status": run_status,
+            "error": (f"{errors}/{len(records)} 次採樣失敗" if errors else None),
         })
 
     out_dir.mkdir(parents=True, exist_ok=True)

@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS aivi_runs (
   finished_at     TIMESTAMPTZ,
   engines         TEXT[] DEFAULT '{}',
   prompt_count    INTEGER,
-  status          VARCHAR(20) DEFAULT 'running',          -- running / completed / failed
+  status          VARCHAR(20) DEFAULT 'running',          -- running / completed / partial / failed
   error           TEXT
 );
 
@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS aivi_responses (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   run_id          UUID REFERENCES aivi_runs(id) ON DELETE CASCADE,
   prompt_id       VARCHAR(50),                    -- 對應 prompt_sets.prompts[].id
+  intent          VARCHAR(30),                    -- brand / category / comparison / purchase
   prompt_text     TEXT NOT NULL,
   locale          VARCHAR(10),
   engine          VARCHAR(30) NOT NULL,           -- openai / gemini / claude / perplexity / google_aio
@@ -74,6 +75,10 @@ CREATE TABLE IF NOT EXISTS aivi_responses (
   error           TEXT,
   sampled_at      TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 自我修復：若本 migration 的舊版已套用，補上後來新增的欄位
+ALTER TABLE aivi_responses
+  ADD COLUMN IF NOT EXISTS intent VARCHAR(30);
 
 CREATE INDEX IF NOT EXISTS idx_aivi_responses_run ON aivi_responses(run_id);
 
