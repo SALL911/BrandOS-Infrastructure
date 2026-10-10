@@ -1,0 +1,122 @@
+name: AIVI Seed Brand
+
+# 從 Actions 頁籤執行 onboarding 第 2–3 步（建品牌 + 灌鎖版題庫），
+# 不需要在本機放 Supabase 憑證。
+# 題庫要先存在 repo 的 prompts/<slug>/ 底下。
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Brand slug（對應 prompts/<slug>/）'
+        required: true
+        default: 'symcio'
+      name:
+        description: '品牌正式名稱'
+        required: true
+        default: 'Symcio'
+      name_en:
+        description: '英文名稱（選填）'
+        required: false
+      domain:
+        description: '官網域名（選填）'
+        required: false
+        default: 'symcio.tw'
+      industry:
+        required: false
+        default: 'technology'
+      status:
+        description: 'tracking_status（poc / subscription 需要下方授權編號）'
+        required: false
+        default: 'baseline'
+        type: choice
+        options: [prospect, baseline, poc, subscription, paused]
+      aliases:
+        description: '別名，逗號分隔（選填）'
+        required: false
+      competitors:
+        description: '競品，逗號分隔（選填）'
+        required: false
+      prompt_version:
+        required: false
+        default: 'v1'
+      lock_days:
+        description: '題庫鎖版天數'
+        required: false
+        default: '90'
+      dry_run:
+        description: '只印計畫，不寫 DB'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aivi-seed
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    name: Create brand and locked prompt sets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Seed brand
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # poc / subscription 必填；腳本在缺少時會以 exit 2 擋下
+          CONSENT_REF: ${{ secrets.AIVI_CONSENT_REF }}
+          DPA_ID: ${{ secrets.AIVI_DPA_ID }}
+        run: |
+          set -euo pipefail
+          ARGS=(--slug "${{ inputs.slug }}" --name "${{ inputs.name }}")
+          ARGS+=(--industry "${{ inputs.industry }}")
+          ARGS+=(--status "${{ inputs.status }}")
+          ARGS+=(--prompt-version "${{ inputs.prompt_version }}")
+          ARGS+=(--lock-days "${{ inputs.lock_days }}")
+          [ -n "${{ inputs.name_en }}" ] && ARGS+=(--name-en "${{ inputs.name_en }}")
+          [ -n "${{ inputs.domain }}" ]  && ARGS+=(--domain "${{ inputs.domain }}")
+          [ "${{ inputs.dry_run }}" = "true" ] && ARGS+=(--dry-run)
+
+          # 逗號分隔的別名／競品攤成可重複的旗標
+          IFS=',' read -ra ALIASES <<< "${{ inputs.aliases }}"
+          for a in "${ALIASES[@]:-}"; do
+            a="$(echo "$a" | xargs)"; [ -n "$a" ] && ARGS+=(--alias "$a")
+          done
+          IFS=',' read -ra COMPS <<< "${{ inputs.competitors }}"
+          for c in "${COMPS[@]:-}"; do
+            c="$(echo "$c" | xargs)"; [ -n "$c" ] && ARGS+=(--competitor "$c")
+          done
+
+          # poc / subscription 時把 secret 裡的授權編號帶進去
+          if [ "${{ inputs.status }}" = "poc" ] || [ "${{ inputs.status }}" = "subscription" ]; then
+            if [ -z "${CONSENT_REF:-}" ] || [ -z "${DPA_ID:-}" ]; then
+              echo "::error::status=${{ inputs.status }} 需要 AIVI_CONSENT_REF 與 AIVI_DPA_ID secrets"
+              exit 2
+            fi
+            ARGS+=(--consent-ref "$CONSENT_REF" --dpa-id "$DPA_ID")
+          fi
+
+          python scripts/aivi_seed_brand.py "${ARGS[@]}"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## AIVI Seed Brand"
+            echo "- Slug: ${{ inputs.slug }}"
+            echo "- Status: ${{ inputs.status }}"
+            echo "- Dry run: ${{ inputs.dry_run }}"
+            echo "- Job: ${{ job.status }}"
+            echo ""
+            echo "成功後請把 log 裡印出的 brand id 設為 repo variable \`AIVI_BRAND_ID\`。"
+          } >> "$GITHUB_STEP_SUMMARY"
