@@ -154,6 +154,11 @@ python scripts/aivi_seed_brand.py --slug acme --name "艾克美" --name-en Acme 
 
    題庫先放在 `prompts/acme/v1.zh-TW.json` 與 `v1.en.json`；腳本會檢查題目數與
    id 重複，並印出要填進 `AIVI_BRAND_ID` 的值。加 `--dry-run` 可先看會做什麼。
+
+   不想在本機放 Supabase 憑證的話，走 Actions 頁籤的 **AIVI Seed Brand**
+   （`.github/workflows/aivi-seed.yml`）執行同一支腳本，參數一樣，
+   `dry_run` 預設 `true`。poc / subscription 的授權編號從
+   `AIVI_CONSENT_REF` / `AIVI_DPA_ID` secrets 帶入。
 4. 手動觸發 `aivi-weekly.yml`（`run_type=baseline`）跑期初基線
 5. 抽驗 10% mentions，填 `verified_by`
 6. 交期初報告（含方法論揭露段）
