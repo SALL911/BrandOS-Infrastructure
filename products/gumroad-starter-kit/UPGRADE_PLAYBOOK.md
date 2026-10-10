@@ -1,6 +1,6 @@
 # 升級話術手冊（$39 → $299，補差額 $260）
 
-用於收據信以外的接觸點。升級連結：`<UPGRADE_URL>`（見 LAUNCH.md 步驟 1）。
+用於收據信以外的接觸點。升級連結：`https://symcio.tw/upgrade`（見 LAUNCH.md 步驟 1）。
 所有時程承諾以「建置時段開始、權限備妥後」起算。
 
 ## 場景一：購買完成（收據信）
@@ -8,9 +8,9 @@
 
 ## 場景二：買家發問或遇到 Bug
 
-**中**：「完全理解，HubSpot Private App 權限與 Vercel 執行環境常有細節陷阱。如果你希望這兩天就讓系統接單，建議改用專人建置：先前的 $39 全額折抵，補差額 $260，我直接連線接手排除問題，並提供 14 天 Telegram / LINE 支援。升級連結：<UPGRADE_URL>」
+**中**：「完全理解，HubSpot Private App 權限與 Vercel 執行環境常有細節陷阱。如果你希望這兩天就讓系統接單，建議改用專人建置：先前的 $39 全額折抵，補差額 $260，我直接連線接手排除問題，並提供 14 天 Telegram / LINE 支援。升級連結：https://symcio.tw/upgrade」
 
-**EN**: "Totally get it — HubSpot scopes and Vercel runtime settings come with tricky edge cases. If you'd rather have this live by tomorrow, I can take it over end-to-end. Your $39 is fully credited, so it's $260 to upgrade, including 14 days of direct messaging support: <UPGRADE_URL>"
+**EN**: "Totally get it — HubSpot scopes and Vercel runtime settings come with tricky edge cases. If you'd rather have this live by tomorrow, I can take it over end-to-end. Your $39 is fully credited, so it's $260 to upgrade, including 14 days of direct messaging support: https://symcio.tw/upgrade"
 
 ## 場景三：高意向買家（ROI）
 
