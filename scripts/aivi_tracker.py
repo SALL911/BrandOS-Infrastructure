@@ -229,13 +229,17 @@ def main() -> int:
     }
     run_id = sb_insert_one("aivi_runs", {k: v for k, v in run_row.items() if v is not None})
     if sb_configured and not run_id:
-        print("ERROR: Supabase 已設定但 aivi_runs 寫入失敗，中止採樣。"
-              "否則 80 次 API 呼叫的結果只會留在 runner 本機並隨 job 消失。",
-              file=sys.stderr)
+        print(f"ERROR: Supabase 已設定但 aivi_runs 寫入失敗，中止採樣。"
+              f"否則 {total_prompts * len(engines)} 次 API 呼叫的結果只會留在 "
+              "runner 本機並隨 job 消失。", file=sys.stderr)
         return 3
 
     records: list[dict] = []
     errors = 0
+    # 逐列寫入失敗要累計。Supabase 已設定卻寫不進去（例如 migration 還沒套用、
+    # 欄位不存在、RLS 擋住）時，採樣結果會靜默消失在 runner 上，
+    # job 卻顯示綠燈——那比直接失敗更糟。
+    db_failures = 0
 
     for locale, ps in sets.items():
         for p in ps["prompts"]:
@@ -288,8 +292,10 @@ def main() -> int:
                         "latency_ms": latency,
                         "error": error,
                     })
-                    if response_id:
-                        sb_insert_one("aivi_mentions", {
+                    if not response_id:
+                        db_failures += 1
+                    else:
+                        if not sb_insert_one("aivi_mentions", {
                             "response_id": response_id,
                             "brand_id": brand_id,
                             "mentioned": mentioned,
@@ -297,7 +303,8 @@ def main() -> int:
                             "sentiment": rec["sentiment"],
                             "cited_urls": rec["cited_urls"],
                             "competitors": rec["competitors"],
-                        })
+                        }):
+                            db_failures += 1
 
                 flag = "HIT " if mentioned else ("ERR " if error else "miss")
                 print(f"  {flag} [{locale}/{engine}] {p.get('id')} ({latency} ms)")
@@ -319,6 +326,7 @@ def main() -> int:
         "disclosure": "API 採樣，非消費者介面重現；結果不等同 ChatGPT/Gemini 消費者版畫面。",
         "sample_size": len(sampled),
         "error_count": errors,
+        "db_write_failures": db_failures,
         "presence_rate_pct": presence,
         "avg_rank": round(sum(ranks) / len(ranks), 2) if ranks else None,
         "by_engine": {
@@ -344,10 +352,16 @@ def main() -> int:
             run_status = "failed"
         else:
             run_status = "partial"
+        notes = []
+        if errors:
+            notes.append(f"{errors}/{len(records)} 次採樣失敗")
+        if db_failures:
+            notes.append(f"{db_failures} 列寫入失敗")
+            run_status = "partial" if run_status == "completed" else run_status
         sb_patch("aivi_runs", f"id=eq.{run_id}", {
             "finished_at": datetime.now(timezone.utc).isoformat(),
             "status": run_status,
-            "error": (f"{errors}/{len(records)} 次採樣失敗" if errors else None),
+            "error": ("；".join(notes) or None),
         })
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -361,6 +375,13 @@ def main() -> int:
     print(f"\n提及率 {presence}%（{len(hits)}/{len(sampled)}）"
           f"｜平均排名 {summary['avg_rank']}｜錯誤 {errors}")
     print(f"報告：{out_path}")
+
+    if db_failures:
+        print(f"ERROR: {db_failures} 列未能寫入 Supabase（本機報告仍已產出：{out_path}）。"
+              "常見原因是 migration 未套用或欄位不符——修好後重跑，"
+              "否則這次採樣不會進入趨勢資料。", file=sys.stderr)
+        return 4
+
     return 0
 
 
