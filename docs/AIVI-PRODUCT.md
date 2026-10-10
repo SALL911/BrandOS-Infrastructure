@@ -54,6 +54,7 @@ AIVI Baseline（免費・示範版・非公開評等）
 | 免費單次診斷 | `scripts/geo_audit.py` + `.github/workflows/geo-audit.yml` | 漏斗入口（依產業出題） |
 | 訂閱週期採樣 | `scripts/aivi_tracker.py` + `.github/workflows/aivi-weekly.yml` | 依品牌鎖版 prompt bank |
 | 鎖版題庫 | `prompts/<slug>/<version>.<locale>.json` | 改題必須開新版 |
+| 品牌建檔 | `scripts/aivi_seed_brand.py` | onboarding 第 2–3 步一條命令 |
 | 六維度計分 / 月報 | `scripts/aivi_score.py` + `.github/workflows/aivi-monthly.yml` | 權重來自 Secrets，月報 HTML |
 | 品牌資本分數 | `scripts/bci_engine.py` + `.github/workflows/bci-daily.yml` | 權重來自 Secrets |
 | 資料層 | `supabase/migrations/20260830000000_aivi_tracking.sql` | runs / responses / mentions / scores |
@@ -142,8 +143,17 @@ supabase db push   # 套用 20260830000000_aivi_tracking.sql
 ## 五、新客戶 onboarding 流程（簽約 → 第一份報告）
 
 1. 簽 MSA + DPA → 取得 `consent_ref` / `dpa_id`
-2. `INSERT brands`（含 `aliases`、`competitors`、`tracking_status='poc'`）
-3. 產出 40 題 × 中英 prompt bank，`INSERT prompt_sets`，`locked_until = 今天 + 90 天`
+2–3. 建品牌與鎖版題庫（一條命令，缺授權會以 exit 2 擋下）：
+
+```bash
+python scripts/aivi_seed_brand.py --slug acme --name "艾克美" --name-en Acme \
+    --domain acme.com.tw --industry technology --status poc \
+    --consent-ref MSA-2026-014 --dpa-id DPA-2026-014 \
+    --alias "Acme Taiwan" --competitor 競品甲 --competitor 競品乙
+```
+
+   題庫先放在 `prompts/acme/v1.zh-TW.json` 與 `v1.en.json`；腳本會檢查題目數與
+   id 重複，並印出要填進 `AIVI_BRAND_ID` 的值。加 `--dry-run` 可先看會做什麼。
 4. 手動觸發 `aivi-weekly.yml`（`run_type=baseline`）跑期初基線
 5. 抽驗 10% mentions，填 `verified_by`
 6. 交期初報告（含方法論揭露段）
