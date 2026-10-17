@@ -19,7 +19,7 @@ test.describe("Homepage", () => {
 
     // 6 modules present
     await expect(page.getByRole("heading", { name: "AI Visibility Index" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /運動產業/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /贊助成效量化資料/ })).toBeVisible();
   });
 
   test("nav menu links work (desktop)", async ({ page }) => {
