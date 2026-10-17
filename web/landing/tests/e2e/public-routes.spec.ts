@@ -6,7 +6,7 @@ import { test, expect } from "@playwright/test";
  */
 
 const STATIC_ROUTES = [
-  { path: "/", title: /Symcio BrandOS/ },
+  { path: "/", title: /Symcio · BrandOS/ },
   { path: "/about", title: /關於全識/ },
   { path: "/pricing", title: /定價方案/ },
   { path: "/tools", title: /工具套件/ },
