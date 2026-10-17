@@ -48,7 +48,7 @@ Use the **fastest cost-efficient model** from each vendor's current lineup. As o
 
 - OpenAI: `gpt-4o-mini`
 - Anthropic: `claude-haiku-4-5-20251001`
-- Google: `gemini-1.5-flash`
+- Google: `gemini-3.8-flash`（2026-10 起；此前為已下線的 `gemini-1.5-flash`）
 - Perplexity: `sonar`
 
 Rationale: ABVI measures brand representation, not reasoning quality. Cheapest-capable-model is the right tradeoff.

@@ -48,7 +48,7 @@ from urllib import request
 from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from geo_audit import ENGINES, analyze_mention  # noqa: E402
+from geo_audit import ENGINES, GEMINI_MODEL, analyze_mention  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PROMPTS_DIR = REPO_ROOT / "prompts"
@@ -57,7 +57,7 @@ PROMPTS_DIR = REPO_ROOT / "prompts"
 # 方法論揭露要求記錄模型版本，所以這裡不能留空字串。
 # 改 adapter 的模型時這張表要一起改，否則報告會標錯版本。
 ENGINE_MODELS = {
-    "gemini": "gemini-1.5-flash",
+    "gemini": GEMINI_MODEL,
     "claude": "claude-haiku-4-5-20251001",
     "openai": "gpt-4o-mini",
     "perplexity": "sonar",
@@ -150,12 +150,16 @@ URL_RE = None
 
 
 def extract_urls(text: str) -> list[str]:
-    """抓回覆中的引用網址（月報「引用來源清單」用）。"""
+    """抓回覆中的引用網址（月報「引用來源清單」用）。
+
+    引擎 API 回傳的結構化引用（目前僅 Perplexity）排在前面，
+    其後補上內文中出現的網址。
+    """
     global URL_RE
     if URL_RE is None:
         import re
         URL_RE = re.compile(r"https?://[^\s\)\]\>,;\"']+")
-    seen: list[str] = []
+    seen: list[str] = list(dict.fromkeys(getattr(text, "citations", None) or []))
     for u in URL_RE.findall(text or ""):
         u = u.rstrip(".,;:)")
         if u not in seen:
