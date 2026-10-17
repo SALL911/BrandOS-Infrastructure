@@ -63,6 +63,19 @@ def _post(url: str, headers: dict, body: dict, timeout: int = 60) -> dict:
 # ---------- AI engine adapters ----------
 # Each returns plain text response or raises RuntimeError.
 
+# gemini-1.5-flash 已下線（2026-10 起每次呼叫 HTTP 404）。
+# 可用 GEMINI_MODEL 覆寫；aivi_tracker 以同一變數記錄 model_version。
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash"
+
+
+def _gemini_text(resp: dict) -> str:
+    """串接 candidates[0] 的文字 parts，略過 thought parts（3.x 模型可能回傳多個 part）。"""
+    parts = resp["candidates"][0]["content"]["parts"]
+    text = "".join(p["text"] for p in parts if "text" in p and not p.get("thought"))
+    if not text:
+        raise KeyError("no text parts")
+    return text
+
 
 class EngineText(str):
     """引擎回覆文字，額外攜帶 API 回傳的結構化引用網址。
@@ -94,7 +107,7 @@ def _perplexity_citations(resp: dict) -> list[str]:
 def query_gemini(prompt: str, api_key: str) -> str:
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-1.5-flash:generateContent?key={api_key}"
+        f"{GEMINI_MODEL}:generateContent?key={api_key}"
     )
     resp = _post(
         url,
@@ -104,7 +117,7 @@ def query_gemini(prompt: str, api_key: str) -> str:
     if "_error" in resp:
         raise RuntimeError(f"gemini: {resp['_error']}")
     try:
-        return resp["candidates"][0]["content"]["parts"][0]["text"]
+        return _gemini_text(resp)
     except (KeyError, IndexError):
         raise RuntimeError(f"gemini: unexpected response {resp}")
 
