@@ -150,12 +150,16 @@ URL_RE = None
 
 
 def extract_urls(text: str) -> list[str]:
-    """抓回覆中的引用網址（月報「引用來源清單」用）。"""
+    """抓回覆中的引用網址（月報「引用來源清單」用）。
+
+    引擎 API 回傳的結構化引用（目前僅 Perplexity）排在前面，
+    其後補上內文中出現的網址。
+    """
     global URL_RE
     if URL_RE is None:
         import re
         URL_RE = re.compile(r"https?://[^\s\)\]\>,;\"']+")
-    seen: list[str] = []
+    seen: list[str] = list(dict.fromkeys(getattr(text, "citations", None) or []))
     for u in URL_RE.findall(text or ""):
         u = u.rstrip(".,;:)")
         if u not in seen:

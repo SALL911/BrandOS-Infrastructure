@@ -63,6 +63,34 @@ def _post(url: str, headers: dict, body: dict, timeout: int = 60) -> dict:
 # ---------- AI engine adapters ----------
 # Each returns plain text response or raises RuntimeError.
 
+
+class EngineText(str):
+    """引擎回覆文字，額外攜帶 API 回傳的結構化引用網址。
+
+    仍是 str，既有呼叫端（analyze_mention、寫 DB）不需改動；
+    需要引用來源的呼叫端以 getattr(text, "citations", []) 取用。
+    """
+
+    citations: list[str]
+
+    def __new__(cls, text: str, citations: list[str] | None = None) -> "EngineText":
+        obj = super().__new__(cls, text)
+        obj.citations = list(citations or [])
+        return obj
+
+
+def _perplexity_citations(resp: dict) -> list[str]:
+    """取 sonar 回傳的引用網址：優先 search_results，退回舊版 citations 欄位。"""
+    urls: list[str] = []
+    for item in resp.get("search_results") or []:
+        url = item.get("url") if isinstance(item, dict) else None
+        if url and url not in urls:
+            urls.append(url)
+    for url in resp.get("citations") or []:
+        if isinstance(url, str) and url not in urls:
+            urls.append(url)
+    return urls
+
 def query_gemini(prompt: str, api_key: str) -> str:
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
@@ -139,9 +167,10 @@ def query_perplexity(prompt: str, api_key: str) -> str:
     if "_error" in resp:
         raise RuntimeError(f"perplexity: {resp['_error']}")
     try:
-        return resp["choices"][0]["message"]["content"]
+        text = resp["choices"][0]["message"]["content"]
     except (KeyError, IndexError):
         raise RuntimeError(f"perplexity: unexpected response {resp}")
+    return EngineText(text, _perplexity_citations(resp))
 
 
 ENGINES: dict[str, tuple[str, Any]] = {
