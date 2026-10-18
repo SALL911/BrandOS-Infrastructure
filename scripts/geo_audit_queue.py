@@ -48,6 +48,7 @@ from typing import Any
 from urllib import request
 from pathlib import Path
 from urllib.error import HTTPError, URLError
+from urllib.parse import quote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from geo_audit import GEMINI_MODEL, _gemini_text  # noqa: E402
@@ -267,12 +268,13 @@ def preflight_supabase() -> dict:
 
 def fetch_prospects(limit: int, rescan_days: int) -> list[dict]:
     """撈 status='prospect' 且 (last_scanned_at is NULL 或 > rescan_days 天前)"""
-    # Supabase PostgREST 的 or filter 語法
+    # PostgREST query string 裡 `+` 會被解碼為空格，ISO 時區 `+00:00` 必須先 encode
+    cutoff = quote(_cutoff(rescan_days), safe="")
     url = (
         f"{SUPABASE_URL}/rest/v1/brands"
         f"?select=id,name,domain,industry,primary_email,first_scan_sent_at,last_scanned_at"
         f"&status=eq.prospect"
-        f"&or=(last_scanned_at.is.null,last_scanned_at.lt.{_cutoff(rescan_days)})"
+        f"&or=(last_scanned_at.is.null,last_scanned_at.lt.{cutoff})"
         f"&order=created_at.asc"
         f"&limit={limit}"
     )
