@@ -48,7 +48,7 @@
 | Google Workspace 信箱 | `director-bot@symcio.tw` | `content-bot@symcio.tw` | `growth-bot@symcio.tw` | `eng-bot@symcio.tw` |
 | GitHub App | `symcio-director`（issues: write, pull_requests: write 僅 review）| `symcio-content`（contents: write 限 `content/**` 經 PR）| `symcio-growth`（issues: write）| `symcio-engineer`（contents / pull_requests / actions: write）|
 | Notion integration | 讀全部、寫 `Inbox` / `Tasks` | 讀 brief、寫 `Content Drafts` | 讀 CRM 草稿 | 讀 `Specs` |
-| Supabase role | `bot_director`：`agent_tasks` RW、其餘 R | `bot_content`：`geo_content` INSERT/UPDATE（僅能寫 status=`draft`）| `bot_growth`：`leads` / `subscriptions` R、`engagement_signals` W | migration 走 CI，不給直連寫入 |
+| Supabase role | `bot_director`：`agent_tasks` 讀/新增/改狀態；`knowledge_nodes`、`memory_contexts` 新增 | `bot_content`：`geo_content` 只能新增/修改 `draft` 列，不能改 status | `bot_growth`：漏斗表唯讀（不含 Stripe raw_event）；`leads` 只能改 status/notes | migration 走 CI，不給直連寫入 |
 | HubSpot private app | — | — | `growth-bot`（contacts / deals write、不可刪除）| — |
 | Composio entity | — | `content`（Buffer / Gmail 草稿）| `growth`（HubSpot / Gmail 草稿）| — |
 | 對外寄信 | 不寄 | 不寄 | **只建草稿**，人工按送出 | 不寄 |
@@ -56,6 +56,15 @@
 月成本估算：Google Workspace 4 席 × Business Starter ≈ US$28–40；GitHub App / Notion integration / HubSpot private app 免費。
 
 ### 3.2 祕密管理
+- 資料庫權限定義在 `supabase/migrations/20261105000000_bot_roles.sql`，行為測試 `supabase/tests/bot_roles_test.sql`（CI 必跑）。全部無 DELETE。
+- 登入帳號不進 repo。創辦人在 Supabase SQL Editor 執行（每個助手一次，密碼由密碼管理器產生）：
+  ```sql
+  CREATE ROLE director_bot LOGIN PASSWORD '<產生的密碼>' IN ROLE bot_director;
+  CREATE ROLE content_bot  LOGIN PASSWORD '<產生的密碼>' IN ROLE bot_content;
+  CREATE ROLE growth_bot   LOGIN PASSWORD '<產生的密碼>' IN ROLE bot_growth;
+  ```
+  pooler 連線字串使用者名稱為 `<帳號>.<project_ref>`，分別存成 GitHub Secrets `DIRECTOR_SUPABASE_DB_URL`、`CONTENT_SUPABASE_DB_URL`、`GROWTH_SUPABASE_DB_URL`。
+- 停用助手：`ALTER ROLE content_bot NOLOGIN;`
 - 所有 key 放 GitHub Secrets，命名 `<BOT>_<SYSTEM>_KEY`，例：`CONTENT_NOTION_KEY`、`GROWTH_HUBSPOT_TOKEN`
 - 每把 key 只掛在使用它的 workflow 的 `env:`，不放 repo 層級共用
 - 每季輪替；離職/停用助手 = 撤銷其 GitHub App 安裝 + 停用信箱

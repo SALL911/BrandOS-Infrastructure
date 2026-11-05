@@ -399,6 +399,16 @@ CREATE TABLE brand_projects (
 
 ---
 
+## AI 助手資料庫角色（migration 20261105000000_bot_roles.sql）
+
+| 群組角色 | 可讀 | 可寫 | 限制 |
+|---------|------|------|------|
+| `bot_director` | agent_tasks、workflow_runs、geo_content、knowledge_nodes、memory_contexts | agent_tasks INSERT + UPDATE(status, output)；knowledge_nodes / memory_contexts INSERT | 不可讀 leads / members |
+| `bot_content` | geo_content、news_items、aivi_scores_monthly、bci_snapshots、knowledge_nodes；agent_tasks（僅 agent='content-operator'）| geo_content INSERT（status 必須 'draft'）、UPDATE 內容欄位（僅 draft 列）| 不可改 status；不可讀 leads |
+| `bot_growth` | leads、subscriptions、subscription_events（不含 raw_event）、visibility_reports、aivi_billing_plans、aivi_scores_monthly、newsletter_subscribers、brands、engagement_signals、geo_content（僅 published）；agent_tasks（僅 agent='growth-operator'）| leads UPDATE(status, notes) | 不可讀 members |
+
+三者皆無 DELETE。登入帳號以 `CREATE ROLE <x>_bot LOGIN ... IN ROLE bot_<x>` 手動建立，不進 repo。行為測試：`supabase/tests/bot_roles_test.sql`。
+
 ## 系統關聯圖
 
 ```
