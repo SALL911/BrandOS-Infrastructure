@@ -84,7 +84,7 @@ Issue(bot:engineer) → product-engineer 開 PR → director review → 人工 m
 
 ## 四、技能包（邊幹活邊寫）
 
-- 位置：`.claude/skills/<bot>-<task>/SKILL.md`，模板見 `.claude/skills/_template/SKILL.md`
+- 位置：`.claude/skills/<bot>-<task>/SKILL.md`，模板見 `docs/ai-team/SKILL_TEMPLATE.md`
 - 觸發條件（任一成立就必須寫或更新）：
   1. 同一操作第 2 次出現
   2. 創辦人修正過一次輸出
@@ -115,4 +115,4 @@ Issue(bot:engineer) → product-engineer 開 PR → director review → 人工 m
 | `.claude/agents/content-operator.md` | 內容官 |
 | `.claude/agents/growth-operator.md` | 增長官 |
 | `.claude/agents/product-engineer.md` | 產品工程師 |
-| `.claude/skills/_template/SKILL.md` | 技能包模板 |
+| `docs/ai-team/SKILL_TEMPLATE.md` | 技能包模板 |
