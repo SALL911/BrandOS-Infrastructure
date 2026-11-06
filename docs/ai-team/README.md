@@ -76,8 +76,8 @@
 錄音轉逐字稿 → 貼給 director → 複述確認(Y) → GitHub Issue（label: bot:*）+ agent_tasks 列
                                                      │
 [B 每日內容]                                          ▼
-Notion brief / news_items → content-operator → geo_content(status=draft)
-  → 人工在 Notion 勾 approved → notion-sync → geo-publisher(cron) → 排程工具
+news_items / knowledge_nodes → content-operator（07:00 cron）→ geo_content(status=draft) + 審稿 PR
+  → 人工在 PR 改字 / 刪檔 / merge → content-approve → approved / archived → geo-publisher（12:00）
 
 [C 試用轉付費]
 Typeform / 網站註冊 → leads → lead-scorer(cron) → composio-hubspot-sync
@@ -87,7 +87,7 @@ Typeform / 網站註冊 → leads → lead-scorer(cron) → composio-hubspot-syn
 Issue(bot:engineer) → product-engineer 開 PR → director review → 人工 merge → supabase-deploy
 ```
 
-人工只剩四個按鈕：**語音確認 Y、內容 approved、寄信送出、PR merge**。其餘搬運由 workflow 完成。
+人工只剩四個按鈕：**語音確認 Y、內容審稿 PR merge、寄信送出、程式 PR merge**。其餘搬運由 workflow 完成。
 
 ---
 
@@ -109,7 +109,7 @@ Issue(bot:engineer) → product-engineer 開 PR → director review → 人工 m
 |----|------|------|
 | D1 | 開 4 個 Workspace 帳號；建 4 個 GitHub App；GitHub labels `bot:director/content/growth/engineer` | 帳號可登入、App 已安裝 |
 | D2 | 上線 `director`（Claude.ai Project + Claude Code subagent）| 用一段真實語音逐字稿跑通複述確認 → 開出 Issue |
-| D3–D5 | 上線 `content-operator`；建 Supabase role `bot_content` migration | 連續 3 天內容 08:00 前進 `draft` |
+| D3–D5 | 建 `content_bot` 登入帳號 + Secret `CONTENT_SUPABASE_DB_URL`；手動觸發 `content-operator.yml`（dry_run=true → false）| 連續 3 天 08:00 前出現審稿 PR |
 | D6–D7 | director 對 content-operator 做第一次「實習生考核」| 一次通過率 ≥ 70% |
 | D8–D10 | 上線 `growth-operator`；HubSpot private app；Composio entity | 新 lead 24h 內有草稿 |
 | D11–D14 | 上線 `product-engineer` | 第 1 個 PR 經 director review 後合併 |
@@ -125,3 +125,6 @@ Issue(bot:engineer) → product-engineer 開 PR → director review → 人工 m
 | `.claude/agents/growth-operator.md` | 增長官 |
 | `.claude/agents/product-engineer.md` | 產品工程師 |
 | `docs/ai-team/SKILL_TEMPLATE.md` | 技能包模板 |
+| `scripts/content_operator.py` + `.github/workflows/content-operator.yml` | 內容官每日草稿 + 審稿 PR |
+| `scripts/content_approve.py` + `.github/workflows/content-approve.yml` | 審稿 PR merge → approved / archived |
+| `supabase/migrations/20261105000000_bot_roles.sql` | 助手專屬 DB 角色 |
