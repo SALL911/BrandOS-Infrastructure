@@ -97,6 +97,17 @@ jobs:
               );
           " | grep -q '^19$' || (echo "Missing tables" && exit 1)
 
+      - name: Run SQL behaviour tests (supabase/tests)
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -e
+          shopt -s nullglob
+          for f in supabase/tests/*.sql; do
+            echo "==> Testing $f"
+            psql -h localhost -U postgres -d brandos_ci -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+
       - name: Apply seed.sql
         if: hashFiles('supabase/seed.sql') != ''
         env:

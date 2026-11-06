@@ -1,0 +1,59 @@
+name: CRM Sync (Supabase → Attio)
+
+# Supabase 是唯一真相，HubSpot / Attio 只接收不回寫（docs/ai-team/crm-line-meta.md）。
+# HubSpot：composio-hubspot-sync.yml（leads）+ symcio.tw member-sync（members）
+# Attio：本 workflow，每日 03:30 Asia/Taipei，排在 lead-scorer 之後
+
+on:
+  schedule:
+    - cron: '30 19 * * *'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: '同步近 N 天新增 / 更新'
+        required: true
+        default: '2'
+      limit:
+        description: '最多幾筆（0 = 不限；首次建議 1）'
+        required: true
+        default: '0'
+      dry_run:
+        description: 'Dry-run（只印 payload）'
+        required: true
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crm-sync
+  cancel-in-progress: false
+
+jobs:
+  attio:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install 'psycopg[binary]==3.2.*'
+      - name: Sync to Attio
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ATTIO_API_KEY: ${{ secrets.ATTIO_API_KEY }}
+          DAYS: ${{ github.event.inputs.days || '2' }}
+          LIMIT: ${{ github.event.inputs.limit || '0' }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${ATTIO_API_KEY:-}" && "${DRY_RUN:-false}" != "true" ]]; then
+            echo "::warning::ATTIO_API_KEY 未設定，略過 Attio 同步"
+            exit 0
+          fi
+          ARGS=(--days "$DAYS" --limit "$LIMIT")
+          [[ "${DRY_RUN:-false}" == "true" ]] && ARGS+=(--dry-run)
+          python scripts/attio_sync.py "${ARGS[@]}"
