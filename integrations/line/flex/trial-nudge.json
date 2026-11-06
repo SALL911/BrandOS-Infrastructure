@@ -1,0 +1,28 @@
+{
+  "_comment": "試用第 3 天未產出報告的提醒卡（growth-operator 試用未啟用分段）。變數：{{name}} {{days_left}} {{start_url}}。",
+  "type": "flex",
+  "altText": "BrandOS 試用剩 {{days_left}} 天：一步產出第一份 AI 可見度報告",
+  "contents": {
+    "type": "bubble",
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "spacing": "md",
+      "paddingAll": "20px",
+      "contents": [
+        { "type": "text", "text": "BrandOS 試用", "size": "sm", "color": "#2A4D3A", "weight": "bold" },
+        { "type": "text", "text": "{{name}}，試用還剩 {{days_left}} 天", "size": "lg", "weight": "bold", "color": "#1A2E22", "wrap": true },
+        { "type": "text", "text": "輸入品牌名稱與官網，系統會在 ChatGPT、Claude、Gemini、Perplexity 測試並產出第一份報告。", "size": "sm", "color": "#555555", "wrap": true }
+      ]
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "spacing": "sm",
+      "contents": [
+        { "type": "button", "style": "primary", "color": "#2A4D3A", "action": { "type": "uri", "label": "產出第一份報告", "uri": "{{start_url}}" } },
+        { "type": "button", "style": "link", "color": "#2A4D3A", "action": { "type": "message", "label": "需要協助", "text": "真人" } }
+      ]
+    }
+  }
+}

@@ -128,3 +128,4 @@ Issue(bot:engineer) → product-engineer 開 PR → director review → 人工 m
 | `scripts/content_operator.py` + `.github/workflows/content-operator.yml` | 內容官每日草稿 + 審稿 PR |
 | `scripts/content_approve.py` + `.github/workflows/content-approve.yml` | 審稿 PR merge → approved / archived |
 | `supabase/migrations/20261105000000_bot_roles.sql` | 助手專屬 DB 角色 |
+| `docs/ai-team/crm-line-meta.md` | HubSpot × Attio × LINE × Meta 整合與本人設定步驟 |
