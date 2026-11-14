@@ -17,12 +17,11 @@ post_time: Asia/Taipei 09:00 weekday
 
 Symcio 做了一件簡單的事：把「AI 搜尋曝光度」變成可量化的指標。
 
-三個第一：
-• 台灣第一個「AI 曝光可量化系統」
-• 台灣唯一「跨 ChatGPT / Gemini 品牌可見度指標」
-• 全球第一個「AI 搜尋排名監測平台」
+Symcio 做的事：
+• 跨 ChatGPT、Claude、Gemini、Perplexity 量測品牌被提及的比率與排名
+• 方法論公開，可被第三方複核
+• 只量測、不代操
 
-類比：我們是 AI 時代的 SimilarWeb + SEMrush + Bloomberg 合體。
 
 開源方法論已公開：
 github.com/SALL911/BrandOS-Infrastructure
@@ -49,12 +48,10 @@ If your brand ranks first on Google but is invisible in AI, you are operating in
 
 Symcio quantifies this.
 
-Three firsts:
-• Taiwan's first platform for quantifiable AI brand exposure
-• Taiwan's only cross-engine (ChatGPT/Claude/Gemini/Perplexity) visibility index
-• World's first AI-search ranking intelligence platform
-
-We are the SimilarWeb + SEMrush + Bloomberg of the AI era.
+What we do:
+• Measure brand mention rate and ranking across ChatGPT, Claude, Gemini, and Perplexity
+• Publish the methodology so it can be independently checked
+• Measure only; we do not sell optimization
 
 Methodology is open source:
 github.com/SALL911/BrandOS-Infrastructure

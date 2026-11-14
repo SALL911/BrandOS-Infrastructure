@@ -32,7 +32,7 @@ export const DOCS_REGISTRY: DocEntry[] = [
     label: "Symcio 品類定位",
     filename: "POSITIONING.md",
     section: "方法論",
-    summary: "三個第一 + SimilarWeb/SEMrush/Bloomberg 類比座標說明。",
+    summary: "可驗證定位與訊息矩陣。",
   },
   {
     slug: "design-system",

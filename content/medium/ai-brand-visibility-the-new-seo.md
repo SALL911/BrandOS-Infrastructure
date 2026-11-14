@@ -83,13 +83,12 @@ A brand that appears in Gemini but not Claude is misread by every security-consc
 
 ## 4. The solution: Symcio
 
-Symcio is the AI-era SimilarWeb + SEMrush + Bloomberg.
+Symcio measures brand visibility inside AI answer engines.
 
 - **What SimilarWeb did for web traffic, we do for AI answers.**
 - **What SEMrush did for Google rankings, we do for ChatGPT rankings.**
-- **What Bloomberg did for financial data, we do for brand influence in AI.**
 
-We are Taiwan's first platform for quantifiable AI brand exposure, Taiwan's only cross-engine brand-visibility index, and the world's first AI-search ranking intelligence platform.
+We are a Taiwan-based AI visibility measurement service covering ChatGPT, Claude, Gemini, and Perplexity, with an openly published methodology.
 
 ### How to get your first benchmark
 

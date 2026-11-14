@@ -60,6 +60,10 @@ jobs:
           QUEUE_BATCH_SIZE: ${{ github.event.inputs.batch_size || '10' }}
           QUEUE_RESCAN_DAYS: ${{ github.event.inputs.rescan_days || '7' }}
           DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '' }}
+          # Email 署名個人聯絡方式（缺則省略）
+          EMAIL_SIG_PHONE: ${{ secrets.EMAIL_SIG_PHONE }}
+          EMAIL_SIG_LINE: ${{ secrets.EMAIL_SIG_LINE }}
+          EMAIL_SIG_ALT_EMAIL: ${{ secrets.EMAIL_SIG_ALT_EMAIL }}
         run: python scripts/geo_audit_queue.py
 
       - name: Summary

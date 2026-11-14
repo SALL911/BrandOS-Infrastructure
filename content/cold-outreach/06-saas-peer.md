@@ -141,7 +141,7 @@ Hi `[[First Name]]`,
 
 但 2026 年 >50% 的 B2B top-of-funnel 流量來源是 ChatGPT / Claude / Gemini / Perplexity。這個缺口客戶已經在問，`[[Company]]` 2025 roadmap 裡 `[[你能公開查到的線索]]`。
 
-Symcio 是**已經在生產**的 AI Visibility Intelligence 平台——跨 4 引擎，每日，台灣領先、全球 top 10。
+Symcio 是**已經在生產**的 AI Visibility Intelligence 平台——跨 4 引擎，每日更新。
 
 三個路徑可能有興趣：
 

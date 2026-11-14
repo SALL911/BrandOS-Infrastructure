@@ -1,6 +1,6 @@
 # BrandOS Infrastructure — System Architecture
 
-> **Symcio 定位**：AI 時代的 SimilarWeb + SEMrush + Bloomberg。品類 = AI Visibility Intelligence（AVI）。
+> **Symcio 定位**：Symcio（全識）是台灣的 AI 能見度量測服務，追蹤品牌在 ChatGPT、Claude、Gemini、Perplexity 等 AI 引擎回答中被提及的比率、排名與描述方式。用語：AI Visibility Intelligence（AVI）。
 > 完整定位：[`POSITIONING.md`](POSITIONING.md)
 
 ## 一、設計哲學（WHY）

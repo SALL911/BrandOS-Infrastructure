@@ -47,6 +47,8 @@ from datetime import datetime, timezone
 from typing import Any
 from urllib import request
 from pathlib import Path
+
+from email_signature import signature_html
 from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -377,7 +379,7 @@ def send_report_email(to_email: str, brand_name: str, composite: float,
     升級 $299 AI Visibility Audit →
   </a>
   <p style="font-size:11px;color:#6B7280;border-top:1px solid #eee;margin-top:24px;padding-top:16px;">
-    Symcio · AI Visibility Intelligence · <a href="https://symcio.tw" style="color:#6B7280;">symcio.tw</a><br>
+    {signature_html("#6B7280")}<br><br>
     你因在 symcio.tw 提交品牌資料收到此信。若非本人操作請忽略。
   </p>
 </div>

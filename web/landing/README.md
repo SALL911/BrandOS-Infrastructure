@@ -28,7 +28,7 @@ npm run dev
 | `/tools/brand-check` | Typeform 健檢 | `app/tools/brand-check/page.tsx` |
 | `/tools/entity-builder` | GEO 實體建置器 | `app/tools/entity-builder/page.tsx` |
 | `/schema-generator` | Schema.org + Wikidata 產生器 | `app/schema-generator/page.tsx` |
-| `/about` | 關於 · 三個第一 · BCI 方法論 + Typeform | `app/about/page.tsx` |
+| `/about` | 關於 · 定位 · BCI 方法論 + Typeform | `app/about/page.tsx` |
 
 ### 登入 / 註冊
 

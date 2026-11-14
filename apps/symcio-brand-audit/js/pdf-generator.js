@@ -106,7 +106,7 @@
       <div class="pdf-page" style="page-break-after:auto;">
         <h2 style="font-size:18px;border-bottom:2px solid #0a0a0a;padding-bottom:6px;margin-bottom:16px;">六、關於 Symcio</h2>
         <p style="font-size:13px;color:#333;margin-bottom:12px;">
-          Symcio（全識）是台灣第一個 AI 曝光可量化系統。BCI v1.0 方法論以 ISO 10668 國際品牌評價標準為架構，整合：
+          Symcio（全識）是台灣的 AI 能見度量測服務。BCI v1.0 方法論以 ISO 10668 國際品牌評價標準為架構，整合：
         </p>
         <ul style="font-size:13px;color:#333;padding-left:20px;line-height:1.8;">
           <li>FBV · 財務品牌價值（ISO 10668 所得法）</li>
