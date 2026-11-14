@@ -1,0 +1,76 @@
+{
+  "_comment": "Symcio BrandOS 品牌系統 — Lovart 自動化 brief。欄位英文、內容繁中。改這份檔即可重跑，不用改程式。",
+  "project_name": "Symcio BrandOS Brand System v1",
+  "brand_kit_id": "",
+  "_brand_kit_note": "Lovart OpenAPI 只能「引用」Brand Kit ID，不能建立。先在網頁 Brand Kit 面板手動建好再填入；留空則用專案預設 kit。",
+  "red_lines": "嚴格遵守：1) 不得出現『第一／唯一／領先／革命性／賦能／顛覆』等字樣；2) 不得放任何第三方 logo（Bloomberg、ISO、TNFD 等標章一律不放）；3) 不得出現獎章、認證印章、勾勾徽章等暗示認證的圖形；4) 不得做『100% 永續』『零碳』等絕對宣稱；5) 中文一律繁體；6) 不要感嘆號。",
+  "identity_core": "品牌：Symcio（中文：全識）。產品：BrandOS™ — 品牌治理作業系統，量測企業品牌在 AI 搜尋中的能見度（AIVI）、品牌資本指數（BCI = 財務 + 自然資本 + AI 能見度），並對齊 ISO 10668 品牌估值與 TNFD 自然揭露。定位：中立量測基礎設施，像信用評等或指數編製機構那樣——只量測、不代操。受眾：台灣上市櫃公司 CEO、品牌長、永續長、董事會、銀行授信人員。語氣：冷靜、精準、可被稽核的數據終端感；深色介面但不走賽博霓虹，不要漸層光暈、不要機器人或大腦圖示。",
+  "design_tokens": "依 docs/DESIGN_SYSTEM.md v1。色彩：主背景墨黑 #0A0A0A、卡片 #111111、深層 #161616、邊框 #262626；品牌強調色萊姆綠 #C8F55A（CTA 與重點，用量 ≤10%，按下態 #A8D140）；文字白 #FFFFFF、次要 #9CA3AF、註釋 #6B7280。BCI 分級語意色：優秀 #2DD4A0（80–100）、良好 #378ADD（60–79）、需改善 #FBBF24（40–59）、危險 #F87171（0–39），只用於數據。字體：Inter（標題 800、內文 400），中文 Noto Sans TC；數據與標籤 DM Mono 全大寫、字距寬。風格：扁平、無陰影、無漸層，以 1px 邊框分層；圓角 12px；大量留白，數字為視覺主角。",
+  "steps": [
+    {
+      "id": "01_strategy",
+      "mode": "thinking",
+      "thread": "master",
+      "prompt": "先不要出圖。請以品牌設計總監身分，依下列資料規劃一套完整品牌識別系統的架構與出圖順序（logo 系統、色彩、字體、圖像語言、資料視覺化規範、應用物），列出每項的設計原則與要避免的做法，作為本專案後續所有生成的依據。\n\n{identity_core}\n\n{design_tokens}\n\n{red_lines}"
+    },
+    {
+      "id": "02_logo",
+      "mode": "thinking",
+      "thread": "master",
+      "prompt": "依剛才的架構，設計 Symcio 主標誌系統：1) 英文字標「SYMCIO」襯線字標，可帶一個極簡幾何符號（概念：量尺刻度／座標軸／指數基準線，三選一並說明）；2) 中英組合橫式「Symcio 全識」；3) 直式版；4) 單色白版與單色黑版。在墨黑 #0A0A0A 與白底兩種背景上各呈現一次，每個版本附最小尺寸與留白示意。{red_lines}"
+    },
+    {
+      "id": "03_sub_brand",
+      "mode": "thinking",
+      "thread": "master",
+      "prompt": "延續主標誌，設計子品牌字標「BrandOS™」以及四個模組標記：AIVI（AI 能見度指數）、BCI（品牌資本指數）、GEO Audit（AI 搜尋稽核）、ESG·TNFD（自然揭露）。模組標記用 DM Mono 字標加簡單線性圖示，統一 24px 線寬網格，放在同一張規範板上。{red_lines}"
+    },
+    {
+      "id": "04_spec_sheet",
+      "mode": "thinking",
+      "thread": "master",
+      "prompt": "做一張品牌規範總覽板（16:9）：色票（含 HEX 與用量比例）、字體層級（Inter／Noto Sans TC／DM Mono，H1/H2/內文/數據標籤，中英對照）、圖表配色規則（依 BCI 四級語意色，其餘用灰階）、網格與留白。{design_tokens} {red_lines}"
+    },
+    {
+      "id": "05_report_cover",
+      "mode": "fast",
+      "thread": "apps",
+      "prompt": "應用物：『AIVI Baseline 品牌 AI 能見度基準報告』封面（A4 直式）。標題、副標『3 個工作天｜3 個關鍵缺口』、客戶名稱欄位用『[客戶名稱]』佔位、報告日期佔位、Symcio 標誌在頁尾。封面主視覺為一條指數基準線與三個缺口標記。{red_lines}",
+      "attach_from": [
+        "02_logo",
+        "04_spec_sheet"
+      ]
+    },
+    {
+      "id": "06_linkedin",
+      "mode": "fast",
+      "thread": "apps",
+      "prompt": "應用物：LinkedIn 公司頁橫幅（1584×396）與 LinkedIn 貼文模板（1200×1200，標題＋單一大數字＋來源註腳）。主文案：『品牌在 AI 搜尋裡，被看見了嗎？』。{red_lines}",
+      "attach_from": [
+        "02_logo",
+        "04_spec_sheet"
+      ]
+    },
+    {
+      "id": "07_deck_cover",
+      "mode": "fast",
+      "thread": "apps",
+      "prompt": "應用物：提案簡報封面與內頁模板（16:9 各一張），內頁示範一張『AI 能見度分數 vs 同業』長條圖版型，數字用佔位符。{red_lines}",
+      "attach_from": [
+        "02_logo",
+        "04_spec_sheet"
+      ]
+    },
+    {
+      "id": "08_stationery",
+      "mode": "fast",
+      "thread": "apps",
+      "prompt": "應用物：名片正反面（90×54mm，姓名職稱用佔位符『[姓名]』『[職稱]』）、Email 簽名檔橫條、網站 favicon（32px／180px）。{red_lines}",
+      "attach_from": [
+        "02_logo",
+        "04_spec_sheet"
+      ]
+    }
+  ],
+  "_thread_note": "Lovart 的 reasoning mode 在 thread 第一則訊息就鎖定。master thread 用 thinking 做識別系統；apps thread 用 fast 做應用物，並把 02/04 的產出當參考圖附上以維持一致。"
+}
