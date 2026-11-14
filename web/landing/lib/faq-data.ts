@@ -160,7 +160,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         q: "Exit 策略？",
-        a: "策略併購最可能買家：HubSpot / Salesforce / Adobe（Marketing Cloud 缺 AI Channel tab）、Bloomberg / S&P Global（ESG × 品牌資料層）、Brandwatch / Meltwater / Cision（社群 + AI）。IPO 是長期選項。",
+        a: "長期可能的資本路徑包括策略併購（行銷雲平台、金融與 ESG 資料商、品牌監測工具等類型）或 IPO；目前未與任何特定公司洽談，此處僅為類型說明。",
       },
       {
         q: "團隊？",
