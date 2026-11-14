@@ -276,7 +276,7 @@ Symcio 的承諾是「**公式開源、產業校準閉源、資料分層**」:
 
 ## 十二、版本
 
-- **v1.0**(2026-04)— 對齊 Symcio Research 方法論白皮書 v1.0（預計上傳 SSRN）:三維 FBV / SCV / AIV、2026 基準權重 α=0.50 β=0.25 γ=0.25、SCV 三子指標權重(0.40 / 0.40 / 0.20)、AIV 跨四引擎平台權重(0.35 / 0.25 / 0.25 / 0.15)、FBV 採 ISO 10668 所得法。
+- **v1.0**(2026-04)— 對齊 Symcio Research 方法論白皮書 v1.0（Zenodo DOI：https://doi.org/10.5281/zenodo.20419081）:三維 FBV / SCV / AIV、2026 基準權重 α=0.50 β=0.25 γ=0.25、SCV 三子指標權重(0.40 / 0.40 / 0.20)、AIV 跨四引擎平台權重(0.35 / 0.25 / 0.25 / 0.15)、FBV 採 ISO 10668 所得法。
 - **v0.x**(2026-04 前)— 早期 F / V / E 三維模型(Financial Capital / AI Visibility / Engagement),已由 v1.0 取代;歷史 BCI 分數保留舊方法論版本標記於 `bci_snapshots.weights_version`。
 
 ---

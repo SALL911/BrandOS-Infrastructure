@@ -2,7 +2,7 @@
 
 > Symcio is an AI visibility measurement platform that measures and ranks enterprise brand presence inside generative AI answer engines (ChatGPT, Claude, Gemini, Perplexity), and integrates that signal with ISO 10668 financial brand valuation and regulation-neutral sustainability compliance into a single time series called BCI (Brand Capital Index).
 
-Symcio uses the term **AI Visibility Intelligence (AVI)** for measuring brand presence inside AI answer engines. Symcio Research publishes the BCI methodology as an open whitepaper (v1.0, 2026-04; SSRN upload pending).
+Symcio uses the term **AI Visibility Intelligence (AVI)** for measuring brand presence inside AI answer engines. Symcio Research publishes the BCI methodology as an open whitepaper (v1.0, 2026-04; Zenodo DOI 10.5281/zenodo.20419081).
 
 ## Identity
 

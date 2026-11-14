@@ -16,7 +16,7 @@ InterBrand 用了 38 年量化品牌價值。
 
 CSRD、ESPR、CBAM、台灣金管會分階段 ESG 揭露——「合規準備度」變成市場准入的最低門檻。同一時間,超過一半的 B2B 採購者在打開 Google 前已先問 AI。但 InterBrand、Brand Finance、Bloomberg 三家最權威的品牌/金融資料庫裡,沒有一個欄位叫「永續合規準備度」,也沒有一個欄位叫「AI 可見度」。
 
-Symcio Research 今天發布 **BCI v1.0 — Brand Capital Index**(方法論白皮書，預計上傳 SSRN)。
+Symcio Research 今天發布 **BCI v1.0 — Brand Capital Index**(方法論白皮書，Zenodo DOI：https://doi.org/10.5281/zenodo.20419081)。
 
 BCI = α · FBV + β · SCV + γ · AIV
 (α + β + γ = 1.00, BCI ∈ [0, 100])
@@ -91,9 +91,9 @@ Free AI visibility check: symcio.tw/tools/brand-check
 
 ## 發文策略
 
-1. **發文前 1 小時**:Medium 文章先發布,取得 canonical URL;SSRN 上傳完成前不得貼 SSRN 連結
+1. **發文前 1 小時**:Medium 文章先發布,取得 canonical URL;論文連結一律用 Zenodo DOI（https://doi.org/10.5281/zenodo.20419081）
 2. **LinkedIn 主貼文**:中文版,Hook 第一行最重要,選「InterBrand 38 年... 但測不到 ChatGPT / 也測不到 CSRD」
-3. **留言區**:貼 English 版本 + Medium 連結（SSRN 上線後再補）
+3. **留言區**:貼 English 版本 + Medium 連結 + Zenodo DOI 連結
 4. **後續 24 小時**:
    - 回覆每一條留言(名人效應雪球)
    - 前 10 位留「BCI v1.0」者私訊跑 snapshot(真的跑!用 `BRAND_NAME=X DRY_RUN=true python scripts/bci_engine.py`)

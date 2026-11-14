@@ -35,6 +35,8 @@ from typing import Any
 from urllib import request
 from urllib.error import HTTPError, URLError
 
+from email_signature import signature_html
+
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PROMPTS_FILE = REPO_ROOT / "docs" / "prompts" / "geo-audit-prompts.json"
@@ -532,8 +534,8 @@ def _build_report_html(brand: str, report: dict) -> str:
   </div>
 
   <div style="margin-top:24px;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:12px">
-    Symcio / 全識股份有限公司 · AI Visibility Intelligence (AVI) 平台<br>
-    方法論：<a href="https://github.com/SALL911/BrandOS-Infrastructure" style="color:#888">github.com/SALL911/BrandOS-Infrastructure</a>
+    {signature_html("#888")}<br>
+    方法論程式碼：<a href="https://github.com/SALL911/BrandOS-Infrastructure" style="color:#888">github.com/SALL911/BrandOS-Infrastructure</a>
   </div>
 </body></html>"""
 
