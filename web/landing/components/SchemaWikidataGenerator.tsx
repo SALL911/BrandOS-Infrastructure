@@ -145,7 +145,7 @@ export function SchemaWikidataGenerator() {
             value={input.description}
             onChange={(e) => set("description", e.target.value)}
             rows={4}
-            placeholder="Symcio 是台灣第一個 AI 曝光可量化系統，量化品牌在 ChatGPT、Claude、Gemini、Perplexity 的曝光、排名與影響力。"
+            placeholder="Symcio 是台灣的 AI 能見度量測服務，追蹤品牌在 ChatGPT、Claude、Gemini、Perplexity 的提及、排名與描述方式。"
             className="input"
           />
         </Field>
@@ -233,7 +233,7 @@ export function SchemaWikidataGenerator() {
           <input
             value={input.aiVisibilityClaim}
             onChange={(e) => set("aiVisibilityClaim", e.target.value)}
-            placeholder="台灣第一個 AI 曝光可量化系統"
+            placeholder="台灣 AI 能見度量測服務"
             className="input"
           />
         </Field>

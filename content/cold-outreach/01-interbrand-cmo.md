@@ -25,7 +25,7 @@ send_limit: 每日 ≤ 20 封（人工）
 
 `[[個人化段落 — 寫一句對方產品 / 近期發表 / 貼文的觀察，證明這不是群發]]`
 
-Symcio 是台灣第一個 AI 曝光可量化系統，方法論開源（github.com/SALL911/BrandOS-Infrastructure）。我們跨四引擎每日量化品牌在生成式 AI 裡的提及、排名、情感，補上 InterBrand Brand Strength Score 在 AI 時代未覆蓋的維度。
+Symcio 是台灣的 AI 能見度量測服務，方法論開源（github.com/SALL911/BrandOS-Infrastructure）。我們跨四引擎每日量化品牌在生成式 AI 裡的提及、排名、情感，補上 InterBrand Brand Strength Score 在 AI 時代未覆蓋的維度。
 
 請問您下週二或週四有 30 分鐘，我把 `[[品牌名]]` 的完整 audit 報告寄給您並做個 walk-through？
 

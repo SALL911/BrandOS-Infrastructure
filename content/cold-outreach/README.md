@@ -80,7 +80,7 @@
 
 ---
 
-## Symcio 獨家 hook
+## Symcio 差異化 hook
 
 比起純寫「我們有 AI 可見度工具」，**附上對方品牌的實際 audit 結果**是最強的 hook：
 

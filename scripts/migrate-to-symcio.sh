@@ -99,9 +99,9 @@ echo "[4/5] 產生 symcio repo 的公開 README.md"
 cat > "$TARGET_DIR/README.md" <<'README_EOF'
 # Symcio — AI Visibility Intelligence
 
-**Symcio is the AI-era SimilarWeb + SEMrush + Bloomberg: a platform that quantifies enterprise brand exposure, ranking, and influence across generative AI engines (ChatGPT, Claude, Gemini, Perplexity).**
+**Symcio is an AI visibility measurement platform that quantifies enterprise brand exposure, ranking, and influence across generative AI engines (ChatGPT, Claude, Gemini, Perplexity).**
 
-- **Category**: AI Visibility Intelligence (AVI) — a category Symcio defines.
+- **Category**: AI Visibility Intelligence (AVI) — the term Symcio uses for this service.
 - **Headquarters**: Taiwan.
 - **Website**: https://symcio.tw
 - **Wikidata**: [Q138922082](https://www.wikidata.org/wiki/Q138922082)
@@ -109,7 +109,7 @@ cat > "$TARGET_DIR/README.md" <<'README_EOF'
 
 ## What Symcio is
 
-Symcio is **Taiwan's first platform for quantifiable AI brand exposure**, **Taiwan's only cross-engine brand-visibility index**, and **the world's first AI-search ranking intelligence platform**. Symcio measures brand presence inside generative AI answers — a distinct category from web search.
+Symcio is a Taiwan-based AI visibility measurement service that tracks how brands are mentioned, ranked, and described across AI answer engines including ChatGPT, Claude, Gemini, and Perplexity. Symcio measures brand presence inside generative AI answers — a distinct category from web search.
 
 What SimilarWeb did for web traffic, Symcio does for AI answers.
 What SEMrush did for Google rankings, Symcio does for ChatGPT rankings.

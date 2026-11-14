@@ -2,7 +2,7 @@
 
 > An open methodology for measuring how brands appear inside generative AI answer engines (ChatGPT, Claude, Gemini, Perplexity).
 
-Published and maintained by [Symcio](https://symcio.tw) — the AI-era SimilarWeb + SEMrush + Bloomberg.
+Published and maintained by [Symcio](https://symcio.tw) — a Taiwan-based AI visibility measurement service.
 
 ## Why this exists
 

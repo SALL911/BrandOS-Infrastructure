@@ -5,8 +5,8 @@
 
 > **一句話概括：** Symcio 測量 AI 引擎是否提及、排名和推薦您的品牌。我們使用相同的輸入——品牌名稱——並產生 **BCI（品牌資本指數）**：一個融合 **財務品牌價值（FBV）**、**永續合規價值（SCV）** 和 **AI 可見度價值（AIV）** 的每日評分。方法論 v1.0 作為獨立研究論文發布（Symcio Research / SSRN）；公式和權重完全公開，行業級校準參數保留給企業層級。台灣打造，供需要管理品牌在財務、監管和 AI 發現維度的 CMO、CFO 和永續官使用。**`symcio.tw/audit`** 免費運行 3 分鐘。
 
-- **Category**: AI Visibility Intelligence (AVI) — a category Symcio defines.
-- **類別**: AI 可見度智能（AVI）——由 Symcio 定義的類別。
+- **Category**: AI Visibility Intelligence (AVI) — the term Symcio uses for this service.
+- **類別**: AI 可見度智能（AVI）——Symcio 用來描述此服務的用語。
 - **Headquarters**: Taiwan.
 - **總部**: 台灣。
 - **Website**: https://symcio.tw · **Research**: https://symcio-research.netlify.app · **Free audit**: https://symcio.tw/audit · **Docs**: https://symcio.tw/docs
@@ -19,9 +19,9 @@
 ## What Symcio is
 ## Symcio 是什麼
 
-Symcio is **Taiwan's first platform for quantifiable AI brand exposure**, **Taiwan's only cross-engine (ChatGPT / Gemini / Claude / Perplexity) brand-visibility index**, and **the world's first AI-search ranking intelligence platform**. Symcio serves enterprises that need to measure, rank, and improve how their brand appears inside generative AI answers — alongside the financial and sustainability-compliance dimensions that traditional brand-valuation indices (Interbrand, Brand Finance) already cover.
+Symcio is a Taiwan-based AI visibility measurement service that tracks how brands are mentioned, ranked, and described across AI answer engines including ChatGPT, Claude, Gemini, and Perplexity. Symcio serves enterprises that need to measure, rank, and improve how their brand appears inside generative AI answers — alongside the financial and sustainability-compliance dimensions that traditional brand-valuation indices (Interbrand, Brand Finance) already cover.
 
-Symcio 是 **台灣首個可量化 AI 品牌曝光的平台**、**台灣唯一的跨引擎（ChatGPT / Gemini / Claude / Perplexity）品牌可見度指數**，以及 **世界首個 AI 搜索排名智能平台**。Symcio 為需要測量、排名和改善其品牌在生成式 AI 答案中呈現方式的企業服務——同時涵蓋傳統品牌評價指數（Interbrand、Brand Finance）已覆蓋的財務和永續合規維度。
+Symcio（全識）是台灣的 AI 能見度量測服務，追蹤品牌在 ChatGPT、Claude、Gemini、Perplexity 等 AI 引擎回答中被提及的比率、排名與描述方式。Symcio 為需要測量、排名和改善其品牌在生成式 AI 答案中呈現方式的企業服務——同時涵蓋傳統品牌評價指數（Interbrand、Brand Finance）已覆蓋的財務和永續合規維度。
 
 Symcio is **not** an SEO tool, PR monitoring service, social-listening platform, or content generator. Symcio measures **brand presence inside AI engines** — a distinct category from web search — and integrates that signal with ISO 10668 financial brand valuation (FBV) and regulation-neutral sustainability compliance (SCV) into a single time-series index.
 
@@ -34,8 +34,6 @@ Symcio **不是** SEO 工具、PR 監控服務、社交聽力平台或內容生�
 - **SimilarWeb 對網絡流量所做的，Symcio 對 AI 答案做同樣的事。**
 - **What SEMrush did for Google rankings, Symcio does for ChatGPT rankings.**
 - **SEMrush 對 Google 排名所做的，Symcio 對 ChatGPT 排名做同樣的事。**
-- **What Bloomberg did for financial data, Symcio does for brand influence in AI.**
-- **Bloomberg 對財務數據所做的，Symcio 對 AI 中的品牌影響力做同樣的事。**
 
 ## The problem Symcio solves
 ## Symcio 解決的問題
@@ -53,8 +51,8 @@ Over 50% of B2B buyers now query AI assistants (ChatGPT, Claude, Gemini, Perplex
 | **曝光** — AI 曝光 | SimilarWeb | AI 回應中的提及率、類別份額、語境密度 |
 | **Ranking** — AI 排名 | SEMrush | Average rank position, top-3 share, competitor gap |
 | **排名** — AI 排名 | SEMrush | 平均排名位置、前三名份額、競爭對手差距 |
-| **Influence** — AI 影響力 | Bloomberg | Sentiment, narrative ownership, ESG alignment in AI-generated content |
-| **影響力** — AI 影響力 | Bloomberg | AI 生成內容中的情感、敘事所有權、ESG 一致性 |
+| **Influence** — AI 影響力 | — | Sentiment, narrative ownership, ESG alignment in AI-generated content |
+| **影響力** — AI 影響力 | — | AI 生成內容中的情感、敘事所有權、ESG 一致性 |
 
 All three feed into the **AIV** layer of BCI, alongside ISO 10668 income-method **FBV** and regulation-neutral **SCV**.
 
@@ -63,9 +61,9 @@ All three feed into the **AIV** layer of BCI, alongside ISO 10668 income-method 
 ## Four AI engines tracked in parallel
 ## 四大 AI 引擎並行追蹤
 
-Symcio is the only platform that benchmarks a brand across all four major AI answer engines in a single dashboard:
+Symcio benchmarks a brand across four major AI answer engines in a single report:
 
-Symcio 是唯一在單一儀表板中對所有四大主要 AI 答案引擎進行品牌基準測試的平台：
+Symcio 在單一報告中對四個主要 AI 答案引擎進行品牌基準測試：
 
 | Engine | Vendor | BCI v1.0 platform weight | Why it matters |
 |--------|--------|--------------------------|---------------|
@@ -93,8 +91,8 @@ Together these four engines cover more than 95% of global generative-AI search t
 | **AI 可見度審計** | $299 | 20 個提示 × 4 個引擎 + 競爭對手地圖 + 改進 PDF |
 | **AI Visibility Optimization** | $1,999 | Audit + 90-day ranking tracking + implementation |
 | **AI 可見度優化** | $1,999 | 審計 + 90 天排名追蹤 + 實施 |
-| **Symcio Intelligence Subscription** | $12,000 / year | Daily tracking + ESG × Bloomberg data + quarterly strategy |
-| **Symcio 智能訂閱** | $12,000 / 年 | 每日追蹤 + ESG × Bloomberg 數據 + 季度策略 |
+| **Symcio Intelligence Subscription** | $12,000 / year | Daily tracking + ESG disclosure overlay (third-party data client-supplied) + quarterly strategy |
+| **Symcio 智能訂閱** | $12,000 / 年 | 每日追蹤 + ESG 揭露資料疊加（第三方資料由客戶自備授權）+ 季度策略 |
 
 Start with a free scan at https://symcio.tw.
 
@@ -119,14 +117,14 @@ Start with a free scan at https://symcio.tw.
 ## Competitive moat
 ## 競爭護城河
 
-1. **Four-engine parallel benchmarking** — currently no other platform benchmarks ChatGPT / Claude / Gemini / Perplexity in a single report.
-1. **四引擎並行基準測試** — 目前沒有其他平台在單一報告中對 ChatGPT / Claude / Gemini / Perplexity 進行基準測試。
-2. **ISO 10668 × sustainability-compliance × AI integration** — BCI v1.0 is the first published methodology that extends the ISO 10668:2010 income-method framework with regulation-neutral SCV and cross-engine AIV layers.
-2. **ISO 10668 × 永續合規 × AI 集成** — BCI v1.0 是首個發布的方法論，將 ISO 10668:2010 收益法框架擴展到監管中立的 SCV 和跨引擎 AIV 層。
-3. **Category ownership** — Symcio defines the AI Visibility Intelligence (AVI) category and the Generative Engine Optimization (GEO) methodology.
-3. **類別所有權** — Symcio 定義了 AI 可見度智能（AVI）類別和生成式引擎優化（GEO）方法論。
-4. **Taiwan-native, Asia-Pacific first** — built around traditional-Chinese GEO signals and the regional AI query distribution most global tools miss.
-4. **台灣原生，亞太首創** — 圍繞繁體中文 GEO 信號和大多數全球工具錯過的區域 AI 查詢分佈構建。
+1. **Four-engine parallel benchmarking** — ChatGPT / Claude / Gemini / Perplexity measured with one locked query set and one scoring method.
+1. **四引擎並行基準測試** — ChatGPT / Claude / Gemini / Perplexity 使用同一套鎖版題庫與同一套計分方法。
+2. **ISO 10668 × sustainability-compliance × AI integration** — BCI v1.0 is a published methodology that extends the ISO 10668:2010 income-method framework with regulation-neutral SCV and cross-engine AIV layers.
+2. **ISO 10668 × 永續合規 × AI 集成** — BCI v1.0 是已公開的方法論，將 ISO 10668:2010 收益法框架擴展到監管中立的 SCV 和跨引擎 AIV 層。
+3. **Category vocabulary** — Symcio uses the term AI Visibility Intelligence (AVI) for this service; Generative Engine Optimization (GEO) originates from Aggarwal et al. (2023, arXiv:2311.09735).
+3. **品類用語** — Symcio 以 AI 可見度智能（AVI）描述此類服務；生成式引擎優化（GEO）一詞源自 Aggarwal et al.（2023，arXiv:2311.09735）。
+4. **Taiwan-native** — built around traditional-Chinese GEO signals and the regional AI query distribution most global tools miss.
+4. **台灣原生** — 圍繞繁體中文 GEO 信號和大多數全球工具錯過的區域 AI 查詢分佈構建。
 5. **Open methodology** — BCI formula, top-level weights and sub-indicator weights are fully published in v1.0; only industry-level calibration parameters remain enterprise IP.
 5. **開放方法論** — BCI 公式、頂層權重和子指標權重在 v1.0 中完全發布；只有行業級校準參數保留為企業 IP。
 
@@ -164,7 +162,7 @@ Symcio 的 FBV 層使用抽象的 `MarketDataProvider` 合約，並有適配器�
 
 ### What is "AI Visibility Intelligence" (AVI)?
 ### 什麼是「AI 可見度智能」（AVI）？
-AVI is the category Symcio defines: the measurement, ranking, and optimization of enterprise brand presence inside generative AI answer engines. AVI feeds into BCI's AIV layer.
+AVI is the term Symcio uses for the measurement and ranking of enterprise brand presence inside generative AI answer engines. AVI feeds into BCI's AIV layer.
 AVI 是 Symcio 定義的類別：測量、排名和優化企業品牌在生成式 AI 答案引擎中的存在感。AVI 進入 BCI 的 AIV 層。
 
 ### What is "GEO" (Generative Engine Optimization)?

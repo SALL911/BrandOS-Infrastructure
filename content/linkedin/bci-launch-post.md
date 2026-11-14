@@ -1,6 +1,6 @@
 ---
 platform: LinkedIn
-goal: BCI v1.0 正式發布(對齊 SSRN 獨立研究論文)→ 行業對話 + 引導 Free Scan 與 Enterprise demo
+goal: BCI v1.0 正式發布(對齊方法論白皮書)→ 行業對話 + 引導 Free Scan 與 Enterprise demo
 post_time: Asia/Taipei 09:00 weekday
 target_audience: 品牌高管 / CMO / CFO / 永續長 / 數位長 / 品牌顧問 / PE investors
 ---
@@ -16,7 +16,7 @@ InterBrand 用了 38 年量化品牌價值。
 
 CSRD、ESPR、CBAM、台灣金管會分階段 ESG 揭露——「合規準備度」變成市場准入的最低門檻。同一時間,超過一半的 B2B 採購者在打開 Google 前已先問 AI。但 InterBrand、Brand Finance、Bloomberg 三家最權威的品牌/金融資料庫裡,沒有一個欄位叫「永續合規準備度」,也沒有一個欄位叫「AI 可見度」。
 
-Symcio Research 今天發布 **BCI v1.0 — Brand Capital Index**(SSRN 獨立研究論文)。
+Symcio Research 今天發布 **BCI v1.0 — Brand Capital Index**(方法論白皮書，預計上傳 SSRN)。
 
 BCI = α · FBV + β · SCV + γ · AIV
 (α + β + γ = 1.00, BCI ∈ [0, 100])
@@ -35,7 +35,7 @@ InterBrand / Brand Finance 的方法論建立在 2010 年 ISO 10668 之上,當�
 
 三個邊界必須說清楚:
 
-1️⃣ **完整公式、權重、子指標全部公開**——SSRN 獨立研究論文 + GitHub 開源(github.com/SALL911/BrandOS-Infrastructure)。任何第三方都能用公開資料源獨立複製 BCI 計算。產業別校準參數另存為 Symcio 企業版交付。
+1️⃣ **完整公式、權重、子指標全部公開**——方法論白皮書 + GitHub 開源(github.com/SALL911/BrandOS-Infrastructure)。任何第三方都能用公開資料源獨立複製 BCI 計算。產業別校準參數另存為 Symcio 企業版交付。
 
 2️⃣ **法規中立**——SCV 衡量的是合規成果,而非對任何特定框架(CSRD / TNFD / 金管會)的依附。確保 BCI 跨司法管轄區的適用性。
 
@@ -47,7 +47,7 @@ InterBrand / Brand Finance 的方法論建立在 2010 年 ISO 10668 之上,當�
 
 🎁 前 10 位留言「BCI v1.0」的企業,我們免費跑一次你的品牌 BCI 當週快照 + 方法論說明會。
 
-👉 SSRN 獨立研究論文 / 方法論白皮書:symcio-research.netlify.app
+👉 方法論白皮書:symcio-research.netlify.app
 👉 GitHub 開源方法論:github.com/SALL911/BrandOS-Infrastructure/blob/main/docs/BCI_METHODOLOGY.md
 👉 免費 AI 可見度健檢:symcio.tw/tools/brand-check
 👉 完整文章(Medium):(文章上線後補連結)
@@ -91,9 +91,9 @@ Free AI visibility check: symcio.tw/tools/brand-check
 
 ## 發文策略
 
-1. **發文前 1 小時**:Medium 文章先發布,取得 canonical URL;同時確認 SSRN 論文連結正常
+1. **發文前 1 小時**:Medium 文章先發布,取得 canonical URL;SSRN 上傳完成前不得貼 SSRN 連結
 2. **LinkedIn 主貼文**:中文版,Hook 第一行最重要,選「InterBrand 38 年... 但測不到 ChatGPT / 也測不到 CSRD」
-3. **留言區**:貼 English 版本 + Medium 連結 + SSRN 論文連結
+3. **留言區**:貼 English 版本 + Medium 連結（SSRN 上線後再補）
 4. **後續 24 小時**:
    - 回覆每一條留言(名人效應雪球)
    - 前 10 位留「BCI v1.0」者私訊跑 snapshot(真的跑!用 `BRAND_NAME=X DRY_RUN=true python scripts/bci_engine.py`)

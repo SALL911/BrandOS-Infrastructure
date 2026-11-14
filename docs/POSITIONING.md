@@ -2,19 +2,23 @@
 
 ## 一句話
 
-**Symcio 是 AI 時代的 SimilarWeb + SEMrush + Bloomberg 合體——企業在 AI 裡的曝光、排名與影響力量化平台。**
+**Symcio（全識）是台灣的 AI 能見度量測服務，追蹤品牌在 ChatGPT、Claude、Gemini、Perplexity 等 AI 引擎回答中被提及的比率、排名與描述方式。**
 
-## 三個「第一」
+## 可驗證定位（取代原「三個第一」）
 
-| 層級 | 稱號 | 可驗證依據 |
-|------|------|-----------|
-| 台灣 | **第一個「AI 曝光可量化系統」** | 首個提供跨 AI 引擎品牌曝光百分位與時序追蹤的系統 |
-| 台灣 | **唯一「跨 ChatGPT / Gemini 的品牌可見度指標」** | 單一客戶儀表板整合 ChatGPT + Claude + Gemini + Perplexity 四引擎 |
-| 全球 | **第一個「AI 搜尋排名監測平台」** | 以「AI 搜尋排名」為產品主軸、非附加功能，且具備 ESG + Bloomberg 資料整合 |
+> 原「台灣第一／台灣唯一／全球第一」說法已於 2026-11 撤除：市場上已有其他跨多個 AI 引擎的品牌可見度工具，無法以公開證據支持最高級宣稱。
+
+| 主張 | 可驗證依據 |
+|------|-----------|
+| 跨四引擎量測 | 單一報告整合 ChatGPT + Claude + Gemini + Perplexity，同一套鎖版題庫 |
+| 繁中／台灣語料 | 題庫以繁體中文與台灣市場查詢為主 |
+| 公開方法論 | BCI 公式與權重公開於本 repo |
+| 只量測不代操 | 優化需求轉介執行夥伴 |
+| ESG 資料 | 規劃整合第三方 ESG 數據（需客戶自備授權），目前未上線 |
 
 ## 品類定位（Category Creation）
 
-Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽——是**新品類**：
+Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽，Symcio 以下列用語描述自己的服務：
 
 > **AI Visibility Intelligence（AVI）**
 > 企業在 AI 搜尋生態系中的曝光、排名、影響力量化基礎設施。
@@ -89,15 +93,15 @@ Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽——是**新�
 ```
 
 **為什麼是這四個？**
-- 合計覆蓋全球 >95% 的 AI 搜尋流量
+- 是目前使用量較大的 AI 對話／搜尋引擎（市占數據需引用當期第三方來源）
 - 各自代表不同「回答風格」：ChatGPT 對話、Claude 結構化、Gemini 整合 Google、Perplexity 引用來源
-- Symcio 是目前**唯一四引擎同框比對**的平台
+- Symcio 以同一套題庫與計分方法做四引擎同框比對
 
-## 競爭護城河（Why Not Copy-able）
+## 差異化（可驗證）
 
-1. **四引擎同框 benchmarking**：目前市面上唯一同時涵蓋 ChatGPT / Claude / Gemini / Perplexity 的平台
+1. **四引擎同框 benchmarking**：ChatGPT / Claude / Gemini / Perplexity 使用同一套題庫與計分（市場上已有其他多引擎工具，差異在繁中語料與公開方法論）
 2. **ESG × AI 雙軌整合**：TNFD / LEAP 框架 + AI 曝光度，形成永續與聲量雙維度儀表板
-3. **GEO 術語定義權**：先行定義 GEO（Generative Engine Optimization）與 AVI 兩個類別
+3. **用語**：GEO 一詞源自 Aggarwal et al.（2023）；Symcio 以 AVI 描述自身服務，不主張定義權
 4. **Symcio × BrandOS SaaS 雙引擎**：診斷（audit）+ 治理（governance）整套交付，非僅數據供應商
 5. **繁中 GEO 與亞太 query 分佈**：台灣本土出發，掌握全球工具普遍忽略的區域訊號
 
@@ -120,8 +124,8 @@ Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽——是**新�
 | CMO | 「你在 ChatGPT 被提到嗎？我們量化給你看。」 |
 | CEO | 「你的品牌在 AI 時代，還有定價權嗎？」 |
 | 投資人 | 「AI 搜尋是繼 Google 之後最大的注意力入口——而我們量化它。」 |
-| 政府/媒體 | 「台灣第一個把 AI 曝光量化為可稽核指標的基礎設施。」 |
-| 開發者 | 「SimilarWeb + SEMrush + Bloomberg，for the AI era.」 |
+| 政府/媒體 | 「把 AI 曝光整理成可稽核指標的量測服務，方法論公開。」 |
+| 開發者 | 「開源的 AI 引擎品牌可見度量測管線。」 |
 
 ## 反面樣板（Symcio 不做的事）
 
@@ -135,9 +139,9 @@ Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽——是**新�
 
 | 年 | 里程碑 |
 |---|-------|
-| 2026 | 台灣前 10 大品牌導入；取得 AVI 品類定義權 |
-| 2027 | 亞太區 100 家客戶；與 Bloomberg Terminal 整合 |
-| 2028 | 全球第一個上市的「AI Visibility Intelligence」公司 |
+| 2026 | 累積首批付費客戶；BCI 方法論上傳研究平台 |
+| 2027 | 拓展亞太客戶；評估第三方金融資料整合（客戶自備授權） |
+| 2028 | 評估資本市場選項 |
 
 ---
 

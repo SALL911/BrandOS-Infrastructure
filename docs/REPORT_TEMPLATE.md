@@ -121,7 +121,7 @@ AI Visibility Intelligence · Taiwan
 **長期（若適合）**
 - [ ] **$12,000 / 年 Symcio Intelligence Subscription**：
   - 每日自動追蹤
-  - ESG × Bloomberg 資料疊加
+  - ESG 揭露資料疊加（第三方資料由客戶自備授權）
   - 季策略會議
 
 ---
@@ -158,7 +158,7 @@ score = (mentioned ? 50 : 0)
 
 ### Section 7 — About Symcio（半頁）
 
-Symcio 是 AI Visibility Intelligence (AVI) 平台 —— 類比於 SimilarWeb + SEMrush + Bloomberg 合體的 AI 時代版本。我們量化企業在 ChatGPT / Claude / Gemini / Perplexity 四個 AI 引擎裡的曝光、排名與影響力。
+Symcio 是 AI 能見度量測服務（只量測、不代操）。我們量化企業在 ChatGPT / Claude / Gemini / Perplexity 四個 AI 引擎裡的曝光、排名與影響力。
 
 - 網站：symcio.tw
 - 開源方法論：github.com/SALL911/BrandOS-Infrastructure
@@ -174,7 +174,7 @@ Symcio 是 AI Visibility Intelligence (AVI) 平台 —— 類比於 SimilarWeb +
 > Phase 2（實作）與 Phase 3（治理）可選：
 >
 > - **$1,999 AI Visibility Optimization**：我們團隊直接協助你執行本報告的三個改善建議，並做 90 天追蹤。
-> - **$12,000 / 年 Symcio Intelligence**：每日追蹤、月報、季策略會議、ESG × Bloomberg 資料疊加。
+> - **$12,000 / 年 Symcio Intelligence**：每日追蹤、月報、季策略會議、ESG 揭露資料疊加（第三方資料由客戶自備授權）。
 >
 > 預約 15 分鐘 Google Meet 討論你的數字：
 > [Calendly link]

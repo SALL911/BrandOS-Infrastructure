@@ -83,7 +83,7 @@ Repo 內容（皆在本 repo `benchmark/ai-brand-visibility-index/` 已準備）
 格式：痛點 → 證據 → CTA（留言 "AI" 或 DM 申請免費分析）
 
 ✅ 動作：
-- [ ] 早上 9:00 Asia/Taipei 發文（AVI 品類定義者視角）
+- [ ] 早上 9:00 Asia/Taipei 發文（AI 能見度量測視角）
 - [ ] 私訊池接上 Calendly 預約連結
 - [ ] 每個 DM 回覆 5 分鐘內
 
@@ -111,11 +111,11 @@ Repo 內容（皆在本 repo `benchmark/ai-brand-visibility-index/` 已準備）
 - ❌ 發一堆平台但無重點（Facebook、IG、TikTok 全不做）
 - ❌ 內容沒有定義、指標、工具三件套
 - ❌ CTA 只導追蹤，不導成交
-- ❌ 喊「第一大 GEO 基礎設施」（無護城河，改用三個第一）
+- ❌ 喊「第一大 GEO 基礎設施」（不得使用任何最高級宣稱，改用 docs/POSITIONING.md 可驗證定位）
 
 ## 延伸閱讀
 
-- `docs/POSITIONING.md` — 三個第一、類比座標、訊息矩陣
+- `docs/POSITIONING.md` — 可驗證定位、訊息矩陣
 - `docs/MVP_SPEC.md` — 產品定價與資料流
 - `docs/REPORT_TEMPLATE.md` — $299 Audit 報告模板
 - `content/` — 各平台內容草稿

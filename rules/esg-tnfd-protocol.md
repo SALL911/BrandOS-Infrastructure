@@ -37,7 +37,7 @@
 產出揭露報告，整合進財務報告與品牌治理。
 - 填寫 TNFD 揭露模板
 - 更新 esg_profiles 資料庫記錄
-- 連結 Bloomberg ESG 數據接口
+- 規劃整合第三方 ESG 數據（如 Bloomberg ESG，需客戶自備授權；目前未上線）
 
 ---
 

@@ -591,7 +591,7 @@ export default function HomePage() {
               <div className="text-3xl">📚</div>
               <h3 className="mt-3 text-lg font-bold text-ink">ESGpedia</h3>
               <p className="mt-2 text-sm text-muted">
-                亞太 ESG 資料庫合作夥伴（洽談中）;資料層整合進 SCV 永續合規分軸。
+                亞太 ESG 資料庫（洽談中，尚未簽約）;資料層整合進 SCV 永續合規分軸。
               </p>
               <div className="mt-4 font-mono text-xs text-accent">
                 esgpedia.io →

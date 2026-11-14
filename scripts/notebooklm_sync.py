@@ -26,7 +26,7 @@ USAGE
     python scripts/notebooklm_sync.py \\
         --seed data/symcio_notebooklm_seed.txt \\
         --notebook "Symcio Brand Knowledge Base" \\
-        --ask "用繁中總結 Symcio 的 BCI 方法論與三個第一定位，每點引用來源。" \\
+        --ask "用繁中總結 Symcio 的 BCI 方法論與可驗證定位，每點引用來源。" \\
         --out outputs/notebooklm-symcio
 
 SEED 格式（一行一個）

@@ -24,7 +24,7 @@ send_limit: 每日 ≤ 10 封（人工；agency 圈子小，寄多會互通）
 
 > 客戶問「我的品牌在 ChatGPT / Gemini 裡是不是被推薦？」時，既有方法論裡沒有欄位能回答。
 
-Symcio 是台灣第一個把這個量化起來的平台——跨 ChatGPT / Claude / Gemini / Perplexity 四引擎的每日 benchmarking，輸出可接進 `[[Agency]]` 既有報告的 JSON / PDF 資料層。我們**不做品牌諮詢**，只提供**資料**（刻意不碰你們的顧問服務）。
+Symcio 把這件事量化——跨 ChatGPT / Claude / Gemini / Perplexity 四引擎的每日 benchmarking，輸出可接進 `[[Agency]]` 既有報告的 JSON / PDF 資料層。我們**不做品牌諮詢**，只提供**資料**（刻意不碰你們的顧問服務）。
 
 `[[個人化段落 — 對方最近一個案子 / 發表 / LinkedIn 的觀察]]`
 

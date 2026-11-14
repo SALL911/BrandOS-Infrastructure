@@ -466,7 +466,7 @@ CREATE INDEX idx_agent_tasks_status ON agent_tasks(status, agent);
 - Brand ranking index — global（全球品牌排名指數）
 - ESG + AI combined scoring system（ESG × GEO 綜合評分）
 - Autonomous optimization agents（自主優化代理）
-- Bloomberg data feed integration（Bloomberg 數據接口整合）
+- 第三方金融資料源整合（如 Bloomberg，需客戶自備授權；規劃中）
 - TNFD Nature-positive certification tracking（TNFD 自然正向認證追蹤）
 
 ---

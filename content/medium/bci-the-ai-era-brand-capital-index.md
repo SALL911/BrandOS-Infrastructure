@@ -20,7 +20,7 @@ english_summary: true
 
 不是他們落後。是**底層座標系換了**。
 
-這篇文章介紹 Symcio Research 發表於 SSRN 的獨立研究論文 v1.0:**BCI（Brand Capital Index, 品牌資本指數）**——第一個同時納入 ISO 10668 所得法、永續法規合規、生成式 AI 引擎可見度的單一品牌資產時序。
+這篇文章介紹 Symcio Research 的方法論白皮書 v1.0（預計上傳 SSRN）:**BCI（Brand Capital Index, 品牌資本指數）**——一個同時納入 ISO 10668 所得法、永續法規合規、生成式 AI 引擎可見度的單一品牌資產時序。
 
 ---
 
@@ -141,7 +141,7 @@ Symcio Research 對 Interbrand、Brand Finance、Bloomberg 的立場:
 - 引擎原始碼:[scripts/bci_engine.py](https://github.com/SALL911/BrandOS-Infrastructure/blob/main/scripts/bci_engine.py)
 - Provider 抽象層:[scripts/providers/](https://github.com/SALL911/BrandOS-Infrastructure/tree/main/scripts/providers)
 - SQL schema:[supabase/migrations/](https://github.com/SALL911/BrandOS-Infrastructure/tree/main/supabase/migrations)
-- SSRN 獨立研究論文:Huang, Chih-Chuan (2026), *品牌資本指數（BCI）方法論白皮書 v1.0*
+- 方法論白皮書（預計上傳 SSRN）:Huang, Chih-Chuan (2026), *品牌資本指數（BCI）方法論白皮書 v1.0*
 
 ---
 
