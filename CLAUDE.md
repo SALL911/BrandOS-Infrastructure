@@ -1,5 +1,5 @@
 # BrandOS Infrastructure — AI Visibility Intelligence Platform
-## CLAUDE.md v1.1 | Symcio × BrandOS
+## CLAUDE.md v1.2 | Symcio × BrandOS
 
 ---
 
@@ -112,6 +112,7 @@ brandos-infrastructure/
 ├── agents/
 │   └── brand-analyst.md         ← 品牌分析子代理
 └── .claude/
+    ├── agents/                  ← search / grep / audit / advisor 子代理
     └── settings.json            ← 權限控管設定
 
 ---
@@ -170,3 +171,37 @@ brandos-infrastructure/
 | P1 | Lead → HubSpot via Composio | `.github/workflows/composio-hubspot-sync.yml` |
 | P2 | Lead scoring agent | `agents/lead-scorer.py`（待建）|
 | P3 | GEO 內容自動發布 | `agents/publisher.py`（待建）|
+
+---
+
+## 十、多代理分工規範（Model Routing）
+
+### 10.1 角色分配
+
+| 角色 | 模型 | 職責 | 定義檔 |
+|------|------|------|--------|
+| 主會話 | Sonnet 5.5 | 統籌、拆解任務、撰寫改動、彙總結果 | `.claude/settings.json` → `model` |
+| search | Haiku 5.5 | 唯讀梳理代碼庫 | `.claude/agents/search.md` |
+| grep | Haiku 5.5 | 查找定義與呼叫位置（獨立上下文） | `.claude/agents/grep.md` |
+| audit | Haiku 5.5 | 在隔離 worktree 跑測試與檢查 | `.claude/agents/audit.md` |
+| advisor | Opus 5.5 | 最終確認前審核彙總改動 | `.claude/agents/advisor.md` |
+
+### 10.2 強制規則
+
+- **所有代碼庫搜尋與測試一律交給 Haiku 5.5 子代理**（search / grep / audit），主會話不直接執行大範圍 Grep/Glob 或測試指令，保持主上下文精簡。
+- 例外：已知確切路徑的單檔讀取（≤ 1 次 Read）可在主會話直接執行。
+- 改名、刪除、改函式簽名前，必須先呼叫 grep。
+- 提交前流程：主會話完成改動 → `git commit -m "[wip] ..."` → audit（worktree；呼叫時必須附 WIP commit SHA，audit 先 `git checkout --detach <SHA>`）→ 主會話彙總 → advisor（Opus 5.5）→ 使用者確認 → `git commit --amend -m "[類型] ..."` 改為正式訊息 → push。
+- amend 只允許改訊息（index 必須為空）；audit 後任何內容變更 = 新 `[wip]` commit + 重跑 audit + 新 SHA。
+- `[wip]` 是本機暫用前綴，永不 push。
+- advisor 回 BLOCK 時不得 commit。
+
+### 10.3 快速確定性選擇（不升級、不詢問）
+
+以下選擇直接依規則執行，不呼叫 advisor、不詢問使用者：
+
+| 情境 | 規則 |
+|------|------|
+| 選工具 | 已知路徑 → Read；找檔名 → search；找符號 → grep；驗證 → audit |
+| 選路徑 | schema/migration → `BrandOS-Infrastructure`；對外頁面 → `symcio` |
+| 重試 | timeout / connection reset / 5xx / 429 → 最多 4 次（2s/4s/8s/16s）；401 / 403 / 404 / proxy 拒絕 / 邏輯錯誤 → 不重試，直接回報 |
