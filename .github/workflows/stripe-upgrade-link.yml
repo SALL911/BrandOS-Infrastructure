@@ -1,0 +1,45 @@
+name: Stripe Upgrade Link
+
+# 建立（或重用）Gumroad Starter Kit → VIP $260 升級 Payment Link。
+# 冪等，可重複執行；URL 輸出於 job summary，貼入 Gumroad 產品 Receipt。
+# 需要 repo secret：STRIPE_SECRET_KEY（restricted key：Products / Prices / Payment Links write）。
+# 詳見 products/gumroad-starter-kit/LAUNCH.md。
+
+on:
+  workflow_dispatch:
+    inputs:
+      calendly_url:
+        description: '付款完成後導向的 Calendly 預約頁（https://，留空 = Stripe 預設確認頁）'
+        required: false
+        default: ''
+      amount_usd:
+        description: '升級差額（USD）'
+        required: true
+        default: '260'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stripe-upgrade-link
+  cancel-in-progress: false
+
+jobs:
+  link:
+    name: Create $260 upgrade payment link
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Create or reuse payment link
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          CALENDLY_URL: ${{ inputs.calendly_url }}
+          UPGRADE_AMOUNT_USD: ${{ inputs.amount_usd }}
+        run: python scripts/stripe_upgrade_link.py
