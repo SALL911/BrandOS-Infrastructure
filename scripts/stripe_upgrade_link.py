@@ -7,7 +7,7 @@ $299 VIP − $39 Starter Kit 全額折抵 = $260。URL 貼入 Gumroad 產品的 
 
 環境變數：
   STRIPE_SECRET_KEY   必填（建議 restricted key：Products / Prices / Payment Links 寫入）
-  CALENDLY_URL        選填：付款完成後自動導向預約頁
+  CALENDLY_URL        選填：付款完成後自動導向預約頁（Cal.com、Calendly 等任一 https 網址）
   UPGRADE_AMOUNT_USD  選填，預設 260
   STRIPE_API_BASE     選填，僅測試用（預設 https://api.stripe.com/v1）
 

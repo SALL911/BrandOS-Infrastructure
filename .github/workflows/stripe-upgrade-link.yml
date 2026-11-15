@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       calendly_url:
-        description: '付款完成後導向的 Calendly 預約頁（https://，留空 = Stripe 預設確認頁）'
+        description: '付款完成後導向的預約頁，例如 Cal.com（https://，留空 = Stripe 預設確認頁）'
         required: false
         default: ''
       amount_usd:

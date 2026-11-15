@@ -1,7 +1,7 @@
 # Gumroad Starter Kit 上架 Runbook（$39 → $260 升級漏斗）
 
 來源：Google Doc「先從 GUMROAD 開始」（Grok 變現策略落地）。
-漏斗：Gumroad $39 Starter Kit → 收據信升級 CTA → Stripe $260（$299 VIP − $39 折抵）→ Calendly 預約 → 48h 交付。
+漏斗：Gumroad $39 Starter Kit → 收據信升級 CTA → Stripe $260（$299 VIP − $39 折抵）→ Cal.com 預約 → 48h 交付。
 
 ---
 
@@ -22,7 +22,10 @@
 
 由 symcio.tw 既有 Stripe Checkout 提供（SALL911/symcio#18），不需在 Stripe 後台建立任何東西：
 1. 合併 SALL911/symcio#18，Vercel 自動部署。
-2. （選填）Vercel → symcio 專案 → Environment Variables 新增 `KIT_UPGRADE_BOOKING_URL` = Calendly 預約頁，然後 redeploy。
+2. Vercel → symcio 專案 → Settings → Environments → Production → Environment Variables 新增 `KIT_UPGRADE_BOOKING_URL` = Cal.com 預約頁，然後 Redeploy。
+   - 目前預約頁：`https://cal.com/kocel-huang-p58cfu/15min`（15 分鐘，適合作為啟動確認會議）
+   - 建議另建 60 分鐘 `vip-setup` 活動作為正式建置時段，網址改為 `https://cal.com/kocel-huang-p58cfu/vip-setup`
+   - 只填乾淨網址，不帶 `?overlayCalendar=...&layout=...` 等參數
 3. 開啟 `https://symcio.tw/upgrade`，應轉到 $260 Stripe 結帳頁。
 
 備援：若要獨立的 Stripe Payment Link，可執行 Actions → **Stripe Upgrade Link**（需要 repo secret `STRIPE_SECRET_KEY`），或在 Gumroad 另建一個 $260 商品。
@@ -86,7 +89,7 @@ VIP upgrade: your $39 is 100% credited toward the $299 Full Setup — pay only t
 ## 步驟 4：交付 SOP（收到 $260 後）
 
 1. Stripe Payments → 核對 `gumroad_email` 與 Gumroad Sales 是否有 $39 紀錄（無紀錄 → 補收 $39 或退款）。
-2. 確認 Calendly 預約；建置前索取：GitHub / Vercel 協作者邀請、HubSpot Super Admin、DNS 權限。
+2. 確認 Cal.com 預約；建置前索取：GitHub / Vercel 協作者邀請、HubSpot Super Admin、DNS 權限。
 3. 依 kit `README.md` 部署 → 綁網域 → `docs/HUBSPOT_SETUP.md` 串 pipeline → 送測試名單驗證。
 4. 交付紀錄寫入 HubSpot deal（stage = closed won），並依 CLAUDE.md §五 存一筆 `knowledge_nodes`（節點類型：商業模式）。
 
