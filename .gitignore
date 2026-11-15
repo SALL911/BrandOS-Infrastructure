@@ -59,3 +59,6 @@ private/aivi/weights_*.json
 private/aivi/fixtures_*.json
 # 例外：格式樣本可進 repo（數值為佔位值，非實際權重）
 !private/aivi/weights_*.example.json
+
+# ========== 付費產品原始碼（repo 為 public，不得進版控）==========
+private/gumroad-starter-kit/
