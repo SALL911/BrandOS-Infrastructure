@@ -1,5 +1,5 @@
 # BrandOS Infrastructure — AI Visibility Intelligence Platform
-## CLAUDE.md v1.1 | Symcio × BrandOS
+## CLAUDE.md v1.2 | Symcio × BrandOS
 
 ---
 
@@ -133,7 +133,7 @@ brandos-infrastructure/
 | 工具 | 角色 | 主要方向 |
 |------|------|---------|
 | GitHub `SALL911/BrandOS-Infrastructure` | **工程 SSoT**：schema / migration / workflow / agents | 所有工具的中心 |
-| GitHub `sall911/symcio` | **對外品牌站 SSoT**：公開工具、landing、行銷頁 | GitHub Pages 部署至 `symcio.tw` |
+| GitHub `sall911/symcio` | **對外品牌站 SSoT**：公開工具、landing、行銷頁 | Vercel 部署至 `symcio.tw` |
 | Claude Code | 開發 / 部署 / DB migration 執行 agent | 讀寫 GitHub + Supabase |
 | VS Code / Windsurf | 本機 IDE | `git pull` / `git push` |
 | claude.ai（雲端 Claude） | 策略思考、行銷內容 brainstorm | 透過 GitHub MCP 讀 repo；Notion MCP 讀 Notion |
@@ -144,14 +144,14 @@ brandos-infrastructure/
 
 **Repo 分工原則**：
 - `BrandOS-Infrastructure`：**內部工程**（不公開部署，僅 CI/CD 執行）
-- `symcio`：**對外品牌**（GitHub Pages → `symcio.tw`），公開工具的 SSoT 放這裡
+- `symcio`：**對外品牌**（Vercel → `symcio.tw`），公開工具的 SSoT 放這裡
 
 ### 9.2 底層改寫規則（避免雙向衝突）
 
 | 內容類型 | 唯一編輯位置 | 同步方向 |
 |---------|-------------|---------|
 | Schema / code / migration / workflow | `BrandOS-Infrastructure` repo | repo → Supabase（auto via CI）|
-| 對外公開工具 / landing / 行銷頁 | `symcio` repo | repo → `symcio.tw`（auto via GitHub Pages）|
+| 對外公開工具 / landing / 行銷頁 | `symcio` repo | repo → `symcio.tw`（auto via Vercel）|
 | 品牌知識 / 客戶 brief / 會議紀錄 | Notion | Notion → `docs/notion-sync/` → `knowledge_nodes`（單向 cron）|
 | 行銷內容 / GEO 內容 | Notion 起草 → repo approved | Notion → `geo_content` 表（approved 後）|
 | 敏感憑證（API key / DB password）| GitHub Secrets | 不同步、不落地 |
@@ -170,3 +170,7 @@ brandos-infrastructure/
 | P1 | Lead → HubSpot via Composio | `.github/workflows/composio-hubspot-sync.yml` |
 | P2 | Lead scoring agent | `agents/lead-scorer.py`（待建）|
 | P3 | GEO 內容自動發布 | `agents/publisher.py`（待建）|
+| P1 | 社群自動發布（draft → 人工核准 → 發布） | `.github/workflows/social-publisher.yml`、`social-drafter.yml` |
+| P1 | 數位足跡每日快照（BCI 數位聲量構面） | `.github/workflows/social-footprint.yml` |
+
+社群發布與足跡量測的設定步驟見 `docs/SOCIAL_AUTOMATION.md`。
