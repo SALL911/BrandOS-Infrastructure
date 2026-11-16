@@ -32,7 +32,7 @@ from social.common import lint_copy  # noqa: E402
 
 DEFAULT_CHANNELS = ["bluesky", "threads", "facebook", "linkedin", "x"]
 SITE = "https://symcio.tw"
-# 文章頁網址樣板；發布前會實際請求一次，非 200 就退回首頁，避免社群貼文帶出 404 連結
+# 文章頁網址樣板；起草時會實際請求一次，頁面不存在就退回首頁，避免社群貼文帶出失效連結
 LINK_TEMPLATE = os.environ.get("SOCIAL_LINK_TEMPLATE", "").strip() or SITE + "/geo/{slug}"
 
 
@@ -41,7 +41,9 @@ def resolve_link(slug: str) -> str:
     try:
         req = urllib.request.Request(url, method="GET", headers={"User-Agent": "symcio-social-automation/1.0"})
         with urllib.request.urlopen(req, timeout=15) as resp:
-            if resp.status == 200:
+            # 線上站對不存在的文章回傳 200 + noindex（soft 404），不能只看狀態碼
+            body = resp.read(200_000).decode("utf-8", "replace")
+            if resp.status == 200 and 'name="robots" content="noindex"' not in body:
                 return url
     except (urllib.error.URLError, TimeoutError):
         pass

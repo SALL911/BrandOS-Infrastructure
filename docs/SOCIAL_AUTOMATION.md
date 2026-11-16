@@ -110,9 +110,9 @@ WHERE metric = 'followers' ORDER BY captured_on DESC, channel;
 
 | 項目 | 說明 | 建議 |
 |------|------|------|
-| 文章連結 | 線上站（`sall911/symcio`）沒有 `/geo/[slug]` 頁面，該路由只存在於本 repo 的 `web/landing`。起草器會先實測連結，非 200 就改用首頁。 | 把 `/geo/[slug]` 移植到 `symcio` repo，貼文才能導向文章頁。 |
-| ECPay／PayPal 購買轉換 | 瀏覽器返回頁不是付款證明，目前只有 Stripe 驗證已付款才送 `Purchase`。 | 在 `/api/ecpay/callback` 以 Meta Conversions API 伺服器端回傳購買事件。 |
-| 隱私權政策 | 網站目前無隱私權頁面；載入 Meta Pixel 與 LINE Tag 後，個資法告知義務與兩家廣告平台政策都要求揭露追蹤行為。 | 上線追蹤碼前新增 `/privacy` 頁面，載明使用的追蹤技術與退出方式。 |
+| 文章連結 | 文章頁 `/geo/[slug]` 已移植到線上站（symcio#28）。該站對不存在的文章回傳 200 + noindex，起草器會檢查 noindex，頁面不存在就改用首頁。 | symcio#28 合併後即可導向文章頁。 |
+| ECPay 購買轉換 | 已在 `/api/ecpay/callback` 以 Meta Conversions API 回傳 `Purchase`（symcio#28）。PayPal 尚未接。 | 在 Vercel 設定 `META_CAPI_ACCESS_TOKEN`；PayPal 有成交量後再補。 |
+| 隱私權政策 | `/privacy` 已新增（symcio#28），蒐集者名稱、保存期間等內容待律師確認。 | 律師確認後再啟用追蹤碼。 |
 | 權杖到期 | Threads、LinkedIn 權杖 60 天到期，GitHub Actions 無法自行更新 secrets。 | 到期會使 workflow 失敗並自動開 issue；收到後手動換發。 |
 | Instagram 圖片 | 沒有自動產圖。 | 以 Canva 範本或 `next/og` 產出 JPEG 後填入 `image_url`。 |
 
