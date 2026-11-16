@@ -1,0 +1,55 @@
+name: Social Drafter
+
+# 由已發布的 geo_content 以 AI 起草社群貼文，寫入 social_posts（status='draft'）。
+# 草稿需人工核准（status='approved'）後，Social Publisher 才會對外發布。
+
+on:
+  schedule:
+    # 每日台北時間 13:23（GEO Content Publisher 12:00 之後）
+    - cron: '23 5 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run（只印草稿，不寫 DB）'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: social-drafter
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    name: Draft social posts from published geo_content
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install 'psycopg[binary]==3.2.*' anthropic
+
+      - name: Run drafter
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SOCIAL_DRAFTER_MODEL: ${{ vars.SOCIAL_DRAFTER_MODEL }}
+          SOCIAL_LINK_TEMPLATE: ${{ vars.SOCIAL_LINK_TEMPLATE }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        run: |
+          set -euo pipefail
+          for v in SUPABASE_DB_URL ANTHROPIC_API_KEY; do
+            if [[ -z "${!v:-}" ]]; then echo "::error::$v secret is not set"; exit 1; fi
+          done
+          ARGS=()
+          if [[ "${DRY_RUN}" == "true" ]]; then ARGS+=(--dry-run); fi
+          python scripts/social_drafter.py "${ARGS[@]}"

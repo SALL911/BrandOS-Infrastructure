@@ -477,3 +477,4 @@ CREATE INDEX idx_agent_tasks_status ON agent_tasks(status, agent);
 |------|------|----------|
 | v1.0 | 2026-04-17 | 初始版本，建立三層架構 |
 | v2.0 | 2026-04-17 | Merge ai-infrastructure-protocol：新增 GEO Visibility、ESG Events、AI Training、Automation、Monetization 四層，形成完整七層架構 |
+| v2.1 | 2026-11-16 | 新增社群發布與數位足跡：`social_posts`、`social_post_deliveries`、`social_metrics`（定義見 `supabase/migrations/20261116000000_social_publishing.sql`，操作見 `docs/SOCIAL_AUTOMATION.md`） |

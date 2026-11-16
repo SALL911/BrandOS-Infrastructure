@@ -1,0 +1,74 @@
+name: Social Footprint
+
+# 每日擷取 Symcio 數位足跡（社群追蹤數、GitHub、Zenodo DOI 瀏覽／下載等）
+# 寫入 social_metrics，作為 BCI 數位聲量構面的時間序列。
+# 免金鑰來源一定會跑；需金鑰來源在 secrets 未設定時略過。
+
+on:
+  schedule:
+    # 每日台北時間 07:41
+    - cron: '41 23 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run（只印數字，不寫 DB）'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: social-footprint
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    name: Snapshot digital footprint
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install psycopg
+        run: pip install 'psycopg[binary]==3.2.*'
+
+      - name: Collect
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOS: ${{ vars.FOOTPRINT_GITHUB_REPOS }}
+          BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
+          FB_PAGE_ID: ${{ vars.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
+          THREADS_USER_ID: ${{ vars.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          YOUTUBE_CHANNEL_ID: ${{ vars.YOUTUBE_CHANNEL_ID }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          LINKEDIN_ORG_ID: ${{ vars.LINKEDIN_ORG_ID }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [[ "${DRY_RUN}" == "true" ]]; then ARGS+=(--dry-run); fi
+          python scripts/social_footprint.py "${ARGS[@]}" 2>&1 | tee footprint.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Social Footprint"
+            echo '```'
+            cat footprint.log 2>/dev/null || echo "(no output)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

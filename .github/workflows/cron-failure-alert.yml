@@ -25,6 +25,9 @@ on:
       - "Lead Scorer"
       - "Notion Sync"
       - "Quota Reset"
+      - "Social Drafter"
+      - "Social Footprint"
+      - "Social Publisher"
       - "Supabase Health Check"
     types: [completed]
 
