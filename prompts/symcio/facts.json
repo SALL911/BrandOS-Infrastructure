@@ -1,0 +1,32 @@
+{
+  "brand_slug": "symcio",
+  "version": "symcio-facts-v1",
+  "updated_at": "2026-11-20",
+  "_note": "自家示範品牌的公開事實。改任何一項請把 version 升為 v2，否則月對月正確率不可比。客戶品牌的事實檔不得放進本 repo（public），改用 GitHub Secret AIVI_FACTS_JSON 注入。",
+  "brand_terms": ["Symcio", "symcio.tw", "全識"],
+  "facts": [
+    { "id": "domain",        "label": "官網 symcio.tw",          "any_of": ["symcio.tw"] },
+    { "id": "taiwan",        "label": "台灣公司",                 "any_of": ["台灣", "臺灣", "台北", "Taiwan", "Taipei"] },
+    { "id": "brandos",       "label": "產品為 BrandOS",           "any_of": ["BrandOS", "Brand OS"] },
+    { "id": "aivi",          "label": "AI 能見度量測",             "any_of": ["AIVI", "AI 能見度", "AI能見度", "AI 可見度", "AI Visibility"] },
+    { "id": "bci",           "label": "BCI 品牌資本指數",          "any_of": ["BCI", "品牌資本指數", "Brand Capital Index"] },
+    { "id": "method_public", "label": "方法論公開於 Zenodo",       "any_of": ["Zenodo", "10.5281/zenodo.20419081"] },
+    { "id": "neutral",       "label": "中立第三方量測，不做執行",   "any_of": ["中立", "第三方量測", "neutral", "independent measurement", "third-party measurement"] },
+    { "id": "fixed_fee",     "label": "固定費制",                 "any_of": ["固定費", "fixed fee", "flat fee"] }
+  ],
+  "wrong_claims": [
+    { "id": "bloomberg_authorized", "label": "誤稱 Bloomberg 授權／合作",
+      "any_of": ["Bloomberg 授權", "Bloomberg台灣授權", "Bloomberg 台灣授權", "Bloomberg 官方", "authorized representative of Bloomberg", "Bloomberg's authorized", "official Bloomberg partner", "Bloomberg partner"] },
+    { "id": "success_fee", "label": "誤稱成效抽成",
+      "any_of": ["成效抽成", "按成效收費", "success fee", "commission-based", "performance-based fee"] },
+    { "id": "execution_agency", "label": "誤稱提供行銷代操",
+      "any_of": ["代操", "代為執行優化"] },
+    { "id": "is_bank", "label": "誤稱銀行業務",
+      "any_of": ["收受存款", "辦理放款", "是一家銀行", "is a bank"] }
+  ],
+  "confusables": [
+    { "id": "symbio",  "label": "Symbio（不同公司）",    "any_of": ["Symbio"] },
+    { "id": "sym",     "label": "三陽工業 SYM",          "any_of": ["三陽", "SYM Motor", "Sanyang"] },
+    { "id": "quanshi_tech", "label": "全識科技（待確認是否為不同實體）", "any_of": ["全識科技"] }
+  ]
+}

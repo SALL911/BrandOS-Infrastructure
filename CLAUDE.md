@@ -1,20 +1,20 @@
 # BrandOS Infrastructure — AI Visibility Intelligence Platform
-## CLAUDE.md v1.1 | Symcio × BrandOS
+## CLAUDE.md v1.2 | Symcio × BrandOS
 
 ---
 
 ## 一、專案背景（WHY）
 
-**Symcio 定位（三個第一）**
-- 台灣**第一個**「AI 曝光可量化系統」
-- 台灣**唯一**「跨 ChatGPT / Gemini 的品牌可見度指標」
-- **全球第一個**「AI 搜尋排名監測平台」
+**Symcio 定位**：品牌與 IP 的量測與證據基礎設施。
+**對外標語**：讓 AI 正確介紹你的品牌：數據可查・AI 可見・品牌可估。
 
-**一句話類比**：Symcio = AI 時代的 **SimilarWeb + SEMrush + Bloomberg** 合體。
+**定位語氣規範（2026-11 起）**：中立、保守。對外文件與程式產出不得使用「台灣第一」「台灣唯一」「全球第一」等最高級或排他性主張；能力描述以可查證的事實陳述（方法論 DOI、量測範圍、採樣方式）取代。
 
-**專業領域**：企業在 AI 裡的**曝光、排名與影響力**量化與治理。
-**品類定義**：AI Visibility Intelligence（AVI），由 Symcio 先行定義。
-**護城河**：台灣唯一同時具備「跨四引擎 AI 可見度量化」與「ESG × AI 雙軌治理」能力的平台。
+**一句話類比**：Symcio = AI 時代的 **SimilarWeb + SEMrush + Bloomberg** 合體（僅為類比，見下方品牌使用規範）。
+
+**專業領域**：企業在 AI 裡的**曝光、正確性與影響力**量化與治理。
+**品類名稱**：AI Visibility Intelligence（AVI）。
+**護城河**：持續累積的時間序列數據（每月 AI 可見度與正確性觀測、實體錨點時間戳）。方法論可被複製，累積的數據無法回溯補齊。
 
 **品牌使用規範**：Bloomberg、SimilarWeb、SEMrush 僅作為**類比座標**（nominative fair use）說明品類定位，**不主張任何授權、合作或代表關係**。對外文宣不得使用「授權代表」「official partner」等字樣。
 

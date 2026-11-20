@@ -58,6 +58,11 @@ jobs:
           PROMPT_LOCALES: ${{ vars.AIVI_PROMPT_LOCALES || 'zh-TW,en' }}
           RUN_TYPE: ${{ github.event.inputs.run_type || 'weekly' }}
 
+          # 同題重複採樣次數（AI 回答有變異）；成本 = 題數 × 引擎 × 次數
+          AIVI_REPEATS: ${{ vars.AIVI_REPEATS || '1' }}
+          # 客戶品牌事實檔走 Secret；未設定則讀 prompts/<slug>/facts.json
+          AIVI_FACTS_JSON: ${{ secrets.AIVI_FACTS_JSON }}
+
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -84,4 +89,5 @@ jobs:
           echo "- Brand: ${{ github.event.inputs.brand_slug || vars.AIVI_BRAND_SLUG || 'symcio' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Prompt version: ${{ vars.AIVI_PROMPT_VERSION || 'v1' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Sampling: official APIs only（非消費者介面重現）" >> $GITHUB_STEP_SUMMARY
+          echo "- Repeats: ${{ vars.AIVI_REPEATS || '1' }}" >> $GITHUB_STEP_SUMMARY
           echo "- Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
