@@ -73,20 +73,59 @@ jobs:
           fi
           echo "Resolved password from: $(grep source $GITHUB_OUTPUT | cut -d= -f2)"
 
-      - name: Link project
+      # WHY：舊流程 `supabase link` 依賴 SUPABASE_ACCESS_TOKEN（個人 token，會過期／被撤銷）。
+      # 2026-10-10 起 token 失效 → 每次 deploy 失敗 → aivi_runs 等表從未建立。
+      # 有 SUPABASE_DB_URL 時改用 `db push --db-url` 直連資料庫，不再需要 access token。
+      # Transaction pooler（:6543）不支援 migration 需要的 session 功能，自動改用 session 模式（:5432）。
+      - name: Push migrations via DB URL（不需 access token）
+        id: push_dburl
+        if: steps.resolve_pwd.outputs.source == 'SUPABASE_DB_URL'
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          DB_URL="$SUPABASE_DB_URL"
+          if printf '%s' "$DB_URL" | grep -q 'pooler\.supabase\.com:6543'; then
+            DB_URL="${DB_URL/pooler.supabase.com:6543/pooler.supabase.com:5432}"
+            echo "Transaction pooler → session pooler (:5432)"
+          fi
+          echo "::add-mask::$DB_URL"
+          supabase db push --db-url "$DB_URL" --include-all
+
+      # 舊路徑（僅在沒有 SUPABASE_DB_URL 時使用）
+      - name: Link project (legacy)
+        if: steps.resolve_pwd.outputs.source != 'SUPABASE_DB_URL'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD:  ${{ env.DB_PASSWORD }}
           SUPABASE_PROJECT_REF:  ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          if ! supabase link --project-ref "$SUPABASE_PROJECT_REF"; then
+            echo "::error::supabase link 失敗。若訊息為 Invalid access token：設定 SUPABASE_DB_URL secret（建議，免 token），或到 Supabase Dashboard → Account → Access Tokens 重發 SUPABASE_ACCESS_TOKEN。"
+            exit 1
+          fi
 
-      - name: Push migrations (db push)
+      - name: Push migrations (legacy db push)
+        if: steps.resolve_pwd.outputs.source != 'SUPABASE_DB_URL'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD:  ${{ env.DB_PASSWORD }}
         run: |
           supabase db push --include-all
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 部署後立即驗證：migration 宣告的表都要在 PostgREST 看得到
+      - name: Verify schema (drift check)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # PostgREST schema cache 需數秒重載
+          sleep 10
+          python scripts/supabase_schema_drift.py
 
       - name: Summary
         if: always()
