@@ -26,6 +26,9 @@ on:
       - "Notion Sync"
       - "Quota Reset"
       - "Supabase Health Check"
+      # 2026-11：這兩條連續失敗 6 週無告警，補進監聽
+      - "Supabase Deploy"
+      - "AIVI Weekly Tracking"
     types: [completed]
 
 permissions:
