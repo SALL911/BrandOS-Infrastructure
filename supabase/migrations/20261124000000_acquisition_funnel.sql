@@ -171,6 +171,19 @@ AS $$
   ORDER BY d.day;
 $$;
 
--- 內含營收與名單數，只開放給 service_role
-REVOKE ALL ON FUNCTION acquisition_daily(DATE, NUMERIC) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION acquisition_daily(DATE, NUMERIC) TO service_role;
+-- 內含營收與名單數，只開放給 service_role。
+-- anon / authenticated / service_role 是 Supabase 內建角色；CI 的純 Postgres 沒有，逐一檢查後再調整權限。
+REVOKE ALL ON FUNCTION acquisition_daily(DATE, NUMERIC) FROM PUBLIC;
+DO $$
+DECLARE
+  r TEXT;
+BEGIN
+  FOREACH r IN ARRAY ARRAY['anon', 'authenticated'] LOOP
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = r) THEN
+      EXECUTE format('REVOKE ALL ON FUNCTION acquisition_daily(DATE, NUMERIC) FROM %I', r);
+    END IF;
+  END LOOP;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
+    GRANT EXECUTE ON FUNCTION acquisition_daily(DATE, NUMERIC) TO service_role;
+  END IF;
+END $$;
