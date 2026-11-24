@@ -46,7 +46,11 @@ import time
 from datetime import datetime, timezone
 from typing import Any
 from urllib import request
+from pathlib import Path
 from urllib.error import HTTPError, URLError
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from geo_audit import GEMINI_MODEL, _gemini_text  # noqa: E402
 
 
 # ---------- HTTP helper ----------
@@ -84,14 +88,14 @@ def _http(
 def query_gemini(prompt: str, api_key: str) -> str:
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-1.5-flash:generateContent?key={api_key}"
+        f"{GEMINI_MODEL}:generateContent?key={api_key}"
     )
     r = _http(url, method="POST", headers={"Content-Type": "application/json"},
               body={"contents": [{"parts": [{"text": prompt}]}]})
     if not r["ok"]:
         raise RuntimeError(f"gemini: HTTP {r['status']}: {str(r['body'])[:200]}")
     try:
-        return r["body"]["candidates"][0]["content"]["parts"][0]["text"]
+        return _gemini_text(r["body"])
     except (KeyError, IndexError, TypeError):
         raise RuntimeError(f"gemini: unexpected response {r['body']}")
 

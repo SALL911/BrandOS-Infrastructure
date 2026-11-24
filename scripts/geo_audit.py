@@ -42,31 +42,95 @@ PROMPTS_FILE = REPO_ROOT / "docs" / "prompts" / "geo-audit-prompts.json"
 
 # ---------- HTTP helper ----------
 
-def _post(url: str, headers: dict, body: dict, timeout: int = 60) -> dict:
-    req = request.Request(
-        url,
-        data=json.dumps(body).encode("utf-8"),
-        headers=headers,
-        method="POST",
-    )
+# 可重試的狀態：限流（429）與引擎端暫時性錯誤（5xx）。4xx 其餘為呼叫端錯誤，重試無益。
+RETRY_STATUS = {429, 500, 502, 503, 504}
+HTTP_RETRIES = int(os.environ.get("HTTP_RETRIES", "2"))
+RETRY_BASE_DELAY = float(os.environ.get("RETRY_BASE_DELAY", "10"))
+
+
+def _retry_delay(attempt: int, retry_after: str | None) -> float:
+    """優先採用伺服器的 Retry-After（秒，上限 60），否則指數退避。"""
     try:
-        with request.urlopen(req, timeout=timeout) as r:
-            return json.loads(r.read().decode("utf-8"))
-    except HTTPError as e:
-        return {"_error": f"HTTP {e.code}", "_body": e.read().decode(errors="ignore")}
-    except URLError as e:
-        return {"_error": f"URL error: {e.reason}"}
-    except Exception as e:  # noqa: BLE001
-        return {"_error": f"{type(e).__name__}: {e}"}
+        if retry_after:
+            return min(float(retry_after), 60.0)
+    except ValueError:
+        pass
+    return RETRY_BASE_DELAY * (2 ** attempt)
+
+
+def _post(url: str, headers: dict, body: dict, timeout: int = 90) -> dict:
+    data = json.dumps(body).encode("utf-8")
+    for attempt in range(HTTP_RETRIES + 1):
+        retry_after = None
+        req = request.Request(url, data=data, headers=headers, method="POST")
+        try:
+            with request.urlopen(req, timeout=timeout) as r:
+                raw = r.read().decode("utf-8")
+                # Supabase 的 Prefer: return=minimal 成功時回傳空 body
+                return json.loads(raw) if raw.strip() else {}
+        except HTTPError as e:
+            err = {"_error": f"HTTP {e.code}", "_body": e.read().decode(errors="ignore")}
+            if e.code not in RETRY_STATUS:
+                return err
+            retry_after = e.headers.get("Retry-After") if e.headers else None
+        except (URLError, TimeoutError) as e:
+            reason = getattr(e, "reason", e)
+            err = {"_error": f"{type(e).__name__}: {reason}"}
+        except Exception as e:  # noqa: BLE001
+            return {"_error": f"{type(e).__name__}: {e}"}
+        if attempt < HTTP_RETRIES:
+            time.sleep(_retry_delay(attempt, retry_after))
+    return err
 
 
 # ---------- AI engine adapters ----------
 # Each returns plain text response or raises RuntimeError.
 
+# gemini-1.5-flash 已下線（2026-10 起每次呼叫 HTTP 404）。
+# 可用 GEMINI_MODEL 覆寫；aivi_tracker 以同一變數記錄 model_version。
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash"
+
+
+def _gemini_text(resp: dict) -> str:
+    """串接 candidates[0] 的文字 parts，略過 thought parts（3.x 模型可能回傳多個 part）。"""
+    parts = resp["candidates"][0]["content"]["parts"]
+    text = "".join(p["text"] for p in parts if "text" in p and not p.get("thought"))
+    if not text:
+        raise KeyError("no text parts")
+    return text
+
+
+class EngineText(str):
+    """引擎回覆文字，額外攜帶 API 回傳的結構化引用網址。
+
+    仍是 str，既有呼叫端（analyze_mention、寫 DB）不需改動；
+    需要引用來源的呼叫端以 getattr(text, "citations", []) 取用。
+    """
+
+    citations: list[str]
+
+    def __new__(cls, text: str, citations: list[str] | None = None) -> "EngineText":
+        obj = super().__new__(cls, text)
+        obj.citations = list(citations or [])
+        return obj
+
+
+def _perplexity_citations(resp: dict) -> list[str]:
+    """取 sonar 回傳的引用網址：優先 search_results，退回舊版 citations 欄位。"""
+    urls: list[str] = []
+    for item in resp.get("search_results") or []:
+        url = item.get("url") if isinstance(item, dict) else None
+        if url and url not in urls:
+            urls.append(url)
+    for url in resp.get("citations") or []:
+        if isinstance(url, str) and url not in urls:
+            urls.append(url)
+    return urls
+
 def query_gemini(prompt: str, api_key: str) -> str:
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-1.5-flash:generateContent?key={api_key}"
+        f"{GEMINI_MODEL}:generateContent?key={api_key}"
     )
     resp = _post(
         url,
@@ -76,7 +140,7 @@ def query_gemini(prompt: str, api_key: str) -> str:
     if "_error" in resp:
         raise RuntimeError(f"gemini: {resp['_error']}")
     try:
-        return resp["candidates"][0]["content"]["parts"][0]["text"]
+        return _gemini_text(resp)
     except (KeyError, IndexError):
         raise RuntimeError(f"gemini: unexpected response {resp}")
 
@@ -139,9 +203,10 @@ def query_perplexity(prompt: str, api_key: str) -> str:
     if "_error" in resp:
         raise RuntimeError(f"perplexity: {resp['_error']}")
     try:
-        return resp["choices"][0]["message"]["content"]
+        text = resp["choices"][0]["message"]["content"]
     except (KeyError, IndexError):
         raise RuntimeError(f"perplexity: unexpected response {resp}")
+    return EngineText(text, _perplexity_citations(resp))
 
 
 ENGINES: dict[str, tuple[str, Any]] = {

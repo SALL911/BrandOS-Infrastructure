@@ -137,7 +137,7 @@ AI Visibility Intelligence · Taiwan
 **AI 引擎版本**（測試當下）：
 - ChatGPT: GPT-4o-mini (API)
 - Claude: claude-haiku-4-5
-- Gemini: gemini-1.5-flash
+- Gemini: gemini-3.8-flash
 - Perplexity: sonar
 
 **評分公式**（公開於 GitHub repo）：

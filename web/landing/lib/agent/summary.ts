@@ -38,7 +38,7 @@ export async function enrichSummary(report: FakeReport): Promise<string> {
 
   try {
     const { text } = await generateText({
-      model: google("gemini-1.5-flash"),
+      model: google("gemini-3.8-flash"),
       prompt,
       temperature: 0.3,
     });

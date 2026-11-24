@@ -58,7 +58,7 @@ A valid ABVI measurement **must** cover all four engines:
 |--------|-------------|-------|
 | ChatGPT | OpenAI Chat Completions | `gpt-4o-mini` (or current flagship mini) |
 | Claude | Anthropic Messages | `claude-haiku-4-5-20251001` |
-| Gemini | Google Generative Language | `gemini-1.5-flash` |
+| Gemini | Google Generative Language | `gemini-3.8-flash` |
 | Perplexity | Perplexity Chat Completions | `sonar` |
 
 Why all four: each engine's training data and retrieval behavior differ enough that single-engine measurements are statistically misleading.
