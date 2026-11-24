@@ -1,0 +1,5 @@
+{
+  "_comment": "有投票權者名單（GOVERNANCE.md 第三節）。新增或移除 Maintainer 需 T2 提案；由 SIP Tally workflow 讀取。",
+  "steward": "SALL911",
+  "maintainers": []
+}

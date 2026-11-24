@@ -25,6 +25,7 @@ on:
       - "Lead Scorer"
       - "Notion Sync"
       - "Quota Reset"
+      - "SIP Tally"
       - "Supabase Health Check"
     types: [completed]
 
