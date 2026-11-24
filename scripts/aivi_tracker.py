@@ -13,6 +13,7 @@ AIVI Tracker — 「AI 能見度基線與追蹤」採樣器
   1. 讀鎖版 prompt bank（Supabase prompt_sets 優先，否則 prompts/<slug>/<version>.<locale>.json）
   2. 對每題 × 每引擎採樣（僅走官方 API；不爬消費者版 UI）
   3. 解析提及 / 排名 / 情感 / 引用來源 / 同框競品
+     ＋ 事實正確性（scripts/aivi_accuracy.py；有 facts 檔才啟用）
   4. 寫入 aivi_runs / aivi_responses / aivi_mentions；無 Supabase 則落地 reports/aivi/
 
 環境變數：
@@ -28,6 +29,8 @@ AIVI Tracker — 「AI 能見度基線與追蹤」採樣器
   AIVI_ENGINES               預設全部：gemini,claude,openai,perplexity
   GEMINI_API_KEY / ANTHROPIC_API_KEY / OPENAI_API_KEY / PERPLEXITY_API_KEY
   SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
+  AIVI_REPEATS               同題同引擎重複採樣次數，預設 1（AI 回答有變異，建議 3）
+  AIVI_FACTS_JSON            客戶品牌事實檔（JSON 字串，走 Secret）；無則讀 prompts/<slug>/facts.json
   DRY_RUN                    'true' 則不呼叫引擎、不寫 DB（只印計畫）
   OUTPUT_DIR                 預設 reports/aivi
 
@@ -49,6 +52,7 @@ from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from geo_audit import ENGINES, GEMINI_MODEL, analyze_mention  # noqa: E402
+import aivi_accuracy  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PROMPTS_DIR = REPO_ROOT / "prompts"
@@ -188,6 +192,9 @@ def main() -> int:
     locales = [l.strip() for l in os.environ.get("PROMPT_LOCALES", "zh-TW,en").split(",") if l.strip()]
     dry_run = _env_bool("DRY_RUN")
     out_dir = Path(os.environ.get("OUTPUT_DIR", "reports/aivi"))
+    repeats = max(1, int(os.environ.get("AIVI_REPEATS", "1") or "1"))
+    facts = aivi_accuracy.load_facts(slug, PROMPTS_DIR)
+    acc_method = aivi_accuracy.method_tag(facts) if facts else None
 
     # 紅線：付費追蹤他人品牌必須先有授權與 DPA
     if status in ("poc", "subscription"):
@@ -215,12 +222,13 @@ def main() -> int:
 
     print(f"AIVI Tracker — brand={brand} slug={slug} status={status}")
     print(f"  prompt version={version} locales={locales} prompts={total_prompts}")
-    print(f"  engines={engines or '(none)'} dry_run={dry_run}")
+    print(f"  engines={engines or '(none)'} repeats={repeats} dry_run={dry_run}")
+    print(f"  accuracy={acc_method or '(無 facts 檔，略過正確性判定)'}")
     for locale, ps in sets.items():
         print(f"  [{locale}] source={ps['source']} locked_until={ps['locked_until']}")
 
     if dry_run:
-        print(f"DRY RUN：預計 {total_prompts * max(len(engines), 1)} 次採樣，未呼叫任何引擎。")
+        print(f"DRY RUN：預計 {total_prompts * max(len(engines), 1) * repeats} 次採樣，未呼叫任何引擎。")
         return 0
 
     run_row = {
@@ -228,7 +236,7 @@ def main() -> int:
         "prompt_set_id": next((s["prompt_set_id"] for s in sets.values() if s["prompt_set_id"]), None),
         "run_type": os.environ.get("RUN_TYPE", "weekly"),
         "engines": engines,
-        "prompt_count": total_prompts,
+        "prompt_count": total_prompts,  # 題數；實際採樣次數 = 題數 × 引擎 × repeats
         "status": "running",
     }
     run_id = sb_insert_one("aivi_runs", {k: v for k, v in run_row.items() if v is not None})
@@ -248,71 +256,94 @@ def main() -> int:
     for locale, ps in sets.items():
         for p in ps["prompts"]:
             for engine in engines:
-                env_key, fn = ENGINES[engine]
-                started = time.time()
-                error = None
-                text = ""
-                try:
-                    text = fn(p["text"], os.environ[env_key])
-                except Exception as e:  # noqa: BLE001
-                    error = f"{type(e).__name__}: {e}"
-                    errors += 1
-                latency = int((time.time() - started) * 1000)
+                for run_no in range(1, repeats + 1):
+                    env_key, fn = ENGINES[engine]
+                    started = time.time()
+                    error = None
+                    text = ""
+                    try:
+                        text = fn(p["text"], os.environ[env_key])
+                    except Exception as e:  # noqa: BLE001
+                        error = f"{type(e).__name__}: {e}"
+                        errors += 1
+                    latency = int((time.time() - started) * 1000)
 
-                analysis = analyze_mention(text, brand, domain) if text else {}
-                mentioned = bool(analysis.get("mentioned")) or matches_brand(
-                    text, brand, domain, aliases)
+                    analysis = analyze_mention(text, brand, domain) if text else {}
+                    mentioned = bool(analysis.get("mentioned")) or matches_brand(
+                        text, brand, domain, aliases)
 
-                rec = {
-                    "prompt_id": p.get("id"),
-                    "intent": p.get("intent"),
-                    "prompt_text": p["text"],
-                    "locale": locale,
-                    "engine": engine,
-                    "sampled_via": "api",
-                    "latency_ms": latency,
-                    "error": error,
-                    "mentioned": mentioned,
-                    "rank_position": analysis.get("rank_position"),
-                    "sentiment": analysis.get("sentiment"),
-                    "competitors": analysis.get("competitors", []),
-                    "cited_urls": extract_urls(text),
-                    "response_text": text,
-                }
-                records.append(rec)
+                    acc = (aivi_accuracy.check_accuracy(text, mentioned, facts)
+                           if facts and not error else {})
 
-                if run_id:
-                    response_id = sb_insert_one("aivi_responses", {
-                        "run_id": run_id,
-                        "prompt_id": rec["prompt_id"],
-                        "prompt_text": rec["prompt_text"],
-                        "intent": rec["intent"],
+                    rec = {
+                        "run_no": run_no,
+                        "prompt_id": p.get("id"),
+                        "intent": p.get("intent"),
+                        "prompt_text": p["text"],
                         "locale": locale,
                         "engine": engine,
-                        "model_version": (os.environ.get(f"{engine.upper()}_MODEL")
-                                          or ENGINE_MODELS.get(engine, "")),
                         "sampled_via": "api",
-                        "response_text": text,
                         "latency_ms": latency,
                         "error": error,
-                    })
-                    if not response_id:
-                        db_failures += 1
-                    else:
-                        if not sb_insert_one("aivi_mentions", {
-                            "response_id": response_id,
-                            "brand_id": brand_id,
-                            "mentioned": mentioned,
-                            "rank_position": rec["rank_position"],
-                            "sentiment": rec["sentiment"],
-                            "cited_urls": rec["cited_urls"],
-                            "competitors": rec["competitors"],
-                        }):
-                            db_failures += 1
+                        "mentioned": mentioned,
+                        "rank_position": analysis.get("rank_position"),
+                        "sentiment": analysis.get("sentiment"),
+                        "competitors": analysis.get("competitors", []),
+                        "cited_urls": extract_urls(text),
+                        "response_text": text,
+                        "accuracy": acc.get("accuracy"),
+                        "error_type": acc.get("error_type"),
+                        "facts_hit": acc.get("facts_hit"),
+                        "facts_matched": acc.get("facts_matched", []),
+                        "conflicts_found": acc.get("conflicts_found", []),
+                        "accuracy_method": acc_method if acc else None,
+                    }
+                    records.append(rec)
 
-                flag = "HIT " if mentioned else ("ERR " if error else "miss")
-                print(f"  {flag} [{locale}/{engine}] {p.get('id')} ({latency} ms)")
-                time.sleep(CALL_INTERVAL)
+                    if run_id:
+                        response_id = sb_insert_one("aivi_responses", {
+                            "run_id": run_id,
+                            "prompt_id": rec["prompt_id"],
+                            "prompt_text": rec["prompt_text"],
+                            "intent": rec["intent"],
+                            "locale": locale,
+                            "engine": engine,
+                            "model_version": (os.environ.get(f"{engine.upper()}_MODEL")
+                                              or ENGINE_MODELS.get(engine, "")),
+                            "sampled_via": "api",
+                            "run_no": run_no,
+                            "response_text": text,
+                            "latency_ms": latency,
+                            "error": error,
+                        })
+                        if not response_id:
+                            db_failures += 1
+                        else:
+                            mention_row = {
+                                "response_id": response_id,
+                                "brand_id": brand_id,
+                                "mentioned": mentioned,
+                                "rank_position": rec["rank_position"],
+                                "sentiment": rec["sentiment"],
+                                "cited_urls": rec["cited_urls"],
+                                "competitors": rec["competitors"],
+                            }
+                            if acc:
+                                mention_row.update({
+                                    "accuracy": rec["accuracy"],
+                                    "error_type": rec["error_type"],
+                                    "facts_hit": rec["facts_hit"],
+                                    "conflicts_found": rec["conflicts_found"],
+                                    "accuracy_method": acc_method,
+                                })
+                            if not sb_insert_one("aivi_mentions", mention_row):
+                                db_failures += 1
+
+                    flag = "HIT " if mentioned else ("ERR " if error else "miss")
+                    acc_flag = f" {rec['accuracy']}" + (f":{rec['error_type']}" if rec["error_type"] else "") \
+                        if rec["accuracy"] and rec["accuracy"] != "absent" else ""
+                    print(f"  {flag} [{locale}/{engine}#{run_no}] {p.get('id')} ({latency} ms){acc_flag}")
+                    time.sleep(CALL_INTERVAL)
 
     sampled = [r for r in records if not r["error"]]
     hits = [r for r in sampled if r["mentioned"]]
@@ -329,6 +360,7 @@ def main() -> int:
         "sampled_via": "api",
         "disclosure": "API 採樣，非消費者介面重現；結果不等同 ChatGPT/Gemini 消費者版畫面。",
         "sample_size": len(sampled),
+        "repeats": repeats,
         "error_count": errors,
         "db_write_failures": db_failures,
         "presence_rate_pct": presence,
@@ -347,6 +379,7 @@ def main() -> int:
             }
             for i in sorted({r["intent"] for r in sampled if r.get("intent")})
         },
+        "accuracy": aivi_accuracy.summarize(sampled) if facts else None,
     }
 
     if run_id:
@@ -378,6 +411,10 @@ def main() -> int:
 
     print(f"\n提及率 {presence}%（{len(hits)}/{len(sampled)}）"
           f"｜平均排名 {summary['avg_rank']}｜錯誤 {errors}")
+    if summary["accuracy"]:
+        a = summary["accuracy"]
+        print(f"正確率 {a['correct_rate_pct']}%｜講不出事實 {a['partial_rate_pct']}%"
+              f"｜講錯 {a['wrong_rate_pct']}%｜錯誤類型 {a['error_breakdown']}")
     print(f"報告：{out_path}")
 
     if db_failures:
