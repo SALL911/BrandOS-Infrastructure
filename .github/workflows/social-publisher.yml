@@ -1,0 +1,80 @@
+name: Social Publisher
+
+# 發布 social_posts 中已核准（status='approved'）且到期的貼文到各社群通路。
+# 未設定 secrets 的通路自動略過；每則貼文每個通路只會成功發布一次。
+# 設定步驟與各通路限制見 docs/SOCIAL_AUTOMATION.md。
+
+on:
+  schedule:
+    # 台北時間 09:17–21:17 每小時一次（UTC 01–13）
+    - cron: '17 1-13 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run（只印計畫，不發文、不寫 DB）'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: social-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish approved social posts
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install psycopg
+        run: pip install 'psycopg[binary]==3.2.*'
+
+      - name: Run publisher
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+          BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          THREADS_USER_ID: ${{ vars.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          FB_PAGE_ID: ${{ vars.FB_PAGE_ID }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          LINKEDIN_ORG_ID: ${{ vars.LINKEDIN_ORG_ID }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_BROADCAST_ENABLED: ${{ vars.LINE_BROADCAST_ENABLED }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
+            echo "::error::SUPABASE_DB_URL secret is not set（與 geo-publisher 共用同一個 pooler URL）"
+            exit 1
+          fi
+          ARGS=()
+          if [[ "${DRY_RUN}" == "true" ]]; then ARGS+=(--dry-run); fi
+          python scripts/social_publisher.py "${ARGS[@]}" | tee publisher.log
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Social Publisher"
+            echo "- Trigger: \`${{ github.event_name }}\`"
+            echo '```'
+            cat publisher.log 2>/dev/null || echo "(no output)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
