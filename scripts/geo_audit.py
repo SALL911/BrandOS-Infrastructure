@@ -42,22 +42,45 @@ PROMPTS_FILE = REPO_ROOT / "docs" / "prompts" / "geo-audit-prompts.json"
 
 # ---------- HTTP helper ----------
 
-def _post(url: str, headers: dict, body: dict, timeout: int = 60) -> dict:
-    req = request.Request(
-        url,
-        data=json.dumps(body).encode("utf-8"),
-        headers=headers,
-        method="POST",
-    )
+# 可重試的狀態：限流（429）與引擎端暫時性錯誤（5xx）。4xx 其餘為呼叫端錯誤，重試無益。
+RETRY_STATUS = {429, 500, 502, 503, 504}
+HTTP_RETRIES = int(os.environ.get("HTTP_RETRIES", "2"))
+RETRY_BASE_DELAY = float(os.environ.get("RETRY_BASE_DELAY", "10"))
+
+
+def _retry_delay(attempt: int, retry_after: str | None) -> float:
+    """優先採用伺服器的 Retry-After（秒，上限 60），否則指數退避。"""
     try:
-        with request.urlopen(req, timeout=timeout) as r:
-            return json.loads(r.read().decode("utf-8"))
-    except HTTPError as e:
-        return {"_error": f"HTTP {e.code}", "_body": e.read().decode(errors="ignore")}
-    except URLError as e:
-        return {"_error": f"URL error: {e.reason}"}
-    except Exception as e:  # noqa: BLE001
-        return {"_error": f"{type(e).__name__}: {e}"}
+        if retry_after:
+            return min(float(retry_after), 60.0)
+    except ValueError:
+        pass
+    return RETRY_BASE_DELAY * (2 ** attempt)
+
+
+def _post(url: str, headers: dict, body: dict, timeout: int = 90) -> dict:
+    data = json.dumps(body).encode("utf-8")
+    for attempt in range(HTTP_RETRIES + 1):
+        retry_after = None
+        req = request.Request(url, data=data, headers=headers, method="POST")
+        try:
+            with request.urlopen(req, timeout=timeout) as r:
+                raw = r.read().decode("utf-8")
+                # Supabase 的 Prefer: return=minimal 成功時回傳空 body
+                return json.loads(raw) if raw.strip() else {}
+        except HTTPError as e:
+            err = {"_error": f"HTTP {e.code}", "_body": e.read().decode(errors="ignore")}
+            if e.code not in RETRY_STATUS:
+                return err
+            retry_after = e.headers.get("Retry-After") if e.headers else None
+        except (URLError, TimeoutError) as e:
+            reason = getattr(e, "reason", e)
+            err = {"_error": f"{type(e).__name__}: {reason}"}
+        except Exception as e:  # noqa: BLE001
+            return {"_error": f"{type(e).__name__}: {e}"}
+        if attempt < HTTP_RETRIES:
+            time.sleep(_retry_delay(attempt, retry_after))
+    return err
 
 
 # ---------- AI engine adapters ----------
