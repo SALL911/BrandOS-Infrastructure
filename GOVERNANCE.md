@@ -34,7 +34,7 @@ DAO-lite 取 DAO 的三個元素——**提案公開、投票留痕、規則即�
 | 角色 | 定義 | 投票權 | 合併權 | 目前成員 |
 |------|------|-------|-------|---------|
 | **Steward** | 公司負責人，最終法律責任人 | 1 票 + 保留否決權（見第五節） | 全部 | @SALL911 |
-| **Maintainer** | 對特定模組負責，列於 `.github/CODEOWNERS` | 1 票 | 所負責路徑 | （空缺，由 T2 提案任命） |
+| **Maintainer** | 對特定模組負責，列於 `.github/CODEOWNERS` 與 `docs/governance/voters.json` | 1 票 | 所負責路徑 | （空缺，由 T2 提案任命） |
 | **Contributor** | 過去 90 日內有 ≥1 個已合併 PR 的人類貢獻者 | 諮詢票（計入討論、不計入門檻） | 無 | — |
 | **AI Agent** | Claude Code、GitHub Actions、Composio、任何自動化帳號 | **無** | **無** | — |
 
@@ -108,6 +108,18 @@ Steward 否決權**僅限**下列事由，行使時必須在 issue 留下書面�
 - 有投票權者僅 1 人（現況）時：Steward 單人決議有效，但**公開期與決策日誌要求不可省略**。
 - 提案人可投票。Agent 開的提案由其人類操作者擔任提案人。
 - 利益衝突：與提案有直接財務利益者必須聲明並 ABSTAIN。
+- 只計入投票期內建立、且截止前未再編輯的留言；討論期的 VOTE 不計。
+- Steward 否決：留言首行寫 `VETO: <1-4>`（第五節條款編號），未引用有效條款者視為無效。
+- 等級欄位未填或無法判斷時，自動以 T3 計票。
+
+### 6.1.1 自動計票（SIP Tally workflow）
+
+| 觸發 | 動作 |
+|------|------|
+| issue 加上 `proposal:voting` | 檢查最短討論期（T2 7 日／T3 14 日，自 issue 建立起算）；不足則退回 `proposal:discussion`，足夠則公告 72 小時截止時間 |
+| 每小時排程 | 已過截止的 SIP：計票 → 留言公告 → 換 `proposal:accepted`／`proposal:rejected` → 開決策日誌 PR（須人類合併）→ 未通過者以 `not_planned` 關閉 |
+
+實作：`.github/workflows/sip-tally.yml`、`.github/scripts/sip-tally.js`。有投票權者名單：`docs/governance/voters.json`（異動需 T2）。
 
 ### 6.2 提案必填欄位
 
@@ -134,8 +146,10 @@ Steward 否決權**僅限**下列事由，行使時必須在 issue 留下書面�
 | Issue 模板 | `governance-proposal.md` | 已建立 |
 | 決策日誌 | `docs/governance/DECISIONS.md` | 已建立 |
 | Branch protection（`main`） | Require PR、Require CODEOWNERS review、Require status checks、禁止 force push、禁止刪除 | **待 Steward 於 GitHub Settings 手動開啟** |
-| Labels | `proposal`、`proposal:discussion`、`proposal:voting`、`proposal:accepted`、`proposal:rejected`、`governance:T1` | **待建立** |
-| 自動計票 workflow | 投票期結束自動計票並留言結果 | 規劃中（P2） |
+| Labels | `proposal`、`proposal:discussion`、`proposal:voting`、`proposal:accepted`、`proposal:rejected`、`governance:T1` | SIP Tally 首次排程執行時自動建立 |
+| 自動計票 workflow | `.github/workflows/sip-tally.yml`（見 6.1.1） | 已建立 |
+| 有投票權者名單 | `docs/governance/voters.json` | 已建立 |
+| Actions 建立 PR 權限 | Settings → Actions → General →「Allow GitHub Actions to create and approve pull requests」 | **待 Steward 手動開啟**（未開啟時決策日誌改以留言提供） |
 
 ---
 

@@ -1,0 +1,64 @@
+name: SIP Tally
+
+# DAO-lite 自動計票（GOVERNANCE.md 第六節）
+#   - issue 加上 `proposal:voting` → 檢查最短討論期，足夠則公告 72 小時截止，不足則退回討論期
+#   - 每小時排程 → 截止的 SIP 計票、留言公告、換 label、開決策日誌 PR、未通過者關閉
+#   - PR 修改計票邏輯 → 跑單元測試
+# 邏輯在 .github/scripts/sip-tally.js；有投票權者名單在 docs/governance/voters.json。
+# 開決策日誌 PR 需在 Settings → Actions → General 勾選
+# 「Allow GitHub Actions to create and approve pull requests」；未勾選時改以留言提供紀錄列。
+
+on:
+  issues:
+    types: [labeled]
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/scripts/sip-tally*.js"
+      - ".github/workflows/sip-tally.yml"
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: sip-tally
+  cancel-in-progress: false
+
+jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node --test .github/scripts/sip-tally.test.js
+
+  open-voting:
+    if: github.event_name == 'issues' && github.event.label.name == 'proposal:voting'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const sip = require('./.github/scripts/sip-tally.js');
+            await sip.onVotingLabeled({ github, context, core });
+
+  tally:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const sip = require('./.github/scripts/sip-tally.js');
+            await sip.runScheduled({ github, context, core });
