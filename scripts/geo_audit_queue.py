@@ -284,7 +284,8 @@ def fetch_prospects(limit: int, rescan_days: int) -> list[dict]:
 
 def _cutoff(days: int) -> str:
     from datetime import timedelta
-    return (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    # 用 Z 結尾：isoformat() 的 "+00:00" 放進 URL 查詢字串時 "+" 會被解成空白，PostgREST 回 22007
+    return (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def insert_visibility_results(rows: list[dict]) -> None:
