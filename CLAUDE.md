@@ -108,7 +108,7 @@ brandos-infrastructure/
 │   └── schema.md                ← 完整資料庫 schema
 ├── rules/
 │   ├── esg-tnfd-protocol.md     ← ESG/TNFD 操作規則
-│   └── brandos-development.md   ← BrandOS 三模組開發規範
+│   └── brandos-development.md   ← BrandOS 模組開發規範
 ├── commands/
 │   ├── daily-briefing.md        ← 每日情境模板
 │   └── brand-audit.md           ← 品牌稽核流程
@@ -176,12 +176,12 @@ brandos-infrastructure/
 
 ---
 
-## 十、BrandOS 三模組開發規範
+## 十、BrandOS 模組開發規範
 
 開發或修改下列任何一項時，**先讀 `rules/brandos-development.md`**，並以它為準：
 
 - 會員層與登入（Email magic link；身分證字號／統一編號僅為識別欄位）
-- AIVI 量測、ESG 行銷自動化、品牌價值衡量（BCI、IP 價值三角）
+- AIVI 量測、ESG 行銷自動化、品牌價值衡量（BCI、IP 價值三角）、多渠道 ROI 與碳排量化
 - `metrics` 表與對 GBAA 登錄簿的唯讀查驗
 
 該文件規定的重點：不發幣不上鏈、身分證字號加密且不入日誌、評分設定檔不入版本庫、

@@ -8,11 +8,12 @@ v2 取代原「智慧資產查證與品牌估值管理系統開發規範」。
 
 ## 1. 專案定位
 
-BrandOS 是單一登入的 Web 系統（RWD），提供三個模組：
+BrandOS 是單一登入的 Web 系統（RWD），提供四個模組：
 
 1. **AIVI 量測**：定期向生成式 AI 平台送出標準化問題，計算品牌被提及的統計指標。
 2. **ESG 行銷自動化**：產生草稿、人工核准、排程發文、記錄結果。
 3. **品牌價值衡量**：BCI 計分卡、IP 價值三角，以及對 GBAA 登錄簿的唯讀查驗。
+4. **多渠道 ROI 與碳排量化**：年度預算與各渠道花費由企業填報或匯入 CSV，計算 ROAS、總碳排與每百萬花費碳排。
 
 查證登錄簿本身是另一個專案（GBAA Registry，代號 ANCHOR），業主為全球區塊鏈會計聯合會（GBAA），資料庫獨立。BrandOS 只讀取它，不產生登錄編號。
 
@@ -29,7 +30,7 @@ BrandOS 是單一登入的 Web 系統（RWD），提供三個模組：
 - 不做簡訊 OTP。
 - 不自建社群平台發文連接器（經由 Make 或 Buffer）。
 - 不自動發布未經人工核准的內容，不自動改寫客戶網站。
-- 本期不開發 ESG 廣告影響力模擬器與廣告碳排計算，只保留 `metrics` 接口。
+- 本期不開發 ESG 廣告影響力模擬器；多渠道 ROI 模組第一期不串接廣告平台 API，資料來源為填報與 CSV。
 
 所有功能需求必須寫成三項：**輸入**（欄位與型別）、**邏輯**（公式、篩選、狀態流轉）、**輸出**（JSON 結構或畫面元素）。未轉化的學術名詞不得直接進入程式碼。
 
@@ -41,7 +42,7 @@ BrandOS 是單一登入的 Web 系統（RWD），提供三個模組：
 | :--- | :--- | :--- |
 | 訪客 | 不需登入 | 憑編號查驗登錄 |
 | 個人會員 | 註冊＋審核 | 個人 IP 估值 |
-| 企業 owner／editor／viewer | 註冊＋審核；後續成員由 owner 核准 | 自家公司的三個模組 |
+| 企業 owner／editor／viewer | 註冊＋審核；後續成員由 owner 核准 | 自家公司的四個模組 |
 | 投資人 | 管理員指派 | 檢索已公開的企業 |
 | 監管端 | 管理員指派 | 全平台彙總與已公開紀錄 |
 | 管理員 | 內部 | Symcio OS 後台，強制兩步驟驗證 |
@@ -68,7 +69,8 @@ BrandOS 是單一登入的 Web 系統（RWD），提供三個模組：
 - 所有業務資料掛在 `org_id` 下。
 - `orgs.ubn` 為統一編號，欄名與 ANCHOR 一致。
 - 所有表帶 `created_at`／`updated_at`，採軟刪除。
-- **只能 INSERT、禁止 UPDATE／DELETE 的表**：`metrics`、`audit_logs`、`ip_valuations`、`responses`。
+- **只能 INSERT、禁止 UPDATE／DELETE 的表**：`metrics`、`audit_logs`、`ip_valuations`、`responses`、`emission_factors`、`carbon_results`。
+- 組織階層以 `orgs.parent_org_id` 表示；上層組織可讀下層單位已送出的資料，下層單位彼此不可見。
 - AI 原始回應（`responses.raw_text`）永久保存，不可截斷。
 - 登錄編號格式：`GBAA-{YYYY}-{資產類別碼}-{流水號4碼}`，只由 ANCHOR 產生。
 
@@ -85,6 +87,18 @@ ip_value_index = I^w1 × M^w2 × S^w3      其中 w1 + w2 + w3 = 1
 - 權重依產業類別由後台設定，不寫死在程式碼。
 - 任一因子為 0 時顯示「資料不足」，不顯示 0 分。
 - 子指標彙總與估值區間換算，以《GBAA 未來合規會計科目資料庫 v1.2》「IP 價值三角」工作表為準；必須有以該表範例數字為輸入的單元測試。
+
+**多渠道 ROI 與碳排**：
+
+```
+channel_emissions      = activity_amount × activity_factor   （無活動量時：spend × spend_factor）
+total_emissions        = Σ channel_emissions + labor_hours × labor_factor + cloud_kwh × grid_factor
+intensity_per_million  = total_emissions ÷ (reported_spend ÷ 1,000,000)
+roas                   = revenue ÷ spend
+```
+
+- 排放係數存在 `emission_factors`，必附來源；用過的版本鎖定，只能新增版本，不回算舊結果。
+- 每筆計算結果記錄方法（`activity`／`spend`）與係數 id。
 
 **BCI**：FBV、NCV、AIV 三維各自計分。AIV 由已發布的 AIVI 總分自動帶入，不可手填。
 
@@ -103,6 +117,7 @@ ip_value_index = I^w1 × M^w2 × S^w3      其中 w1 + w2 + w3 = 1
 - 系統產生的文案不得出現「第一」「唯一」「認證」「保證」。
 - 國際標準一律寫「依循……原則」或「規劃對接」，不寫「符合」「認證」。
 - 全站不自稱「交易所」，不顯示公開報價。
+- 碳排報告固定標示「依排放係數自行計算之估算，未經第三方查證」；系統輸出不得出現「已驗證」「合規」「Verified」。揭露框架只做欄位對照，標示為「格式對應」。
 - 估值與 BCI 畫面頁尾固定顯示：「評價指標屬管理帳用途，不作為法定財報入帳依據。」
 
 用詞統一：ISSA 5000、DPP、GBAA；系統與資料庫用 `aivi`，BCI 第三維對外稱 AIV。
@@ -111,7 +126,7 @@ ip_value_index = I^w1 × M^w2 × S^w3      其中 w1 + w2 + w3 = 1
 
 ## 8. 模組邊界
 
-- 會員層、AIVI、行銷、品牌價值四者解耦；行銷模組的任何改動不得影響量測與估值資料。
+- 會員層、AIVI、行銷、品牌價值、渠道 ROI 五者解耦；行銷模組的任何改動不得影響量測與估值資料。
 - 模組之間只透過 `org_id` 與 `metrics` 表相連。
 - 下一階段的模擬器只能經由 `GET /v1/metrics` 讀取資料。
 - 與外部的串接只有三處：AI 平台官方 API、Make／Buffer Webhook（HMAC 簽章、以 job id 為冪等鍵）、GBAA ANCHOR 唯讀查驗 API。
@@ -135,7 +150,8 @@ ip_value_index = I^w1 × M^w2 × S^w3      其中 w1 + w2 + w3 = 1
 1. 會員層與外殼（只做到能掛上 AIVI 的程度）
 2. AIVI 第一期（依 AIVI SRS v1.0 的 M1–M3）
 3. 品牌價值模組
-4. ESG 行銷模組
-5. AIVI 第二期、投資人端、監管端
+4. 多渠道 ROI 與碳排模組
+5. ESG 行銷模組
+6. AIVI 第二期、投資人端、監管端
 
 付款綁驗收標準，不綁日期。驗收標準見系統規格第 10.2 節。
