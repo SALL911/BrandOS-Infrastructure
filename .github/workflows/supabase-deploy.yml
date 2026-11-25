@@ -98,9 +98,11 @@ jobs:
           LINKED:                ${{ steps.link.outputs.linked }}
         run: |
           set -euo pipefail
+          # 新版 CLI 在非互動環境不會自動確認，必須明確帶 --yes，否則直接結束且不套用任何變更。
+          # 這個 workflow 本身已有確認關卡（手動觸發需輸入 deploy，或 migration 經 PR 合併）。
           if [ "$LINKED" = "true" ]; then
             echo "mode=linked project" >> "$GITHUB_OUTPUT"
-            supabase db push --include-all
+            supabase db push --include-all --yes
             exit 0
           fi
           if [ -z "${SUPABASE_DB_URL:-}" ]; then
@@ -111,7 +113,7 @@ jobs:
           # 同一台連線池主機的 5432 埠是 session 模式，改用它。
           SESSION_URL=$(printf '%s' "$SUPABASE_DB_URL" | sed -E 's|:6543/|:5432/|')
           echo "mode=direct db-url (session pooler)" >> "$GITHUB_OUTPUT"
-          supabase db push --include-all --db-url "$SESSION_URL"
+          supabase db push --include-all --yes --db-url "$SESSION_URL"
 
       - name: Summary
         if: always()
