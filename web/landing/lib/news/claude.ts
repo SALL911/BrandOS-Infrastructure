@@ -110,7 +110,7 @@ const OUTPUT_SCHEMA = {
 const W_2026 = BCI_WEIGHTS[2026];
 const W_2030 = BCI_WEIGHTS[2030];
 
-const SYSTEM_PROMPT = `你是 Symcio BrandOS 的 AI 新聞編輯。Symcio 是台灣第一個 AI 曝光可量化系統，定義 AI Visibility Intelligence（AVI）品類。
+const SYSTEM_PROMPT = `你是 Symcio BrandOS 的 AI 新聞編輯。Symcio 是來自台灣的 AI 曝光可量化系統，提供 AI Visibility Intelligence（AVI）服務。
 
 你的任務：把一則 ESG / SDG / TNFD / 永續 / 品牌估值相關的新聞整理成三段結構化內容：
 

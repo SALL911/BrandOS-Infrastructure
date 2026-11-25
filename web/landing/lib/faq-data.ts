@@ -140,7 +140,7 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         q: "技術護城河？",
-        a: "1. 四引擎同框 benchmarking 資料集（台灣唯一、全球少數）；2. BCI 公式（公開抽象、權重閉源，PageRank 式揭露）；3. 繁中 / 亞太語料獨家；4. 開源方法論建立品類定義權。",
+        a: "1. 四引擎同框 benchmarking 資料集；2. BCI 公式（公開抽象、權重閉源，PageRank 式揭露）；3. 繁中 / 亞太語料獨家；4. 開源方法論建立品類定義權。",
       },
       {
         q: "Traction 狀態？",

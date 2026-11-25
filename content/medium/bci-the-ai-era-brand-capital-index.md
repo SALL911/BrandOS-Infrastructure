@@ -20,7 +20,7 @@ english_summary: true
 
 不是他們落後。是**底層座標系換了**。
 
-這篇文章介紹 Symcio Research 發表於 SSRN 的獨立研究論文 v1.0:**BCI（Brand Capital Index, 品牌資本指數）**——第一個同時納入 ISO 10668 所得法、永續法規合規、生成式 AI 引擎可見度的單一品牌資產時序。
+這篇文章介紹 Symcio Research 發表於 SSRN 的獨立研究論文 v1.0:**BCI（Brand Capital Index, 品牌資本指數）**——一個同時納入 ISO 10668 所得法、永續法規合規、生成式 AI 引擎可見度的單一品牌資產時序。
 
 ---
 

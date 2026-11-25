@@ -1,6 +1,6 @@
 # Symcio BrandOS — 完整產品地圖
 
-> **定位**：台灣第一個 AI 曝光可量化系統。AI Visibility Intelligence (AVI) 品類的定義者。
+> **定位**：來自台灣的 AI 曝光可量化系統，提供 AI Visibility Intelligence (AVI) 服務。
 > **護城河**：BCI（Brand Capital Index）公式 — 把金融資本、AI 可見度、品牌參與度三個原本不相關的市場統一成單一時序指標。公式公開、權重閉源。
 
 ---

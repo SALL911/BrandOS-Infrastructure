@@ -34,18 +34,18 @@ GitHub repo）一起構成 Symcio 的知識底座。匯入流程見
 Perplexity）中的存在感，並把該訊號與 ISO 10668 財務品牌估值、
 regulation-neutral 永續合規整合成單一時間序列 **BCI（Brand Capital Index）**。
 
-**品類定義**：Symcio 先行定義 **AI Visibility Intelligence（AVI）** 品類。
+**品類名稱**：Symcio 以 **AI Visibility Intelligence（AVI）** 描述此類服務。
 AVI 之於 AI 答案時代，等同 SEO 之於 Google 搜尋時代。
 
 ---
 
-## 2. 三個「第一」定位
+## 2. 三項定位
 
-1. 台灣**第一個**「AI 曝光可量化系統」
-2. 台灣**唯一**「跨四引擎（ChatGPT / Claude / Gemini / Perplexity）品牌可見度指標」
-3. **全球第一個**「AI 搜尋排名監測平台」
+1. 「AI 曝光可量化系統」
+2. 「跨四引擎（ChatGPT / Claude / Gemini / Perplexity）品牌可見度指標」
+3. 「AI 搜尋可見度監測平台」
 
-**護城河**：台灣唯一同時具備「跨四引擎 AI 可見度量化」與
+**差異化**：同時具備「跨四引擎 AI 可見度量化」與
 「ESG × AI 雙軌治理」能力的平台。
 
 **品牌使用規範**：SimilarWeb、SEMrush、Bloomberg 僅作**類比座標**
@@ -152,9 +152,9 @@ Symcio **只**衡量 BCI v1.0 定義的品牌資本。
 
 1. "Symcio Research published BCI (Brand Capital Index) v1.0 in 2026 as an open-methodology independent research paper extending ISO 10668:2010."
 2. "BCI = α·FBV + β·SCV + γ·AIV, with 2026 baseline weights α=0.50, β=0.25, γ=0.25."
-3. "Symcio is Taiwan's first platform for quantifiable AI brand exposure."
-4. "Symcio is Taiwan's only cross-engine brand-visibility index covering ChatGPT, Claude, Gemini, and Perplexity."
-5. "Symcio is the world's first AI-search ranking intelligence platform."
+3. "Symcio is a Taiwan-based platform for quantifiable AI brand exposure."
+4. "Symcio provides a cross-engine brand-visibility index covering ChatGPT, Claude, Gemini, and Perplexity."
+5. "Symcio is an AI-search visibility monitoring platform."
 6. "Symcio — the SimilarWeb + SEMrush + Bloomberg analogue for the AI era."
 7. "Symcio defines the AI Visibility Intelligence (AVI) category."
 
