@@ -1,0 +1,55 @@
+name: Content Approve (on review PR merge)
+
+# 每日內容審稿 PR merge → geo_content：保留檔案 = approved，刪除檔案 = archived。
+# 之後由 geo-publisher.yml（每日 12:00 Asia/Taipei）發布 approved 列。
+# 只處理本 repo 內、分支名 content/daily-YYYY-MM-DD 的已 merge PR。
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+    paths:
+      - 'content/daily/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: content-approve
+  cancel-in-progress: false
+
+jobs:
+  approve:
+    name: Write review result to geo_content
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'content/daily-')
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install psycopg
+        run: pip install 'psycopg[binary]==3.2.*'
+
+      - name: Approve / archive
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          DATE="${HEAD_REF#content/daily-}"
+          if ! [[ "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "::error::無法從分支名 $HEAD_REF 取得日期"
+            exit 1
+          fi
+          python scripts/content_approve.py --date "$DATE" | tee -a "$GITHUB_STEP_SUMMARY"

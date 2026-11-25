@@ -1,0 +1,44 @@
+name: LINE Rich Menu Deploy
+
+# 依 integrations/line/richmenu.json 產圖並部署為 LINE 官方帳號預設選單。
+# 先跑 dry_run=true（官方 validate），確認後 dry_run=false 正式切換。
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run（只 validate，不切換）'
+        required: true
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow + CJK font
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+          pip install 'pillow==11.*'
+      - name: Render
+        run: python scripts/line_richmenu.py render
+      - uses: actions/upload-artifact@v4
+        with:
+          name: richmenu-image
+          path: integrations/line/richmenu.*
+      - name: Deploy
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          ARGS=()
+          [[ "$DRY_RUN" == "true" ]] && ARGS+=(--dry-run)
+          python scripts/line_richmenu.py deploy "${ARGS[@]}"

@@ -1,0 +1,47 @@
+{
+  "_comment": "Symcio LINE 官方帳號主選單。版面：2500x1686，3 欄 x 2 列。改文案或連結只改這個檔，再跑 scripts/line_richmenu.py render / deploy。",
+  "name": "symcio-main-v1",
+  "chatBarText": "Symcio 選單",
+  "selected": true,
+  "size": { "width": 2500, "height": 1686 },
+  "theme": {
+    "background": "#F7F6F3",
+    "primary": "#2A4D3A",
+    "ink": "#1A2E22",
+    "accent_soft": "#E6EEE8",
+    "gold": "#7A5C08"
+  },
+  "cells": [
+    {
+      "label": "免費 AI 健檢",
+      "sub": "3 分鐘看 AI 怎麼描述你",
+      "highlight": true,
+      "action": { "type": "uri", "label": "免費 AI 健檢", "uri": "https://symcio.tw/audit?utm_source=line&utm_medium=richmenu" }
+    },
+    {
+      "label": "方案與試用",
+      "sub": "BrandOS 訂閱方案",
+      "action": { "type": "uri", "label": "方案與試用", "uri": "https://symcio.tw/pricing?utm_source=line&utm_medium=richmenu" }
+    },
+    {
+      "label": "我的報告",
+      "sub": "AI 可見度儀表板",
+      "action": { "type": "uri", "label": "我的報告", "uri": "https://symcio.tw/dashboard?utm_source=line&utm_medium=richmenu" }
+    },
+    {
+      "label": "每週洞察",
+      "sub": "AI 搜尋與品牌治理",
+      "action": { "type": "uri", "label": "每週洞察", "uri": "https://symcio.tw/news?utm_source=line&utm_medium=richmenu" }
+    },
+    {
+      "label": "找真人顧問",
+      "sub": "1 個工作天內回覆",
+      "action": { "type": "message", "label": "找真人顧問", "text": "真人" }
+    },
+    {
+      "label": "會員登入",
+      "sub": "註冊 / 登入 symcio.tw",
+      "action": { "type": "uri", "label": "會員登入", "uri": "https://symcio.tw/signup?utm_source=line&utm_medium=richmenu" }
+    }
+  ]
+}

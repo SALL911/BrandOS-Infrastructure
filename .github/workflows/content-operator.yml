@@ -1,0 +1,114 @@
+name: Content Operator (daily drafts)
+
+# 內容官每日產出（.claude/agents/content-operator.md、docs/ai-team/README.md 管線 B）
+#
+# 07:00 Asia/Taipei 產出當日草稿 → geo_content status='draft'
+#   + content/daily/<date>/*.md → 開審稿 PR（label: content-daily）
+# 人類審稿：改檔案 = 改內容；刪檔案 = 不發布；merge = 核准
+#   → content-approve.yml 轉 approved/archived → geo-publisher.yml（12:00）發布
+#
+# DB 連線使用 content_bot（bot_content 角色），不使用 SUPABASE_DB_URL。
+
+on:
+  schedule:
+    # UTC 23:00 = Asia/Taipei 07:00（隔日）
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'YYYY-MM-DD（留空 = 今天 Asia/Taipei）'
+        required: false
+      dry_run:
+        description: 'Dry-run（不寫 DB、不開 PR）'
+        required: true
+        default: 'true'
+        type: boolean
+      force:
+        description: '當日已有草稿仍重新產出'
+        required: true
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: content-operator
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    name: Generate daily content drafts
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install 'psycopg[binary]==3.2.*' 'anthropic==0.125.*'
+
+      - name: Generate drafts
+        id: gen
+        env:
+          CONTENT_SUPABASE_DB_URL: ${{ secrets.CONTENT_SUPABASE_DB_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          INPUT_DATE: ${{ github.event.inputs.date }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${CONTENT_SUPABASE_DB_URL:-}" ]]; then
+            echo "::error::CONTENT_SUPABASE_DB_URL secret 未設定（content_bot 帳號），見 docs/ai-team/README.md §3.2"
+            exit 1
+          fi
+          DATE="${INPUT_DATE:-$(TZ=Asia/Taipei date +%F)}"
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          ARGS=(--date "$DATE")
+          [[ "${DRY_RUN:-false}" == "true" ]] && ARGS+=(--dry-run)
+          [[ "${FORCE:-false}" == "true" ]] && ARGS+=(--force)
+          python scripts/content_operator.py "${ARGS[@]}"
+
+      - name: Open review PR
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATE: ${{ steps.gen.outputs.date }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain content/daily)" ]; then
+            echo "No new drafts."
+            exit 0
+          fi
+          BRANCH="content/daily-${DATE}"
+          git config user.name  "symcio-content[bot]"
+          git config user.email "symcio-content@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add content/daily
+          git commit -m "[content] ${DATE} 每日內容草稿"
+          git push -u origin "$BRANCH"
+          gh label create content-daily --color 0E8A16 --description "每日內容審稿 PR" --force
+          if ! gh pr view "$BRANCH" >/dev/null 2>&1; then
+            gh pr create \
+              --base main --head "$BRANCH" \
+              --label content-daily \
+              --title "[content] ${DATE} 每日內容審稿" \
+              --body-file "content/daily/${DATE}/REVIEW.md"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Content Operator"
+            echo "- Date: \`${{ steps.gen.outputs.date }}\`"
+            echo "- Dry-run: \`${{ github.event.inputs.dry_run || 'false (cron)' }}\`"
+            echo "- Status: ${{ job.status }}"
+          } >> "$GITHUB_STEP_SUMMARY"

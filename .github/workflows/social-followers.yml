@@ -1,0 +1,43 @@
+name: Social Followers Snapshot
+
+# LINE OA / Facebook 粉專 / Instagram 粉絲數每日快照 → social_follower_snapshots
+# 未設定憑證的平台自動略過。每日 10:00 Asia/Taipei（LINE 統計取前一日）。
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry-run（不寫 DB）'
+        required: true
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install 'psycopg[binary]==3.2.*'
+      - name: Snapshot
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_ACCOUNT: ${{ vars.LINE_ACCOUNT }}
+          META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
+          META_PAGE_ID: ${{ vars.META_PAGE_ID }}
+          META_IG_USER_ID: ${{ vars.META_IG_USER_ID }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          ARGS=()
+          [[ "${DRY_RUN:-false}" == "true" ]] && ARGS+=(--dry-run)
+          python scripts/social_followers.py "${ARGS[@]}"
