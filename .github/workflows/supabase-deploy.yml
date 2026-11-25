@@ -73,20 +73,45 @@ jobs:
           fi
           echo "Resolved password from: $(grep source $GITHUB_OUTPUT | cut -d= -f2)"
 
+      # 連結專案需要 SUPABASE_ACCESS_TOKEN（個人存取權杖，會過期或被撤銷）。
+      # 權杖失效時不中止，改由下一步用 SUPABASE_DB_URL 直接連資料庫推送。
       - name: Link project
+        id: link
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD:  ${{ env.DB_PASSWORD }}
           SUPABASE_PROJECT_REF:  ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          if supabase link --project-ref "$SUPABASE_PROJECT_REF"; then
+            echo "linked=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "linked=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::supabase link 失敗（多半是 SUPABASE_ACCESS_TOKEN 失效）。改用 SUPABASE_DB_URL 直接推送。"
+          fi
 
       - name: Push migrations (db push)
+        id: push
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD:  ${{ env.DB_PASSWORD }}
+          SUPABASE_DB_URL:       ${{ secrets.SUPABASE_DB_URL }}
+          LINKED:                ${{ steps.link.outputs.linked }}
         run: |
-          supabase db push --include-all
+          set -euo pipefail
+          if [ "$LINKED" = "true" ]; then
+            echo "mode=linked project" >> "$GITHUB_OUTPUT"
+            supabase db push --include-all
+            exit 0
+          fi
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            echo "::error::supabase link 失敗，且未設定 SUPABASE_DB_URL，無法推送 migration。"
+            exit 1
+          fi
+          # SUPABASE_DB_URL 是交易模式連線池（6543 埠），不適合跑 migration。
+          # 同一台連線池主機的 5432 埠是 session 模式，改用它。
+          SESSION_URL=$(printf '%s' "$SUPABASE_DB_URL" | sed -E 's|:6543/|:5432/|')
+          echo "mode=direct db-url (session pooler)" >> "$GITHUB_OUTPUT"
+          supabase db push --include-all --db-url "$SESSION_URL"
 
       - name: Summary
         if: always()
@@ -96,5 +121,6 @@ jobs:
             echo "- Project: ${{ secrets.SUPABASE_PROJECT_REF }}"
             echo "- Ref: \`${{ github.sha }}\`"
             echo "- Password source: \`${{ steps.resolve_pwd.outputs.source }}\`"
+            echo "- Push mode: \`${{ steps.push.outputs.mode }}\`"
             echo "- Status: ${{ job.status }}"
           } >> "$GITHUB_STEP_SUMMARY"
