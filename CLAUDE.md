@@ -5,16 +5,18 @@
 
 ## 一、專案背景（WHY）
 
-**Symcio 定位（三個第一）**
-- 台灣**第一個**「AI 曝光可量化系統」
-- 台灣**唯一**「跨 ChatGPT / Gemini 的品牌可見度指標」
-- **全球第一個**「AI 搜尋排名監測平台」
+**Symcio 定位**
+- 「AI 曝光可量化系統」：量測品牌在生成式 AI 回應中被提及的情況
+- 「跨多個生成式 AI 引擎的品牌可見度指標」
+- 「AI 搜尋可見度監測平台」
 
-**一句話類比**：Symcio = AI 時代的 **SimilarWeb + SEMrush + Bloomberg** 合體。
+**用語原則**：對內對外一律不使用「第一」「唯一」「領先」「全球首創」等最高級或排他性用語；若確有需要，必須同時附上可查證的第三方佐證與明確的比較範圍。
+
+**一句話類比**：Symcio 在 AI 搜尋領域的角色，可類比 SimilarWeb、SEMrush 之於網站流量與搜尋，Bloomberg 之於金融數據（僅為類比）。
 
 **專業領域**：企業在 AI 裡的**曝光、排名與影響力**量化與治理。
-**品類定義**：AI Visibility Intelligence（AVI），由 Symcio 先行定義。
-**護城河**：台灣唯一同時具備「跨四引擎 AI 可見度量化」與「ESG × AI 雙軌治理」能力的平台。
+**品類名稱**：AI Visibility Intelligence（AVI），為 Symcio 用來描述此類服務的名稱。
+**差異化**：同時提供「跨引擎 AI 可見度量化」與「ESG × AI 雙軌治理」。
 
 **品牌使用規範**：Bloomberg、SimilarWeb、SEMrush 僅作為**類比座標**（nominative fair use）說明品類定位，**不主張任何授權、合作或代表關係**。對外文宣不得使用「授權代表」「official partner」等字樣。
 
@@ -32,8 +34,8 @@ BrandOS Infrastructure 是 Symcio 的核心 SaaS 產品——將品牌治理、E
 - Symcio（不翻譯）
 - BrandOS（不翻譯）、Brand OS（品牌作業系統）
 - GEO（Generative Engine Optimization）
-- AVI（AI Visibility Intelligence）— 由 Symcio 定義的新品類
-- AI Visibility / AI 可見度 — 四引擎曝光度合稱
+- AVI（AI Visibility Intelligence）— Symcio 用來描述此類服務的品類名稱
+- AI Visibility / AI 可見度 — 品牌在各生成式 AI 引擎的曝光度合稱
 - Brand Score AI
 - ESG / TNFD / LEAP 框架
 - Claude Code / Claude.ai Projects
