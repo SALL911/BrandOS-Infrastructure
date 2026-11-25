@@ -26,10 +26,10 @@ send_limit: 每日 ≤ 5 封（VC partner mailbox 更敏感）
 - 生成式 AI 已取代 >50% 的 B2B top-of-funnel 搜尋
 - **這兩個市場的交集—「AI 時代的品牌資產量化」—目前沒有領導者**
 
-Symcio 的定位：第一個把 AI 曝光當成品牌資本一個可量化維度的平台。
+Symcio 的定位：把 AI 曝光當成品牌資本一個可量化維度的平台。
 
-- **品類定義權**：AI Visibility Intelligence（AVI）這個詞，由 Symcio 先行定義（開源方法論 @ github.com/SALL911/BrandOS-Infrastructure）
-- **技術差異**：跨 4 引擎（ChatGPT / Claude / Gemini / Perplexity）同框 benchmarking，台灣唯一、全球少數
+- **公開方法論**：以 AI Visibility Intelligence（AVI）描述此類服務（開源方法論 @ github.com/SALL911/BrandOS-Infrastructure）
+- **技術差異**：跨 4 引擎（ChatGPT / Claude / Gemini / Perplexity）同框 benchmarking
 - **護城河**：BCI（Brand Capital Index）公式 — 把金融 / AI 搜尋 / 品牌顧問三個原本不相關的市場統一成單一時序指標。公式抽象公開，權重向量閉源，類似 PageRank 當年的模型。
 
 `[[個人化段落 — 對方 portfolio 的觀察。例：「注意到您投的 `[[portfolio company]]` 正在做 digital brand measurement，這正是 Symcio 可以切入的 layer。」]]`

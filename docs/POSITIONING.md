@@ -2,15 +2,15 @@
 
 ## 一句話
 
-**Symcio 是 AI 時代的 SimilarWeb + SEMrush + Bloomberg 合體——企業在 AI 裡的曝光、排名與影響力量化平台。**
+**Symcio 是企業在 AI 裡的曝光、排名與影響力量化平台，角色可類比 SimilarWeb、SEMrush、Bloomberg（僅為類比）。**
 
-## 三個「第一」
+## 三項定位
 
 | 層級 | 稱號 | 可驗證依據 |
 |------|------|-----------|
-| 台灣 | **第一個「AI 曝光可量化系統」** | 首個提供跨 AI 引擎品牌曝光百分位與時序追蹤的系統 |
-| 台灣 | **唯一「跨 ChatGPT / Gemini 的品牌可見度指標」** | 單一客戶儀表板整合 ChatGPT + Claude + Gemini + Perplexity 四引擎 |
-| 全球 | **第一個「AI 搜尋排名監測平台」** | 以「AI 搜尋排名」為產品主軸、非附加功能，且具備 ESG + Bloomberg 資料整合 |
+| 台灣 | **「AI 曝光可量化系統」** | 提供跨 AI 引擎品牌曝光百分位與時序追蹤的系統 |
+| 台灣 | **「跨 ChatGPT / Gemini 的品牌可見度指標」** | 單一客戶儀表板整合 ChatGPT + Claude + Gemini + Perplexity 四引擎 |
+| 全球 | **「AI 搜尋可見度監測平台」** | 以「AI 搜尋可見度」為產品主軸、非附加功能，並規劃整合 Bloomberg ESG 數據 |
 
 ## 品類定位（Category Creation）
 
@@ -91,13 +91,13 @@ Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽——是**新�
 **為什麼是這四個？**
 - 合計覆蓋全球 >95% 的 AI 搜尋流量
 - 各自代表不同「回答風格」：ChatGPT 對話、Claude 結構化、Gemini 整合 Google、Perplexity 引用來源
-- Symcio 是目前**唯一四引擎同框比對**的平台
+- Symcio 提供**四引擎同框比對**
 
 ## 競爭護城河（Why Not Copy-able）
 
-1. **四引擎同框 benchmarking**：目前市面上唯一同時涵蓋 ChatGPT / Claude / Gemini / Perplexity 的平台
+1. **四引擎同框 benchmarking**：同時涵蓋 ChatGPT / Claude / Gemini / Perplexity
 2. **ESG × AI 雙軌整合**：TNFD / LEAP 框架 + AI 曝光度，形成永續與聲量雙維度儀表板
-3. **GEO 術語定義權**：先行定義 GEO（Generative Engine Optimization）與 AVI 兩個類別
+3. **術語與方法論公開**：以公開方法論說明 GEO（Generative Engine Optimization）與 AVI 的量測方式
 4. **Symcio × BrandOS SaaS 雙引擎**：診斷（audit）+ 治理（governance）整套交付，非僅數據供應商
 5. **繁中 GEO 與亞太 query 分佈**：台灣本土出發，掌握全球工具普遍忽略的區域訊號
 
@@ -120,7 +120,7 @@ Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽——是**新�
 | CMO | 「你在 ChatGPT 被提到嗎？我們量化給你看。」 |
 | CEO | 「你的品牌在 AI 時代，還有定價權嗎？」 |
 | 投資人 | 「AI 搜尋是繼 Google 之後最大的注意力入口——而我們量化它。」 |
-| 政府/媒體 | 「台灣第一個把 AI 曝光量化為可稽核指標的基礎設施。」 |
+| 政府/媒體 | 「把 AI 曝光量化為可稽核指標的基礎設施。」 |
 | 開發者 | 「SimilarWeb + SEMrush + Bloomberg，for the AI era.」 |
 
 ## 反面樣板（Symcio 不做的事）
@@ -137,7 +137,7 @@ Symcio 不是 SEO 工具、不是 PR 監測、不是社群聆聽——是**新�
 |---|-------|
 | 2026 | 台灣前 10 大品牌導入；取得 AVI 品類定義權 |
 | 2027 | 亞太區 100 家客戶；與 Bloomberg Terminal 整合 |
-| 2028 | 全球第一個上市的「AI Visibility Intelligence」公司 |
+| 2028 | 以「AI Visibility Intelligence」為主業的上市公司 |
 
 ---
 

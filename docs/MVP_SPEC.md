@@ -4,10 +4,10 @@
 
 **一句話**：Symcio 是 AI 時代的 SimilarWeb + SEMrush + Bloomberg——企業在 AI 引擎裡的**曝光、排名、影響力**量化平台。
 
-**三個第一**：
-- 台灣**第一個**「AI 曝光可量化系統」
-- 台灣**唯一**「跨 ChatGPT / Gemini 的品牌可見度指標」
-- **全球第一個**「AI 搜尋排名監測平台」
+**三項定位**：
+- 「AI 曝光可量化系統」
+- 「跨 ChatGPT / Gemini 的品牌可見度指標」
+- 「AI 搜尋可見度監測平台」
 
 **MVP 交付價值**：讓企業主花 $299 USD 拿到四引擎（ChatGPT / Claude / Gemini / Perplexity）AI 曝光量化報告與改善建議。
 
@@ -15,8 +15,8 @@
 - 傳統 SEO 已不夠——> 50% 的 B2B 買家**先問 AI、再開 Google**
 - 多數企業**完全無法量化**自己在 AI 搜尋的表現
 - 三大定位護城河：
-  1. 四引擎同框比對（市場唯一）
-  2. ESG × AI 雙軌整合（類別定義者）
+  1. 四引擎同框比對
+  2. ESG × AI 雙軌整合
   3. 繁中 GEO 與亞太 query 分佈（區域訊號最完整）
 
 > 完整品類定位見 [`docs/POSITIONING.md`](POSITIONING.md)。

@@ -5,7 +5,7 @@ import { TypeformEmbed } from "@/components/TypeformEmbed";
 export const metadata: Metadata = {
   title: "關於全識 | Symcio BrandOS",
   description:
-    "全識股份有限公司（Symcio）是台灣第一個 AI 曝光可量化系統，定義 AI Visibility Intelligence (AVI) 品類。",
+    "全識股份有限公司（Symcio）是來自台灣的 AI 曝光可量化系統，提供 AI Visibility Intelligence (AVI) 服務。",
 };
 
 export default function AboutPage() {

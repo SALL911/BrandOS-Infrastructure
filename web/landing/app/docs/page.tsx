@@ -68,8 +68,8 @@ export default function DocsIndex() {
         <p className="mt-3">
           Symcio 的護城河是 BCI 權重向量（閉源）與四引擎跨平台資料集（專有）。
           方法論、公式、設計系統、架構 — 這些是類別定義 （AI Visibility
-          Intelligence / AVI）的一部分。公開反而強化 Symcio 是 AVI 品類定義者的
-          地位。
+          Intelligence / AVI）的一部分。公開有助於讓市場理解 Symcio 的 AVI
+          量測方式。
         </p>
       </div>
     </div>
