@@ -11,6 +11,7 @@ GEO Visibility Audit — BrandOS MVP 核心服務
   BRAND_NAME            必填，測試對象品牌名稱
   BRAND_DOMAIN          選，品牌官網域名（用於加權辨識）
   BRAND_INDUSTRY        選，產業（決定 prompt 分類），預設 'technology'
+                        prompt 可含 {brand}，執行時替換為 BRAND_NAME
   GEMINI_API_KEY        選，但強烈建議（唯一免費）
   ANTHROPIC_API_KEY     選
   OPENAI_API_KEY        選
@@ -374,15 +375,17 @@ def main() -> int:
     done = 0
 
     for category, queries in prompts.items():
-        for query_text in queries:
+        for raw_query in queries:
             for engine in active_engines:
                 env_var, fn = ENGINES[engine]
                 api_key = os.environ[env_var]
                 done += 1
                 print(
                     f"  [{done}/{total_queries * len(active_engines)}] "
-                    f"{engine} × {category}: {query_text[:50]}..."
+                    f"{engine} × {category}: {raw_query[:50]}..."
                 )
+                # {brand} 佔位符：品牌認知題（「{brand} 是什麼？」）用來檢查 AI 描述是否正確
+                query_text = raw_query.replace("{brand}", brand)
                 try:
                     text = fn(query_text, api_key)
                 except RuntimeError as e:
@@ -397,6 +400,8 @@ def main() -> int:
                         "query": query_text,
                         "engine": engine,
                         "response_excerpt": text[:500],
+                        # 完整回答只存在 JSON 報告（不寫 DB），供人工判讀正確性與推薦了哪些對手
+                        "response_text": text[:6000],
                         **analysis,
                     }
                 )

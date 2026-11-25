@@ -13,7 +13,7 @@ on:
         description: 'Brand domain (optional)'
         required: false
       brand_industry:
-        description: 'Industry category (technology / finance / consumer_goods / default)'
+        description: 'Industry category (technology / finance / consumer_goods / religious_services / default)'
         required: false
         default: 'technology'
   # Triggered by Stripe webhook (web/landing/app/api/webhooks/stripe) after
@@ -93,12 +93,14 @@ jobs:
           git add reports/
           git commit -m "[geo-audit] 每日可見度測試 ${DATE}"
           git push -u origin "$BRANCH"
+          # repo 設定未開放 Actions 建立 PR 時，報告已推到分支，不讓整個 job 失敗
           gh pr create \
             --base main \
             --head "$BRANCH" \
             --draft \
             --title "[geo-audit] 每日可見度測試 (${DATE})" \
-            --body "自動產生的 GEO 可見度報告，請人工審核 avg_score 與趨勢後合併。"
+            --body "自動產生的 GEO 可見度報告，請人工審核 avg_score 與趨勢後合併。" \
+          || echo "::warning::無法自動建立 PR（Settings → Actions → 允許 Actions 建立 PR），報告在分支 $BRANCH"
 
       - name: Summary
         if: always()

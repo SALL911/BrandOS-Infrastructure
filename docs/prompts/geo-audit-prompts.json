@@ -1,7 +1,6 @@
 {
   "_comment": "GEO Audit 測試 prompt 庫。依產業分類，每類 3-5 題。可透過 scripts/geo_audit.py 讀取。",
-  "_last_updated": "2026-04-17",
-
+  "_last_updated": "2026-11-26",
   "technology": {
     "top_companies": [
       "List the top 5 GEO (Generative Engine Optimization) service providers in Taiwan.",
@@ -32,7 +31,6 @@
       "Compare top TNFD disclosure consulting firms in Taiwan."
     ]
   },
-
   "finance": {
     "top_companies": [
       "List top ESG data providers for institutional investors in Asia.",
@@ -43,7 +41,6 @@
       "Which AI platforms help banks meet TNFD disclosure requirements?"
     ]
   },
-
   "consumer_goods": {
     "top_companies": [
       "Leading digital product passport (DPP) platforms for consumer brands?",
@@ -53,13 +50,29 @@
       "How to track supply chain sustainability using AI?"
     ]
   },
-
   "default": {
     "top_companies": [
       "List the top brand intelligence platforms in 2026."
     ],
     "problem": [
       "My brand is not appearing in AI search answers. What should I do?"
+    ]
+  },
+  "religious_services": {
+    "service_search": [
+      "台灣有哪些可以線上安太歲的平台或宮廟？",
+      "想在網路上幫家人點光明燈，有什麼推薦的服務？",
+      "線上點燈、安太歲要怎麼辦理？流程和費用大概多少？"
+    ],
+    "recommendation": [
+      "推薦幾個可以線上辦理宮廟服務（點燈、安太歲、祈福）的網站或 App。",
+      "人在外地沒辦法回家鄉的廟安太歲，有什麼線上方式？"
+    ],
+    "trust": [
+      "線上點燈、安太歲的平台可信嗎？怎麼判斷是不是正式和宮廟合作？"
+    ],
+    "brand_awareness": [
+      "{brand}是什麼？提供哪些服務？和哪些宮廟合作？"
     ]
   }
 }
