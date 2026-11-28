@@ -20,7 +20,7 @@
  *   - lib/faq-data.ts          (ESG FAQ entries)
  *   - apps/symcio-brand-audit/* (vanilla JS — no ES module imports)
  *   - docs/BCI_METHODOLOGY.md  (published methodology doc)
- *   - llms.txt, README.md, whitepaper/README.md
+ *   - llms.txt, README.md, docs/whitepaper/README.md
  *   - content/medium/*.md, content/linkedin/*.md
  *
  * When BCI weights are rebalanced (e.g. 2030 baseline goes live), update the

@@ -6,7 +6,7 @@ on:
       - 'scripts/bci_engine.py'
       - 'scripts/bci_calibrate.py'
       - 'scripts/providers/**'
-      - 'scripts/tests/**'
+      - 'tests/bci/**'
       - 'supabase/migrations/*bci*.sql'
       - '.github/workflows/bci-test.yml'
   pull_request:
@@ -14,7 +14,7 @@ on:
       - 'scripts/bci_engine.py'
       - 'scripts/bci_calibrate.py'
       - 'scripts/providers/**'
-      - 'scripts/tests/**'
+      - 'tests/bci/**'
       - 'supabase/migrations/*bci*.sql'
   workflow_dispatch:
 
@@ -33,4 +33,4 @@ jobs:
           python-version: '3.12'
 
       - name: Run unittest suite
-        run: python -m unittest discover -s scripts/tests -v
+        run: python -m unittest discover -s tests/bci -v
