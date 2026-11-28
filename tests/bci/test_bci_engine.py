@@ -1,7 +1,7 @@
 """Unit tests for scripts/bci_engine.py — the BCI formula core.
 
 Run:
-    python -m unittest scripts.tests.test_bci_engine
+    python -m unittest tests.bci.test_bci_engine
 
 Covers:
   - compute_f: empty / high-cap / negative-growth / missing-beta edges

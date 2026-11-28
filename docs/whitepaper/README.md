@@ -10,7 +10,7 @@
 **正式版本由 Symcio Research 以獨立研究論文形式發表:**
 
 - 引用:Huang, Chih-Chuan (2026). *品牌資本指數（BCI）方法論白皮書 v1.0*. Symcio Research. ORCID: 0009-0004-6472-4566.
-- 上線位置:[`docs/BCI_METHODOLOGY.md`](../docs/BCI_METHODOLOGY.md)(技術文件版,完整對齊 v1.0 論文)
+- 上線位置:[`docs/BCI_METHODOLOGY.md`](../BCI_METHODOLOGY.md)(技術文件版,完整對齊 v1.0 論文)
 - Research 站:https://symcio-research.netlify.app
 - 公式:`BCI = α·FBV + β·SCV + γ·AIV`,2026 基準權重 α=0.50 β=0.25 γ=0.25
 

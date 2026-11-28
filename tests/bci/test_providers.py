@@ -1,7 +1,7 @@
 """Unit tests for scripts/providers/ adapters.
 
 Run:
-    python -m unittest scripts.tests.test_providers
+    python -m unittest tests.bci.test_providers
 
 Covers:
   - load_provider dispatch for each adapter name
